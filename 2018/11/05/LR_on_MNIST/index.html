@@ -1,0 +1,1038 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="UTF-8">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="逻辑回归,MNIST数据集,">
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="bywmm's blog" type="application/atom+xml">
+
+
+
+
+
+
+<meta name="description" content="实现逻辑回归算法，并在MNIST数据集中查看学习器的效果。">
+<meta name="keywords" content="逻辑回归,MNIST数据集">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Logistic Regression on MNIST dataset">
+<meta property="og:url" content="https://bywmm.github.io/2018/11/05/LR_on_MNIST/index.html">
+<meta property="og:site_name" content="bywmm&#39;s blog">
+<meta property="og:description" content="实现逻辑回归算法，并在MNIST数据集中查看学习器的效果。">
+<meta property="og:locale" content="UTF-8">
+<meta property="og:image" content="http://static.zybuluo.com/BYWMM/8jymzrw7fkejt61j5v4ylu7b/image_1crc2rjnn18vv1e7bak573j1vca9.png">
+<meta property="og:image" content="http://static.zybuluo.com/BYWMM/ee42dlh7gts41jv3au7rqqt5/image_1crc33ceu1h5b15ns1vj212gj1j15m.png">
+<meta property="og:updated_time" content="2018-12-14T15:55:24.334Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Logistic Regression on MNIST dataset">
+<meta name="twitter:description" content="实现逻辑回归算法，并在MNIST数据集中查看学习器的效果。">
+<meta name="twitter:image" content="http://static.zybuluo.com/BYWMM/8jymzrw7fkejt61j5v4ylu7b/image_1crc2rjnn18vv1e7bak573j1vca9.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://bywmm.github.io/2018/11/05/LR_on_MNIST/">
+
+
+
+
+
+  <title>Logistic Regression on MNIST dataset | bywmm's blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="UTF-8">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">bywmm's blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-主页">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            主页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-标签">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-分类">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-归档">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://bywmm.github.io/2018/11/05/LR_on_MNIST/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="JF Wang">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar2.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="bywmm's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Logistic Regression on MNIST dataset</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-11-05T23:06:27+08:00">
+                2018-11-05
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/算法实践/" itemprop="url" rel="index">
+                    <span itemprop="name">算法实践</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2018/11/05/LR_on_MNIST/" class="leancloud_visitors" data-flag-title="Logistic Regression on MNIST dataset">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">Visitors&#58;</span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Words count in article&#58;</span>
+                
+                <span title="Words count in article">
+                  1.3k
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Reading time &asymp;</span>
+                
+                <span title="Reading time">
+                  6
+                </span>
+              
+            </div>
+          
+
+          
+              <div class="post-description">
+                  实现逻辑回归算法，并在MNIST数据集中查看学习器的效果。
+              </div>
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="Logistic-Regression-on-MNIST-dataset"><a href="#Logistic-Regression-on-MNIST-dataset" class="headerlink" title="Logistic-Regression-on-MNIST-dataset"></a>Logistic-Regression-on-MNIST-dataset</h1><p>目标：实现逻辑回归算法，并在MNIST数据集中查看学习器的效果。</p>
+<h2 id="Minist数据集"><a href="#Minist数据集" class="headerlink" title="Minist数据集"></a>Minist数据集</h2><p><strong>数据类别：</strong>手写数字数据集，有0~9这十个类别。每张图片是$28\times28\times1$的灰度图像。</p>
+<p><img src="http://static.zybuluo.com/BYWMM/8jymzrw7fkejt61j5v4ylu7b/image_1crc2rjnn18vv1e7bak573j1vca9.png" alt="image_1crc2rjnn18vv1e7bak573j1vca9.png-5.2kB"></p>
+<p><strong>数据集规模：</strong>训练集为60000个样本，测试集为10000个样本。</p>
+<p>由于有10个类，可以采用OvR的多分类处理，也可以采用EOCO编码来做MvM。</p>
+<h2 id="逻辑回归实现"><a href="#逻辑回归实现" class="headerlink" title="逻辑回归实现"></a>逻辑回归实现</h2><h3 id="逻辑回归模型"><a href="#逻辑回归模型" class="headerlink" title="逻辑回归模型"></a>逻辑回归模型</h3><p><img src="http://static.zybuluo.com/BYWMM/ee42dlh7gts41jv3au7rqqt5/image_1crc33ceu1h5b15ns1vj212gj1j15m.png" alt="image_1crc33ceu1h5b15ns1vj212gj1j15m.png-95.8kB"></p>
+<p>逻辑回归算是个采用Sigmoid激活函数的神经网络单元了。</p>
+<p><strong>对于一个样例$\boldsymbol{x}_i$：</strong></p>
+<p>我们的模型包含两部分：线性部分和激活函数：</p>
+<script type="math/tex; mode=display">\boldsymbol{z}_i=\boldsymbol{w}^T\boldsymbol{x}_i+b\tag{1}</script><script type="math/tex; mode=display">\hat{y}_i=\sigma(\boldsymbol{z}_i)=\frac{1}{1+e^{-\boldsymbol{z}_i}}\tag{2}</script><p>若$\hat{y}_i\leq0.5$，则为反例；若$\hat{y}_i&gt;0.5$，则为正例。</p>
+<blockquote>
+<p>$\hat{y}$可视该样例属于正类的概率。</p>
+</blockquote>
+<h3 id="损失函数"><a href="#损失函数" class="headerlink" title="损失函数"></a>损失函数</h3><p>单个变量$\boldsymbol{x}_i$损失函数为（对数似然）：</p>
+<script type="math/tex; mode=display">\ell(\hat{y}_i, y_i)=-y_i\ln\hat{y}_i - (1-y_i)\ln(1-\hat{y}_i)</script><blockquote>
+<p>当$y_i=0$时，即$\boldsymbol{x}_i$属于反类，对数损失为$\ln(1-\hat{y}_i)$；<br>当$y_i=1$时，即$\boldsymbol{x}_i$属于正类，对数损失为$\ln\hat{y}_i$。</p>
+</blockquote>
+<p>对于所有训练样本的损失函数为</p>
+<script type="math/tex; mode=display">
+J=\frac{1}{m}\sum_{i=1}^m\ell(\hat{y}_i,y_i)</script><p>现在我们要的参数$(\boldsymbol{w}^{*},b^{*})$要满足</p>
+<script type="math/tex; mode=display">(\boldsymbol{w}^*,b^*) = \underset{\boldsymbol{w},b}{\min}J</script><h3 id="梯度下降"><a href="#梯度下降" class="headerlink" title="梯度下降"></a>梯度下降</h3><p>目的是：寻找最优参数$\boldsymbol{w}^{*}$和$b^{*}$，使得我们的目标函数$J$最小。</p>
+<ul>
+<li>初始化$\boldsymbol{w},b$为零<br>对数函数是一个凸函数，初始化为任意值都可通过梯度下降找到最优解。</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">w = np.zeros((X_train.shape[<span class="number">0</span>], <span class="number">1</span>))</span><br><span class="line">b = <span class="number">0</span></span><br></pre></td></tr></table></figure>
+<p>进行num_iterations次梯度下降：</p>
+<ul>
+<li>用当前的$\boldsymbol{w}$和$b$计算$\hat{\boldsymbol{y}}$<script type="math/tex; mode=display">\hat{\boldsymbol{y}} = \sigma(\boldsymbol{w}^T\boldsymbol{X} + b) = (\hat{y}_0, \hat{y}_1, ..., \hat{y}_m)</script></li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 首先求出线性部分和激活函数</span></span><br><span class="line">y_hat = sigmoid(np.dot(w.T, X_train) + b)</span><br></pre></td></tr></table></figure>
+<ul>
+<li>计算损失函数: </li>
+<li><script type="math/tex; mode=display">J = -\frac{1}{m}\sum_{i=1}^{m}y_i\log(\hat{y}_i)+(1-y_i)\log(1-\hat{y}_i)</script></li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 计算损失函数</span></span><br><span class="line">cost = <span class="number">-1.0</span> / m_train * np.sum(Y_train * np.log(y_hat) + (<span class="number">1</span> - Y_train) * np.log(<span class="number">1</span> - y_hat))</span><br><span class="line">cost = np.squeeze(cost)</span><br></pre></td></tr></table></figure>
+<ul>
+<li>计算损失函数对w和b的偏导数</li>
+</ul>
+<script type="math/tex; mode=display">\frac{\partial J}{\partial w} = \frac{1}{m}X(A-Y)^T</script><script type="math/tex; mode=display">\frac{\partial J}{\partial b} = \frac{1}{m} \sum_{i=1}^m (a^{(i)}-y^{(i)})</script><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 求梯度</span></span><br><span class="line">dw = <span class="number">1.0</span> / m_train * np.dot(X_train, (y_hat - Y_train).T)</span><br><span class="line">db = <span class="number">1.0</span> / m_train * np.sum(y_hat - Y_train)</span><br></pre></td></tr></table></figure>
+<ul>
+<li>梯度下降获得新的w，b</li>
+</ul>
+<script type="math/tex; mode=display">\boldsymbol{w} = \boldsymbol{w} - \alpha * \frac{\partial J}{\partial{\boldsymbol{w}}}</script><script type="math/tex; mode=display">b = b - \alpha * \frac{\partial J}{\partial b}</script><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 梯度下降</span></span><br><span class="line">w = w - learning_rate * dw</span><br><span class="line">b = b - learning_rate * db</span><br></pre></td></tr></table></figure>
+<p>经过num_iterations次梯度下降就得到我们最后的$\boldsymbol{w}^{*}$和$b^{*}$了。<br>（当然不一定是完全收敛好的解，这些还需要我们去挑一些参数。）<br>将$\boldsymbol{w}^{*}$和$b^{*}$带入，就得到我们模型的最终的$\hat{\boldsymbol{y}}$</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 训练集上的predict y_hat</span></span><br><span class="line">y_hat_train = sigmoid(np.dot(w.T, X_train) + b)</span><br><span class="line"><span class="comment"># 测试集上的predict y_hat</span></span><br><span class="line">y_hat_test = sigmoid(np.dot(w.T, X_test) + b)</span><br></pre></td></tr></table></figure>
+<p>$\hat{\boldsymbol{y}}$算是属于正类的概率。<br>根据我们的阈值0.5，可以进一步的到最终的预测值（1表示正类，0表示反类）</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">y_prediction_train = np.zeros((<span class="number">1</span>, m_train))</span><br><span class="line">y_prediction_train[y_hat_train &gt; <span class="number">0.5</span>] = <span class="number">1</span></span><br><span class="line">y_prediction_test = np.zeros((<span class="number">1</span>, m_test))</span><br><span class="line">y_prediction_test[y_hat_test &gt; <span class="number">0.5</span>] = <span class="number">1</span></span><br></pre></td></tr></table></figure>
+<hr>
+<p>总的模型函数如下</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">model</span><span class="params">(X_train, Y_train, X_test, Y_test, num_iterations=<span class="number">2000</span>, learning_rate=<span class="number">0.5</span>, print_cost=False)</span>:</span></span><br><span class="line">    <span class="string">"""</span></span><br><span class="line"><span class="string">    逻辑回归模型</span></span><br><span class="line"><span class="string">    </span></span><br><span class="line"><span class="string">    参数：</span></span><br><span class="line"><span class="string">    X_train -- np数组(num_px * num_px, m_train)</span></span><br><span class="line"><span class="string">    Y_train -- np数组(1, m_train)</span></span><br><span class="line"><span class="string">    X_test -- np数组(num_px * num_px, m_test)</span></span><br><span class="line"><span class="string">    Y_test -- np数组(1, m_test)</span></span><br><span class="line"><span class="string">    num_iterations -- 超参数 迭代次数</span></span><br><span class="line"><span class="string">    learning_rate -- 超参数 学习率</span></span><br><span class="line"><span class="string">    print_cost -- Set to true to print the cost every 100 iterations</span></span><br><span class="line"><span class="string">    </span></span><br><span class="line"><span class="string">    """</span></span><br><span class="line"></span><br><span class="line">    <span class="comment"># 训练集样本数</span></span><br><span class="line">    m_train = X_train.shape[<span class="number">1</span>]</span><br><span class="line">    <span class="comment"># 测试集样本数</span></span><br><span class="line">    m_test = X_test.shape[<span class="number">1</span>]</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 初始化w和b为0</span></span><br><span class="line">    <span class="comment"># w 权重, np数组(num_px * num_px, 1)</span></span><br><span class="line">    w = np.zeros((X_train.shape[<span class="number">0</span>], <span class="number">1</span>))</span><br><span class="line">    b = <span class="number">0</span></span><br><span class="line"></span><br><span class="line">    <span class="comment"># 新建一个数组,实时记录损失函数（我们的优化目标）,后面可以画出来看看梯度下降的效果</span></span><br><span class="line">    costs = []</span><br><span class="line">    <span class="comment"># 进行num_iterations次迭代,每次迭代算一次梯度下降</span></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> range(num_iterations):</span><br><span class="line">    </span><br><span class="line">        <span class="comment"># 首先求出线性部分和激活函数</span></span><br><span class="line">        A = sigmoid(np.dot(w.T, X_train) + b)</span><br><span class="line">        <span class="comment"># 计算损失函数</span></span><br><span class="line">        cost = <span class="number">-1.0</span> / m_train * np.sum(Y_train * np.log(A) + (<span class="number">1</span> - Y_train) * np.log(<span class="number">1</span> - A))  </span><br><span class="line">        cost = np.squeeze(cost)</span><br><span class="line">    </span><br><span class="line">        <span class="comment"># 求梯度</span></span><br><span class="line">        dw = <span class="number">1.0</span> / m_train * np.dot(X_train, (A - Y_train).T)</span><br><span class="line">        db = <span class="number">1.0</span> / m_train * np.sum(A - Y_train)</span><br><span class="line">        </span><br><span class="line">        <span class="comment"># 梯度下降</span></span><br><span class="line">        w = w - learning_rate * dw</span><br><span class="line">        b = b - learning_rate * db</span><br><span class="line"></span><br><span class="line">        <span class="comment"># 记录一下损失</span></span><br><span class="line">        <span class="keyword">if</span> i % <span class="number">100</span> == <span class="number">0</span>:</span><br><span class="line">            costs.append(cost)</span><br><span class="line">        </span><br><span class="line">        <span class="comment"># 每一百次迭代打印一次损失</span></span><br><span class="line">        </span><br><span class="line">        <span class="keyword">if</span> print_cost <span class="keyword">and</span> i % <span class="number">100</span> == <span class="number">0</span>:</span><br><span class="line">            print(<span class="string">"Cost after iteration %i: %f"</span> % (i, cost))</span><br><span class="line"></span><br><span class="line">    w = w.reshape(<span class="number">-1</span>, <span class="number">1</span>)</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 训练集上的predict y_hat</span></span><br><span class="line">    y_hat_train = sigmoid(np.dot(w.T, X_train) + b)</span><br><span class="line">    <span class="comment"># 测试集上的predict y_hat</span></span><br><span class="line">    y_hat_test = sigmoid(np.dot(w.T, X_test) + b)</span><br><span class="line">    <span class="comment"># 训练集上的predict 类别</span></span><br><span class="line">    y_prediction_train = np.zeros((<span class="number">1</span>, m_train))</span><br><span class="line">    y_prediction_train[y_hat_train &gt; <span class="number">0.5</span>] = <span class="number">1</span></span><br><span class="line">    <span class="comment"># 测试集上的predict 类别</span></span><br><span class="line">    y_prediction_test = np.zeros((<span class="number">1</span>, m_test))</span><br><span class="line">    y_prediction_test[y_hat_test &gt; <span class="number">0.5</span>] = <span class="number">1</span></span><br><span class="line"></span><br><span class="line">    d = &#123;<span class="string">"costs"</span>: costs,</span><br><span class="line">         <span class="string">"Y_prediction_test"</span>: y_prediction_test,</span><br><span class="line">         <span class="string">"Y_prediction_train"</span>: y_prediction_train,</span><br><span class="line">         <span class="string">"Y_hat_test"</span>: y_hat_test,</span><br><span class="line">         <span class="string">"Y_hat_train"</span>: y_hat_train,</span><br><span class="line">         <span class="string">"w"</span>: w,</span><br><span class="line">         <span class="string">"b"</span>: b,</span><br><span class="line">         <span class="string">"learning_rate"</span> : learning_rate,</span><br><span class="line">         <span class="string">"num_iterations"</span>: num_iterations&#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">return</span> d</span><br></pre></td></tr></table></figure>
+<hr>
+<p>导入MNIST数据集后，采用OvM的思想训练10个分类器。进行分类就可以了。</p>
+<p>每个分类器都是一个类别为正例，另外九个类别为反例。<br>这样$正例:反例=1:9$，虽然正例数目远远小于反例数目，并不会产生类别不平衡的问题，因为这个比例大致就是数据的真实分布产生的比例。</p>
+<p>完整代码见<a href="https://github.com/bywmm/Logistic-Regression-on-MNIST-dataset" target="_blank" rel="noopener">此处</a></p>
+
+      
+    </div>
+    
+    
+    
+
+<div>
+  
+    <div>
+    
+        <div style="text-align:center;color: #555;font-size:14px;">-------------The End-------------</div>
+    
+</div>
+  
+</div>
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/逻辑回归/" rel="tag"># 逻辑回归</a>
+          
+            <a href="/tags/MNIST数据集/" rel="tag"># MNIST数据集</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/11/02/西瓜书笔记3/" rel="next" title="西瓜书笔记3 线性模型">
+                <i class="fa fa-chevron-left"></i> 西瓜书笔记3 线性模型
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/11/06/KerasTutorial/" rel="prev" title="Keras tutorial - the Happy House">
+                Keras tutorial - the Happy House <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="lv-container" data-id="city" data-uid="MTAyMC80MDY4Mi8xNzIwNw=="></div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/avatar2.jpg" alt="JF Wang">
+            
+              <p class="site-author-name" itemprop="name">JF Wang</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives">
+              
+                  <span class="site-state-item-count">25</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">9</span>
+                  <span class="site-state-item-name">categories</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">21</span>
+                  <span class="site-state-item-name">tags</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Logistic-Regression-on-MNIST-dataset"><span class="nav-number">1.</span> <span class="nav-text">Logistic-Regression-on-MNIST-dataset</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Minist数据集"><span class="nav-number">1.1.</span> <span class="nav-text">Minist数据集</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#逻辑回归实现"><span class="nav-number">1.2.</span> <span class="nav-text">逻辑回归实现</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#逻辑回归模型"><span class="nav-number">1.2.1.</span> <span class="nav-text">逻辑回归模型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#损失函数"><span class="nav-number">1.2.2.</span> <span class="nav-text">损失函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#梯度下降"><span class="nav-number">1.2.3.</span> <span class="nav-text">梯度下降</span></a></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2018 &mdash; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">JF Wang</span>
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+      <span class="post-meta-item-text">Site words total count&#58;</span>
+    
+    <span title="Site words total count">44.2k</span>
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Gemini</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+    <script type="text/javascript">
+      (function(d, s) {
+        var j, e = d.getElementsByTagName(s)[0];
+        if (typeof LivereTower === 'function') { return; }
+        j = d.createElement(s);
+        j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+        j.async = true;
+        e.parentNode.insertBefore(j, e);
+      })(document, 'script');
+    </script>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.4.js"></script>
+  <script>AV.initialize("RNdl2wO1FNBvt55Si3t38Ur0-gzGzoHsz", "Bq8si1UE7hC2B4OsFFJYUcnQ");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+
+  
+
+  
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+  
+
+  
+
+</body>
+</html>

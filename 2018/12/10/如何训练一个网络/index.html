@@ -1,0 +1,1107 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="UTF-8">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="神经网络,">
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="bywmm's blog" type="application/atom+xml">
+
+
+
+
+
+
+<meta name="description" content="数据预处理；选择网络结构；初始化网络；合理性检查；超参数调参；检查整个学习过程">
+<meta name="keywords" content="神经网络">
+<meta property="og:type" content="article">
+<meta property="og:title" content="如何训练一个网络">
+<meta property="og:url" content="https://bywmm.github.io/2018/12/10/如何训练一个网络/index.html">
+<meta property="og:site_name" content="bywmm&#39;s blog">
+<meta property="og:description" content="数据预处理；选择网络结构；初始化网络；合理性检查；超参数调参；检查整个学习过程">
+<meta property="og:locale" content="UTF-8">
+<meta property="og:image" content="http://static.zybuluo.com/BYWMM/j5fc79pdauwc8pft45wsez28/e743b6777775b1671c3b5503d7afbbc4_r.jpg">
+<meta property="og:image" content="http://static.zybuluo.com/BYWMM/dmwy85ti1fubvf32hid4yc95/aae11de6e6a29f50d46b9ea106fbb02a_r.jpg">
+<meta property="og:image" content="http://static.zybuluo.com/BYWMM/35mlegzeh5iynqdzxjxrzx83/12afsdjlfask%20%283%29.png">
+<meta property="og:image" content="http://static.zybuluo.com/BYWMM/8w0wxrollbdj5cu2yfnyak3r/12afsdjlfask%20%281%29.png">
+<meta property="og:image" content="http://static.zybuluo.com/BYWMM/yqsjhxzmjmaqse8ohf6bum98/12afsdjlfask%20%284%29.png">
+<meta property="og:image" content="http://static.zybuluo.com/BYWMM/xib9jemewo8uezzlaimnttf6/12afsdjlfask%20%282%29.png">
+<meta property="og:image" content="http://static.zybuluo.com/BYWMM/kuutwq5bvbc383rislzdrzy3/%E9%80%89%E6%8B%A9%E7%BD%91%E7%BB%9C%E7%BB%93%E6%9E%84.png">
+<meta property="og:image" content="http://static.zybuluo.com/BYWMM/767fnlxme7p9yquq2h8d47vs/image_1ctibg5kl1k9qb79eteh8vfdt11.png">
+<meta property="og:image" content="http://static.zybuluo.com/BYWMM/dksv9zm09dkgqsrurr7fep50/123jlkjagksgrkas.png">
+<meta property="og:image" content="http://static.zybuluo.com/BYWMM/ugytwpn9obz36we4v6yalaif/barelychangelearningrate.png">
+<meta property="og:image" content="http://static.zybuluo.com/BYWMM/luulnjg4svsemb5fqemygc8o/V7L_NXF2PR126SNSW_SD4VI.png">
+<meta property="og:image" content="http://static.zybuluo.com/BYWMM/2tlrul7g9peg8ky3n157n7mj/bukensngasldjflaskjg.png">
+<meta property="og:image" content="http://static.zybuluo.com/BYWMM/jhwr27cpojz912zc4io9xce0/8JWV6OINT%28OWT%5BFC322O5XA.png">
+<meta property="og:image" content="http://static.zybuluo.com/BYWMM/vq1lp11zxyzy6a7979vh4oft/klgajfdkjasdf.png">
+<meta property="og:image" content="http://static.zybuluo.com/BYWMM/rr2w1ve77pmzqce7cbmgvsqe/753f398b46cc28c1916d6703cf2080f5_r.jpg">
+<meta property="og:image" content="http://static.zybuluo.com/BYWMM/11lbsac9nvxv3yrqvfjdlzas/fhjsagjksahg.png">
+<meta property="og:image" content="http://static.zybuluo.com/BYWMM/x51clwpraa14lu5uso1cmrcf/jkdhfa.png">
+<meta property="og:image" content="http://static.zybuluo.com/BYWMM/iw44xxd3emfrs04lcg0kz6hi/96573094f9d7f4b3b188069726840a2e_r.jpg">
+<meta property="og:updated_time" content="2018-12-14T15:58:26.677Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="如何训练一个网络">
+<meta name="twitter:description" content="数据预处理；选择网络结构；初始化网络；合理性检查；超参数调参；检查整个学习过程">
+<meta name="twitter:image" content="http://static.zybuluo.com/BYWMM/j5fc79pdauwc8pft45wsez28/e743b6777775b1671c3b5503d7afbbc4_r.jpg">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://bywmm.github.io/2018/12/10/如何训练一个网络/">
+
+
+
+
+
+  <title>如何训练一个网络 | bywmm's blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="UTF-8">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">bywmm's blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-主页">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            主页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-标签">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-分类">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-归档">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://bywmm.github.io/2018/12/10/如何训练一个网络/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="JF Wang">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar2.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="bywmm's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">如何训练一个网络</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-12-10T13:32:46+08:00">
+                2018-12-10
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/神经网络/" itemprop="url" rel="index">
+                    <span itemprop="name">神经网络</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2018/12/10/如何训练一个网络/" class="leancloud_visitors" data-flag-title="如何训练一个网络">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">Visitors&#58;</span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Words count in article&#58;</span>
+                
+                <span title="Words count in article">
+                  6.1k
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Reading time &asymp;</span>
+                
+                <span title="Reading time">
+                  21
+                </span>
+              
+            </div>
+          
+
+          
+              <div class="post-description">
+                  数据预处理；选择网络结构；初始化网络；合理性检查；超参数调参；检查整个学习过程
+              </div>
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="如何训练一个网络"><a href="#如何训练一个网络" class="headerlink" title="如何训练一个网络"></a>如何训练一个网络</h1><h2 id="数据预处理"><a href="#数据预处理" class="headerlink" title="数据预处理"></a>数据预处理</h2><p>关于数据预处理我们有3个常用的符号，数据矩阵$X$，假设其尺寸是$[N\times{D}]$（$N$是数据样本的数量，D是数据的维度）。</p>
+<h3 id="均值减法（Mean-subtraction）"><a href="#均值减法（Mean-subtraction）" class="headerlink" title="均值减法（Mean subtraction）"></a>均值减法（Mean subtraction）</h3><p><strong>均值减法</strong>是预处理最常用的形式。它对数据中每个独立特征减去平均值，从几何上可以理解为在每个维度上都将数据云的中心都迁移到原点。</p>
+<p>在numpy中，该操作可以通过以下代码实现。<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">X -= np.mean(X, axis=<span class="number">0</span>)</span><br></pre></td></tr></table></figure></p>
+<p>而对于图像，更常用的是对所有像素都减去一个值，可以用以下代码实现，也可以在3个颜色通道上分别操作。<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">X -= np.mean(X)</span><br></pre></td></tr></table></figure></p>
+<h3 id="归一化（Normalization）"><a href="#归一化（Normalization）" class="headerlink" title="归一化（Normalization）"></a>归一化（Normalization）</h3><p><strong>归一化</strong>是指将数据的所有维度都归一化，使其数值范围都近似相等。有两种常用方法可以实现归一化。</p>
+<p>第一种是先对数据做零中心化（zero-centered）处理，然后每个维度都除以其标准差，实现代码为<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">X /= np.std(X, axis=<span class="number">0</span>)</span><br></pre></td></tr></table></figure></p>
+<p>第二种方法是对每个维度都做归一化，使得每个维度的最大和最小值是1和-1。这个预处理操作只有在确信不同的输入特征有不同的数值范围（或计量单位）时才有意义，但要注意预处理操作的重要性几乎等同于学习算法本身。在图像处理中，由于像素的数值范围几乎是一致的（都在0-255之间），所以进行这个额外的预处理步骤并不是很必要。</p>
+<p><img src="http://static.zybuluo.com/BYWMM/j5fc79pdauwc8pft45wsez28/e743b6777775b1671c3b5503d7afbbc4_r.jpg"></p>
+<p>一般数据预处理流程：<strong>左边：</strong>原始的2维输入数据。<strong>中间：</strong>在每个维度上都减去平均值后得到零中心化数据，现在数据是以原点为中心的。<strong>右边：</strong>每个维度都除以其标准差来调整其数值范围。</p>
+<h3 id="PCA和白化（Whitening）"><a href="#PCA和白化（Whitening）" class="headerlink" title="PCA和白化（Whitening）"></a>PCA和白化（Whitening）</h3><p><strong>PCA</strong>中，先对数据进行零中心化处理，然后计算协方差矩阵，它展示了数据中的相关性结构。<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 假设输入数据矩阵X的尺寸为[N x D]</span></span><br><span class="line">X -= np.mean(X, axis = <span class="number">0</span>) <span class="comment"># 对数据进行零中心化(重要)</span></span><br><span class="line">cov = np.dot(X.T, X) / X.shape[<span class="number">0</span>] <span class="comment"># 得到数据的协方差矩阵</span></span><br></pre></td></tr></table></figure></p>
+<p>数据<strong>协方差矩阵</strong>的第$(i,j)$个元素是数据第$i$个和第$j$个维度的协方差。具体来说，该矩阵的对角线上的元素是方差。还有，协方差矩阵是对称和半正定的，可以对数据协方差矩阵进行<strong>SVD（奇异值分解）</strong>运算。<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">U,S,V = np.linalg.svd(cov)</span><br></pre></td></tr></table></figure></p>
+<p>U的列是特征向量，S是装有奇异值的1维数组（因为cov是对称且半正定的，所以S中元素是特征值的平方）。为了<strong>去除数据相关性</strong>，将已经零中心化处理过的原始数据投影到特征基准上：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Xrot = np.dot(X,U) <span class="comment"># 对数据去相关性</span></span><br></pre></td></tr></table></figure>
+<p>注意U的列是标准正交向量的集合（范式为1，列之间标准正交），所以可以把它们看做标准正交基向量。因此，投影对应x中的数据的一个旋转，旋转产生的结果就是新的特征向量。如果计算Xrot的协方差矩阵，将会看到它是对角对称的。np.linalg.svd的一个良好性质是在它的返回值U中，特征向量是按照特征值的大小排列的。我们可以利用这个性质来对数据降维，只要使用前面的小部分特征向量，丢弃掉那些包含的数据没有方差的维度。 这个操作也被称为主成分分析（ Principal Component Analysis 简称PCA）降维：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Xrot_reduced = np.dot(X, U[:,:<span class="number">100</span>]) <span class="comment"># Xrot_reduced 变成 [N x 100]</span></span><br></pre></td></tr></table></figure></p>
+<p>经过上面的操作，将原始的数据集的大小由$[N\times{D}]$降到了$[N\times100]$，留下了数据中包含<strong>最大方差</strong>的100个维度。通常使用PCA降维过的数据训练线性分类器和神经网络会达到非常好的性能效果，同时还能节省时间和存储器空间。</p>
+<p><strong>白化（whitening）</strong>的输入是特征基准上的数据，然后对每个维度除以其特征值来对数值范围进行归一化。该变换的几何解释是：<strong>如果数据服从多变量的高斯分布，那么经过白化后，数据的分布将会是一个均值为零，且协方差相等的矩阵。</strong>该操作的代码如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 对数据进行白化操作:</span></span><br><span class="line"><span class="comment"># 除以特征值 </span></span><br><span class="line">Xwhite = Xrot / np.sqrt(S + <span class="number">1e-5</span>)</span><br></pre></td></tr></table></figure>
+<p>注意：该变换的一个缺陷是在变换的过程中可能会夸大数据中的噪声，这是因为它将<strong>所有维度都拉伸到相同的数值范围</strong>，这些维度中也包含了那些只有极少差异性(方差小)而大多是噪声的维度。在实际操作中，这个问题可以用更强的<code>epsilon</code>值来解决（例如：采用比1e-5更大的值）。</p>
+<p><img src="http://static.zybuluo.com/BYWMM/dmwy85ti1fubvf32hid4yc95/aae11de6e6a29f50d46b9ea106fbb02a_r.jpg"></p>
+<p><strong>左边：</strong>二维的原始数据。<strong>中间：</strong>经过PCA操作的数据。可以看出数据首先是零中心的，然后变换到了数据协方差矩阵的基准轴上。这样就对数据进行了解相关（协方差矩阵变成对角阵）。<strong>右边：</strong>每个维度都被特征值调整数值范围，将数据协方差矩阵变为单位矩阵。从几何上看，就是对数据在各个方向上拉伸压缩，使之变成服从高斯分布的一个数据点分布。</p>
+<p>我们可以使用CIFAR-10数据将这些变化可视化出来。CIFAR-10训练集的大小是50000x3072，其中每张图片都可以拉伸为3072维的行向量。我们可以计算$[3072\times3072]$的协方差矩阵然后进行奇异值分解（比较耗费计算性能），那么经过计算的特征向量看起来是什么样子呢？</p>
+<ul>
+<li>首先是一个用于演示的集合，含49张图片：</li>
+</ul>
+<p><img src="http://static.zybuluo.com/BYWMM/35mlegzeh5iynqdzxjxrzx83/12afsdjlfask%20%283%29.png" width="300"></p>
+<ul>
+<li>第二张是3072个特征值向量中的前144个。靠前面的特征向量解释了数据中大部分的方差，可以看见它们与图像中较低的频率相关。</li>
+</ul>
+<p><img src="http://static.zybuluo.com/BYWMM/8w0wxrollbdj5cu2yfnyak3r/12afsdjlfask%20%281%29.png" width="300"></p>
+<ul>
+<li>第三张是49张经过了PCA降维处理的图片，展示了144个特征向量。这就是说，展示原始图像是每个图像用3072维的向量，向量中的元素是图片上某个位置的像素在某个颜色通道中的亮度值。而现在每张图片只使用了一个144维的向量，其中每个元素表示了特征向量对于组成这张图片的贡献度。为了让图片能够正常显示，需要将144维度重新变成基于像素基准的3072个数值。因为U是一个旋转，可以通过乘以U.transpose()[:144,:]来实现，然后将得到的3072个数值可视化。可以看见图像变得有点模糊了，这正好说明前面的特征向量获取了较低的频率。然而，大多数信息还是保留了下来。</li>
+</ul>
+<p><img src="http://static.zybuluo.com/BYWMM/yqsjhxzmjmaqse8ohf6bum98/12afsdjlfask%20%284%29.png" width="300"></p>
+<ul>
+<li>第四张是将“白化”后的数据进行显示。其中144个维度中的方差都被压缩到了相同的数值范围。然后144个白化后的数值通过乘以U.transpose()[:144,:]转换到图像像素基准上。现在较低的频率（代表了大多数方差）可以忽略不计了，较高的频率（代表相对少的方差）就被夸大了。</li>
+</ul>
+<p><img src="http://static.zybuluo.com/BYWMM/xib9jemewo8uezzlaimnttf6/12afsdjlfask%20%282%29.png" width="300"></p>
+<h3 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h3><p><strong>实践操作：</strong>这里提到PCA和白化主要是为了介绍的完整性，实际上在卷积神经网络中并不会采用这些变换。然而对数据进行<strong>零中心化</strong>操作还是非常重要的，对每个像素进行<strong>归一化</strong>也很常见。</p>
+<p><strong>常见错误：</strong>进行预处理很重要的一点是：任何预处理策略（比如数据均值）都只能在训练集数据上进行计算，算法训练完毕后再应用到验证集或者测试集上。例如，如果先计算整个数据集图像的平均值然后每张图片都减去平均值，最后将整个数据集分成训练/验证/测试集，那么这个做法是错误的。应该怎么做呢？应该先分成训练/验证/测试集，<strong>只是从训练集中求图片平均值，然后各个集（训练/验证/测试集）中的图像再减去这个平均值。</strong></p>
+<h2 id="选择网络结构"><a href="#选择网络结构" class="headerlink" title="选择网络结构"></a>选择网络结构</h2><p><img src="http://static.zybuluo.com/BYWMM/kuutwq5bvbc383rislzdrzy3/%E9%80%89%E6%8B%A9%E7%BD%91%E7%BB%9C%E7%BB%93%E6%9E%84.png"></p>
+<p>例如这个单隐层网络，一开始有50个隐层神经元，但基本上，我们可以选择任何我们想要的网络结构。</p>
+<h2 id="初始化网络"><a href="#初始化网络" class="headerlink" title="初始化网络"></a>初始化网络</h2><h3 id="错误：全零初始化"><a href="#错误：全零初始化" class="headerlink" title="错误：全零初始化"></a>错误：全零初始化</h3><p>在训练完毕后，虽然不知道网络中每个权重的最终值应该是多少，但如果数据经过了恰当的归一化的话，就可以假设所有权重数值中大约一半为正数，一半为负数。这样，一个听起来蛮合理的想法就是把这些权重的初始值都设为0吧，因为在期望上来说0是最合理的猜测。这个做法错误的！因为如果网络中的每个神经元都计算出同样的输出，然后它们就会在反向传播中计算出同样的梯度，从而进行同样的参数更新。换句话说，如果权重被初始化为同样的值，神经元之间就失去了不对称性的源头。</p>
+<h3 id="小随机数初始化"><a href="#小随机数初始化" class="headerlink" title="小随机数初始化"></a>小随机数初始化</h3><p>因此，权重初始值要非常接近0又不能等于0。解决方法就是将权重初始化为很小的数值，以此来打破对称性。其思路是：如果神经元刚开始的时候是随机且不相等的，那么它们将计算出不同的更新，并将自身变成整个网络的不同部分。小随机数权重初始化的实现方法是：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">W = <span class="number">0.01</span> * np.random.randn(D,H)</span><br></pre></td></tr></table></figure></p>
+<p>其中randn函数是基于零均值和标准差的一个高斯分布来生成随机数的。根据这个式子，<strong>每个神经元的权重向量都被初始化为一个随机向量，而这些随机向量又服从一个多变量高斯分布</strong>，这样在输入空间中，所有的神经元的指向是随机的。也可以使用均匀分布生成的随机数，但是从实践结果来看，对于算法的结果影响极小。</p>
+<blockquote>
+<p><strong>warn：</strong>并不是小数值一定会得到好的结果。例如，一个神经网络的层中的权重值很小，那么在反向传播的时候就会计算出非常小的梯度（因为梯度与权重值是成比例的）。这就会很大程度上减小反向传播中的“梯度信号”，在深度网络中，就会出现问题。</p>
+</blockquote>
+<h3 id="使用1-sqrt-n-校准方差"><a href="#使用1-sqrt-n-校准方差" class="headerlink" title="使用1/sqrt(n)校准方差"></a>使用1/sqrt(n)校准方差</h3><p>上面做法存在一个问题，随着输入数据量的增长，随机初始化的神经元的输出数据的分布中的方差也在增大。我们可以除以输入数据量的平方根来调整其数值范围，这样神经元输出的方差就归一化到1了。也就是说，建议将神经元的权重向量初始化为：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">w = np.random.randn(n) / sqrt(n)</span><br></pre></td></tr></table></figure></p>
+<p>其中n是输入数据的数量。这样就保证了网络中所有神经元起始时有近似同样的输出分布。实践经验证明，这样做可以提高收敛的速度。</p>
+<h3 id="稀疏初始化（Sparse-initialization）"><a href="#稀疏初始化（Sparse-initialization）" class="headerlink" title="稀疏初始化（Sparse initialization）"></a>稀疏初始化（Sparse initialization）</h3><p>另一个处理非标定方差的方法是将所有权重矩阵设为0，但是为了打破对称性，每个神经元都同下一层固定数目的神经元随机连接（其权重数值由一个小的高斯分布生成）。一个比较典型的连接数目是10个。</p>
+<h3 id="偏置（biases）的初始化"><a href="#偏置（biases）的初始化" class="headerlink" title="偏置（biases）的初始化"></a>偏置（biases）的初始化</h3><p>通常将偏置初始化为0，这是因为随机小数值权重矩阵已经打破了对称性。对于ReLU非线性激活函数，有研究人员喜欢使用如0.01这样的小数值常量作为所有偏置的初始值，这是因为他们认为这样做能让所有的ReLU单元一开始就激活，这样就能保存并传播一些梯度。然而，这样做是不是总是能提高算法性能并不清楚（有时候实验结果反而显示性能更差），所以通常还是使用0来初始化偏置参数。</p>
+<p>实践中，当前的推荐是使用ReLU激活函数，并且使用w = np.random.randn(n) * sqrt(2.0/n)来进行权重初始化，关于这一点，<a href="http://link.zhihu.com/?target=http://arxiv-web3.library.cornell.edu/abs/1502.01852" target="_blank" rel="noopener">这篇文章</a>有讨论。</p>
+<h2 id="学习之前：合理性检查（sanity-checks）"><a href="#学习之前：合理性检查（sanity-checks）" class="headerlink" title="学习之前：合理性检查（sanity checks）"></a>学习之前：合理性检查（sanity checks）</h2><p>在进行费时费力的最优化之前，最好进行一些合理性检查：</p>
+<h3 id="寻找特定情况的正确损失值"><a href="#寻找特定情况的正确损失值" class="headerlink" title="寻找特定情况的正确损失值"></a>寻找特定情况的正确损失值</h3><p>在使用小参数进行初始化时，确保得到的损失值与期望一致。</p>
+<p><img src="http://static.zybuluo.com/BYWMM/767fnlxme7p9yquq2h8d47vs/image_1ctibg5kl1k9qb79eteh8vfdt11.png" width="600"></p>
+<p>当我们weight很小且很分散的时候，趋近于随机分类。所以Softmax损失（让<strong>正则化强度为0</strong>），约等于$-\log{\frac{1}{C}}$。</p>
+<p>例如，对于一个跑CIFAR-10的Softmax分类器，一般期望它的初始损失值是2.302，这是因为初始时预计每个类别的概率是0.1（因为有10个类别），然后Softmax损失值正确分类的负对数概率：-ln(0.1)=2.302。</p>
+<h3 id="提高正则化强度时导致损失值变大"><a href="#提高正则化强度时导致损失值变大" class="headerlink" title="提高正则化强度时导致损失值变大"></a>提高正则化强度时导致损失值变大</h3><p>提高正则化强度，看损失值是否变大</p>
+<p><img src="http://static.zybuluo.com/BYWMM/dksv9zm09dkgqsrurr7fep50/123jlkjagksgrkas.png" width="600"></p>
+<h3 id="对小数据子集过拟合"><a href="#对小数据子集过拟合" class="headerlink" title="对小数据子集过拟合"></a>对小数据子集过拟合</h3><p>最后也是最重要的一步，在整个数据集进行训练之前，尝试在一个<strong>很小的数据集上进行训练（比如20个数据）</strong>，然后确保能到达0的损失值。</p>
+<p>进行这个实验的时候，最好让<strong>正则化强度为0</strong>，不然它会阻止得到0的损失。</p>
+<blockquote>
+<p>但是注意，能对小数据集进行过拟合并不代表万事大吉，依然有可能存在不正确的实现。比如，因为某些错误，数据点的特征是随机的，这样算法也可能对小数据进行过拟合，但是在整个数据集上跑算法的时候，就没有任何泛化能力。</p>
+</blockquote>
+<p>现在就全部完成了 完整性检查操作（sanity checks）</p>
+<h2 id="超参数调参"><a href="#超参数调参" class="headerlink" title="超参数调参"></a>超参数调参</h2><h3 id="首先调学习率"><a href="#首先调学习率" class="headerlink" title="首先调学习率"></a>首先调学习率</h3><p>全部数据集，小的正则化项，首先进行学习率的调参。</p>
+<p>可以试一些学习率的值。这里用了1e-6可以看到<strong>损失值几乎不变，原因可能是学习率太小</strong>。</p>
+<p><img src="http://static.zybuluo.com/BYWMM/ugytwpn9obz36we4v6yalaif/barelychangelearningrate.png" width="700"></p>
+<p>但是，<strong>注意到虽然cost几乎不变，但准确度却提高到了20%左右，是为什么呢？</strong></p>
+<p><strong>原因：</strong>学习率太小了，梯度下降步幅非常小，因此我们的损失项很接近。但是所有的分布都在朝着正确的方向轻微的移动，weight也在朝着正确的方向改变。正确率有较大提升是因为，我们认为分数最大的为该样本的分类，虽然分布还是很分散，但是已经向正确方向有所偏移，大小关系应该有所改变。</p>
+<p>然后选择了另一个极端，1e6一个非常大的学习率</p>
+<p><img src="http://static.zybuluo.com/BYWMM/luulnjg4svsemb5fqemygc8o/V7L_NXF2PR126SNSW_SD4VI.png" width="600"></p>
+<p><strong>损失值爆炸变成NaN，原因可能是学习率太大</strong>，可以试试更小的学习率</p>
+<p>一般我们的学习率设为[1e-3,1e-5]，这是一个我们想要交叉验证的粗略范围。可以在这个范围里试一试不同的学习率。</p>
+<h3 id="超参数优化"><a href="#超参数优化" class="headerlink" title="超参数优化"></a>超参数优化</h3><p><strong>调参的目标：</strong> 找到交叉验证中表现最好的参数（组合），即在训练集上训练，验证集上测试，选验证集高的参数。</p>
+<p>大概分为两步。</p>
+<p><strong>第一步，粗略选择好的参数来确定一个区间</strong></p>
+<p>首先选几个比较分散的数值，然后用几个epochs来训练。通过几个epochs就可以知道那些是比较好的参数，那些是比较差的。通常只要这样做就可以发现一个较好的区间。例如首先用5个epochs进行搜索</p>
+<p><img src="http://static.zybuluo.com/BYWMM/2tlrul7g9peg8ky3n157n7mj/bukensngasldjflaskjg.png" width="600"></p>
+<p>这些区间就是我们想要进一步细化的区域。</p>
+<p><strong>第二步，是在区间内进行精确地搜索</strong></p>
+<p>接下来就可以调整变化范围，在第一步找到的区间中，精确的搜索</p>
+<p><img src="http://static.zybuluo.com/BYWMM/jhwr27cpojz912zc4io9xce0/8JWV6OINT%28OWT%5BFC322O5XA.png" width="600"></p>
+<p>需要注意的一点是，<strong>通常采用对数来优化</strong>，效果会更好。</p>
+<blockquote>
+<p>比如用在[0.01,100]与其用均匀采样，不如用10的幂次进行采样。<br>因为学习率是乘以梯度进行更新，具有乘法效应，所以考虑学习率的时候用一些值得乘或除的值更合理。</p>
+</blockquote>
+<p>这就产生了一个问题，这里所有好的学习率都在1e-4左右，如果我们一开始的调参区间就是[0，1e-4]的话，这样最后选出的学习率都在这个区间的边缘。这样不太好，因为我们没法在全部的空间上充分寻找，可能1e-5或者1e-6中也有我们想要最好的结果。</p>
+<h3 id="参数搜索时的采样"><a href="#参数搜索时的采样" class="headerlink" title="参数搜索时的采样"></a>参数搜索时的采样</h3><p><img src="http://static.zybuluo.com/BYWMM/vq1lp11zxyzy6a7979vh4oft/klgajfdkjasdf.png" width="600"></p>
+<p>网格采样不如用一种随机排列的方式进行采样。<br>随机采样是考虑对一个超过一个变量的函数而言，算是一种稍微有效的降维，可以获得更多有用的信息。</p>
+<h2 id="检查整个学习过程"><a href="#检查整个学习过程" class="headerlink" title="检查整个学习过程"></a>检查整个学习过程</h2><p>在训练神经网络的时候，应该跟踪多个重要数值。这些数值输出的图表是观察训练进程的一扇窗口，是直观理解不同的超参数设置效果的工具，从而知道如何修改超参数以获得更高效的学习过程。</p>
+<p>在下面的图表中，x轴通常都是表示周期（epochs）单位，该单位衡量了在训练中每个样本数据都被观察过次数的期望（一个周期意味着每个样本数据都被观察过了一次）。相较于迭代次数（iterations），一般更倾向跟踪周期，这是因为迭代次数与数据的批尺寸（batchsize）有关，而批尺寸的设置又可以是任意的。</p>
+<h3 id="损失函数"><a href="#损失函数" class="headerlink" title="损失函数"></a>损失函数</h3><p>训练期间第一个要跟踪的数值就是损失值，它在前向传播时对每个独立的批数据进行计算。下图展示的是随着损失值随时间的变化，尤其是曲线形状会给出关于学习率设置的情况：</p>
+<p><img src="http://static.zybuluo.com/BYWMM/rr2w1ve77pmzqce7cbmgvsqe/753f398b46cc28c1916d6703cf2080f5_r.jpg"></p>
+<p><strong>左图</strong>展示了不同的学习率的效果。过低的学习率导致算法的改善是线性的。高一些的学习率会看起来呈几何指数下降，更高的学习率会让损失值很快下降，但是接着就停在一个不好的损失值上（绿线）。这是因为最优化的“能量”太大，参数在混沌中随机震荡，不能最优化到一个很好的点上。<br><strong>右图</strong>显示了一个典型的随时间变化的损失函数值，在CIFAR-10数据集上面训练了一个小的网络，这个损失函数值曲线看起来比较合理（虽然可能学习率有点小，但是很难说），而且指出了批数据的数量可能有点太小（因为损失值的噪音很大）。</p>
+<p>损失值的震荡程度和批尺寸（batch size）有关，当批尺寸为1，震荡会相对较大。当批尺寸就是整个数据集时震荡就会最小，因为每个梯度更新都是单调地优化损失函数（除非学习率设置得过高）。</p>
+<p>有的研究者喜欢用对数域对损失函数值作图。因为学习过程一般都是采用指数型的形状，图表就会看起来更像是能够直观理解的直线，而不是呈曲棍球一样的曲线状。还有，如果多个交叉验证模型在一个图上同时输出图像，它们之间的差异就会比较明显。</p>
+<p>有时候损失函数看起来很有意思：lossfunctions.tumblr.com。</p>
+<p>当在你观察学习率曲线的时候，如果它在一定时间内很平滑，然后突然开始下降，可能是初始值没有设好。<br>从图上可以看出，刚开始的时候梯度变化并不太好，什么也没学到；到达某点后突然开始下降，就像刚开始训练一样<br><img src="http://static.zybuluo.com/BYWMM/11lbsac9nvxv3yrqvfjdlzas/fhjsagjksahg.png" width="400"></p>
+<h3 id="训练集和验证集准确率"><a href="#训练集和验证集准确率" class="headerlink" title="训练集和验证集准确率"></a>训练集和验证集准确率</h3><p>在训练分类器的时候，需要跟踪的第二重要的数值是验证集和训练集的准确率。这个图表能够展现知道模型过拟合的程度：</p>
+<p><img src="http://static.zybuluo.com/BYWMM/x51clwpraa14lu5uso1cmrcf/jkdhfa.png"></p>
+<p>在训练集准确率和验证集准确率中间的空隙指明了模型过拟合的程度。在图中，蓝色的验证集曲线显示相较于训练集，验证集的准确率低了很多，这就说明模型有很强的过拟合。遇到这种情况，就应该增大正则化强度（更强的L2权重惩罚，更多的随机失活等）或收集更多的数据。另一种可能就是验证集曲线和训练集曲线如影随形，这种情况说明你的模型容量还不够大：应该通过增加参数数量让模型容量更大些。<br>————————————————————————————————————————</p>
+<h3 id="权重更新比例"><a href="#权重更新比例" class="headerlink" title="权重更新比例"></a>权重更新比例</h3><p>最后一个应该跟踪的量是权重中更新值的数量和全部值的数量之间的比例。注意：是更新的，而不是原始梯度（比如，在普通sgd中就是梯度乘以学习率）。需要对每个参数集的更新比例进行单独的计算和跟踪。一个经验性的结论是这个比例应该在1e-3左右。如果更低，说明学习率可能太小，如果更高，说明学习率可能太高。下面是具体例子：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 假设参数向量为W，其梯度向量为dW</span></span><br><span class="line">param_scale = np.linalg.norm(W.ravel())</span><br><span class="line">update = -learning_rate*dW <span class="comment"># 简单SGD更新</span></span><br><span class="line">update_scale = np.linalg.norm(update.ravel())</span><br><span class="line">W += update <span class="comment"># 实际更新</span></span><br><span class="line"><span class="keyword">print</span> update_scale / param_scale <span class="comment"># 要得到1e-3左右</span></span><br></pre></td></tr></table></figure>
+<p>相较于跟踪最大和最小值，有研究者更喜欢计算和跟踪梯度的范式及其更新。这些矩阵通常是相关的，也能得到近似的结果。</p>
+<h3 id="每层的激活数据及梯度分布"><a href="#每层的激活数据及梯度分布" class="headerlink" title="每层的激活数据及梯度分布"></a>每层的激活数据及梯度分布</h3><p>一个不正确的初始化可能让学习过程变慢，甚至彻底停止。还好，这个问题可以比较简单地诊断出来。其中一个方法是输出网络中所有层的激活数据和梯度分布的柱状图。直观地说，就是如果看到任何奇怪的分布情况，那都不是好兆头。比如，对于使用tanh的神经元，我们应该看到激活数据的值在整个[-1,1]区间中都有分布。如果看到神经元的输出全部是0，或者全都饱和了往-1和1上跑，那肯定就是有问题了。</p>
+<h3 id="第一层可视化"><a href="#第一层可视化" class="headerlink" title="第一层可视化"></a>第一层可视化</h3><p>最后，如果数据是图像像素数据，那么把第一层特征可视化会有帮助：</p>
+<p><img src="http://static.zybuluo.com/BYWMM/iw44xxd3emfrs04lcg0kz6hi/96573094f9d7f4b3b188069726840a2e_r.jpg"></p>
+<p>将神经网络第一层的权重可视化的例子。左图中的特征充满了噪音，这暗示了网络可能出现了问题：网络没有收敛，学习率设置不恰当，正则化惩罚的权重过低。右图的特征不错，平滑，干净而且种类繁多，说明训练过程进行良好。</p>
+
+      
+    </div>
+    
+    
+    
+
+<div>
+  
+    <div>
+    
+        <div style="text-align:center;color: #555;font-size:14px;">-------------The End-------------</div>
+    
+</div>
+  
+</div>
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/神经网络/" rel="tag"># 神经网络</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/12/05/cs231n_assignment2(ConvolutionalNetworks)/" rel="next" title="cs231n_assignment2(ConvolutionalNetworks)">
+                <i class="fa fa-chevron-left"></i> cs231n_assignment2(ConvolutionalNetworks)
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/12/14/keras samples- LeNet-5 on cifar10 dataset/" rel="prev" title="Keras samples:LeNet-5 on cifar10 dataset">
+                Keras samples:LeNet-5 on cifar10 dataset <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="lv-container" data-id="city" data-uid="MTAyMC80MDY4Mi8xNzIwNw=="></div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/avatar2.jpg" alt="JF Wang">
+            
+              <p class="site-author-name" itemprop="name">JF Wang</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives">
+              
+                  <span class="site-state-item-count">25</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">9</span>
+                  <span class="site-state-item-name">categories</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">21</span>
+                  <span class="site-state-item-name">tags</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#如何训练一个网络"><span class="nav-number">1.</span> <span class="nav-text">如何训练一个网络</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#数据预处理"><span class="nav-number">1.1.</span> <span class="nav-text">数据预处理</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#均值减法（Mean-subtraction）"><span class="nav-number">1.1.1.</span> <span class="nav-text">均值减法（Mean subtraction）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#归一化（Normalization）"><span class="nav-number">1.1.2.</span> <span class="nav-text">归一化（Normalization）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#PCA和白化（Whitening）"><span class="nav-number">1.1.3.</span> <span class="nav-text">PCA和白化（Whitening）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#小结"><span class="nav-number">1.1.4.</span> <span class="nav-text">小结</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#选择网络结构"><span class="nav-number">1.2.</span> <span class="nav-text">选择网络结构</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#初始化网络"><span class="nav-number">1.3.</span> <span class="nav-text">初始化网络</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#错误：全零初始化"><span class="nav-number">1.3.1.</span> <span class="nav-text">错误：全零初始化</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#小随机数初始化"><span class="nav-number">1.3.2.</span> <span class="nav-text">小随机数初始化</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#使用1-sqrt-n-校准方差"><span class="nav-number">1.3.3.</span> <span class="nav-text">使用1/sqrt(n)校准方差</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#稀疏初始化（Sparse-initialization）"><span class="nav-number">1.3.4.</span> <span class="nav-text">稀疏初始化（Sparse initialization）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#偏置（biases）的初始化"><span class="nav-number">1.3.5.</span> <span class="nav-text">偏置（biases）的初始化</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#学习之前：合理性检查（sanity-checks）"><span class="nav-number">1.4.</span> <span class="nav-text">学习之前：合理性检查（sanity checks）</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#寻找特定情况的正确损失值"><span class="nav-number">1.4.1.</span> <span class="nav-text">寻找特定情况的正确损失值</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#提高正则化强度时导致损失值变大"><span class="nav-number">1.4.2.</span> <span class="nav-text">提高正则化强度时导致损失值变大</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#对小数据子集过拟合"><span class="nav-number">1.4.3.</span> <span class="nav-text">对小数据子集过拟合</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#超参数调参"><span class="nav-number">1.5.</span> <span class="nav-text">超参数调参</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#首先调学习率"><span class="nav-number">1.5.1.</span> <span class="nav-text">首先调学习率</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#超参数优化"><span class="nav-number">1.5.2.</span> <span class="nav-text">超参数优化</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#参数搜索时的采样"><span class="nav-number">1.5.3.</span> <span class="nav-text">参数搜索时的采样</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#检查整个学习过程"><span class="nav-number">1.6.</span> <span class="nav-text">检查整个学习过程</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#损失函数"><span class="nav-number">1.6.1.</span> <span class="nav-text">损失函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#训练集和验证集准确率"><span class="nav-number">1.6.2.</span> <span class="nav-text">训练集和验证集准确率</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#权重更新比例"><span class="nav-number">1.6.3.</span> <span class="nav-text">权重更新比例</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#每层的激活数据及梯度分布"><span class="nav-number">1.6.4.</span> <span class="nav-text">每层的激活数据及梯度分布</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#第一层可视化"><span class="nav-number">1.6.5.</span> <span class="nav-text">第一层可视化</span></a></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2018 &mdash; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">JF Wang</span>
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+      <span class="post-meta-item-text">Site words total count&#58;</span>
+    
+    <span title="Site words total count">44.2k</span>
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Gemini</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+    <script type="text/javascript">
+      (function(d, s) {
+        var j, e = d.getElementsByTagName(s)[0];
+        if (typeof LivereTower === 'function') { return; }
+        j = d.createElement(s);
+        j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+        j.async = true;
+        e.parentNode.insertBefore(j, e);
+      })(document, 'script');
+    </script>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.4.js"></script>
+  <script>AV.initialize("RNdl2wO1FNBvt55Si3t38Ur0-gzGzoHsz", "Bq8si1UE7hC2B4OsFFJYUcnQ");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+
+  
+
+  
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+  
+
+  
+
+</body>
+</html>

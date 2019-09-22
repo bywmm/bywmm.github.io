@@ -1,0 +1,1041 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="UTF-8">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="cs231n,神经网络,论文笔记,">
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="bywmm's blog" type="application/atom+xml">
+
+
+
+
+
+
+<meta name="description" content="Batch Normalization：Accelerating Deep Network Training by Reducing Internal Covariate Shift">
+<meta name="keywords" content="cs231n,神经网络,论文笔记">
+<meta property="og:type" content="article">
+<meta property="og:title" content="论文笔记：Batch Normalization">
+<meta property="og:url" content="https://bywmm.github.io/2018/11/30/论文笔记：Batch Normalization/index.html">
+<meta property="og:site_name" content="bywmm&#39;s blog">
+<meta property="og:description" content="Batch Normalization：Accelerating Deep Network Training by Reducing Internal Covariate Shift">
+<meta property="og:locale" content="UTF-8">
+<meta property="og:image" content="http://static.zybuluo.com/BYWMM/5syb7ieqc57yqtl0md50sr03/saduhiasg.png">
+<meta property="og:image" content="http://static.zybuluo.com/BYWMM/lch9k8tgu9qrx5pymm44inz5/fkklaglk.png">
+<meta property="og:image" content="http://static.zybuluo.com/BYWMM/smfpv59hpra5ddhwtsyqw2s5/bpdjsflja.png">
+<meta property="og:updated_time" content="2018-12-01T12:18:50.280Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="论文笔记：Batch Normalization">
+<meta name="twitter:description" content="Batch Normalization：Accelerating Deep Network Training by Reducing Internal Covariate Shift">
+<meta name="twitter:image" content="http://static.zybuluo.com/BYWMM/5syb7ieqc57yqtl0md50sr03/saduhiasg.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://bywmm.github.io/2018/11/30/论文笔记：Batch Normalization/">
+
+
+
+
+
+  <title>论文笔记：Batch Normalization | bywmm's blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="UTF-8">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">bywmm's blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-主页">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            主页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-标签">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-分类">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-归档">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://bywmm.github.io/2018/11/30/论文笔记：Batch Normalization/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="JF Wang">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar2.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="bywmm's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">论文笔记：Batch Normalization</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-11-30T21:37:07+08:00">
+                2018-11-30
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/神经网络/" itemprop="url" rel="index">
+                    <span itemprop="name">神经网络</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2018/11/30/论文笔记：Batch Normalization/" class="leancloud_visitors" data-flag-title="论文笔记：Batch Normalization">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">Visitors&#58;</span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Words count in article&#58;</span>
+                
+                <span title="Words count in article">
+                  1.7k
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Reading time &asymp;</span>
+                
+                <span title="Reading time">
+                  6
+                </span>
+              
+            </div>
+          
+
+          
+              <div class="post-description">
+                  Batch Normalization：Accelerating Deep Network Training by Reducing Internal Covariate Shift
+              </div>
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="论文笔记：Batch-Normalization"><a href="#论文笔记：Batch-Normalization" class="headerlink" title="论文笔记：Batch Normalization"></a>论文笔记：Batch Normalization</h1><p>参考论文：<br><a href="https://arxiv.org/pdf/1502.03167v3.pdf" target="_blank" rel="noopener">Batch Normalization: Accelerating Deep Network Training by Reducing Internal Covariate Shift</a></p>
+<h2 id="Abstract"><a href="#Abstract" class="headerlink" title="Abstract"></a>Abstract</h2><p><strong>Internal Covariate Shift：</strong><br>在深度网络的训练期间，由于网络参数变化而引起的网络激活（网络内部结点）分布的变化。</p>
+<p><strong>ICS导致的问题：</strong></p>
+<p>深层网络训练时，由于模型参数在不断修改，所以各层的输入的概率分布在不断变化，所以须使用<strong>较小的学习率及较好的权重初值</strong>，导致训练很慢，同时也导致使用saturating nonlinearities 激活函数（如sigmoid，正负两边都会饱和）时训练很困难。</p>
+<p><strong>解决办法是：Batch Normalization</strong></p>
+<p><strong>BN是：</strong> 使正则化层称为模型结构的一部分，在训练每个mini_batch时，单独进行Normalization 。</p>
+<p><strong>BN的好处：</strong> 让我们可以使用更大的学习率，初值可以更随意；它起到了正则项的作用，在某些情况下，有它就不需要使用Dropout了。</p>
+<p>在Imagenet上， achieves the same accuracy with 14 times fewertraining steps</p>
+<h2 id="Introduction"><a href="#Introduction" class="headerlink" title="Introduction"></a>Introduction</h2><p>随机梯度下降（SGD）已被证明是训练深度网络的一种有效方式，而动量）和Adagrad等SGD的变体也取得了非常好的效果。下文以SGD为例进行讨论。</p>
+<h3 id="SGD遇到的问题"><a href="#SGD遇到的问题" class="headerlink" title="SGD遇到的问题"></a>SGD遇到的问题</h3><p>SGD目标</p>
+<script type="math/tex; mode=display">
+\theta=\underset{\theta}{\arg\min}\frac{1}{N}\sum_{i=1}^N\ell(x_i,\theta)</script><p>用mini_batch去近似整个训练集的梯度</p>
+<script type="math/tex; mode=display">
+\frac{1}{m}\frac{\partial\ell(x_i,\theta)}{\partial\theta}</script><p>（在并行计算下，m个合成一个batch计算比单独计算m次快很多；且用m个样本去估计整个训练集的梯度方向比用单个样本要准确。所以用一个mini_batch下降一次要比用一个样本下降mini_batch次要好。）</p>
+<p>虽然SGD简单高效，但它需要调整模型超参数，特别是优化中使用的学习速率以及模型参数的初始值。每个层的输入都受到前面所有层的参数的影响，因此随着网络变得更深，网络参数的微小变化就会放大。</p>
+<p>这就带来一个问题：<strong>各层输入分布的变动导致模型需要不停地去拟合新的分布。</strong></p>
+<h3 id="Covariate-Shift扩展到子网络"><a href="#Covariate-Shift扩展到子网络" class="headerlink" title="Covariate Shift扩展到子网络"></a>Covariate Shift扩展到子网络</h3><p>当学习系统的输入分布发生变化时，会发生<strong>协变量变化（Covariate Shift）</strong></p>
+<blockquote>
+<p>当一个学习系统的输入分布是变化的时（即训练集的样本分布和测试集的样本分布不一致），训练的模型就很难有较好的泛化能力，这叫做<strong>covariate shift</strong> (Shimodaira, 2000)，解决办法是domain adaptation (Jiang, 2008).和迁移学习。</p>
+</blockquote>
+<p>然而，协变变化的概念可以扩展到整个学习系统中，适用于其子部分，如子网络或层。考虑一个网络计算</p>
+<p><strong>整个network损失函数为：</strong></p>
+<script type="math/tex; mode=display">\ell=F_2(F_1(\mu,\theta_1), \theta_2)</script><p>学习$\theta_2$可以看作是输入$F_1(\mu,\theta_1)$被送入子网络<br><strong>sub-network的损失函数为：</strong></p>
+<script type="math/tex; mode=display">
+\ell=F_2(x, \theta_2)</script><p>sub-network的SGD（$m$是batch_size，$\alpha$是学习率）：</p>
+<script type="math/tex; mode=display">
+\theta_2\leftarrow\theta_2-\frac{\alpha}{m}\frac{\partial{F}_2(x_i,\theta_2)}{\partial\theta_2}</script><p>这与具有输入$x$的独立网络$F_2$完全等效。</p>
+<p>因此，使训练更有效的输入分布特性，也适用于对子网络进行训练。<br><strong>将Covariate Shift扩展到子网络</strong>，即我们想要每个sub-network的输入分布都不要有太大的变化，这就引出了Batch Normalization的方法</p>
+<p><strong>BN希望通过对每个子网络输入的归一化，来对子网络的输入分布进行一定程度的fixed。</strong></p>
+<h2 id="Towards-Reducing-Internal-Covariate-Shift"><a href="#Towards-Reducing-Internal-Covariate-Shift" class="headerlink" title="Towards Reducing Internal Covariate Shift"></a>Towards Reducing Internal Covariate Shift</h2><p><strong>Internal Covariate Shift</strong> 算是将Covariate Shift扩展到每一个子网络的一个说法。希望每个子网络的输入都不要有太大的变化（在深度网络中，前一层一个参数的微小变化对于深层参数可能产生较大的影响）。</p>
+<p>Batch Normalization就是为了降低Internal Covariate Shift。</p>
+<h3 id="算法思想"><a href="#算法思想" class="headerlink" title="算法思想"></a>算法思想</h3><p>前面提到BN是想，在每次mini_batch的数据进行训练时，每一层的输入都进行归一化（子网络的思想就是：每个子网络的输入都进行处理）。</p>
+<script type="math/tex; mode=display">
+\hat{x}^{(k)}=\frac{x^{(k)}-E(x^{(k)})}{\sqrt{Var(x^{(k)})}}</script><p>但是，简单地标准化每层的输入可能会改变该层可以表示的内容。例如，Sigmoid函数虽为一个非线性的函数，通过Normalization可能将输入压缩到其线性部分。</p>
+<p><img src="http://static.zybuluo.com/BYWMM/5syb7ieqc57yqtl0md50sr03/saduhiasg.png" width="300"></p>
+<p>我们希望，可以灵活地学习压缩范围，比如压缩到$[-5,5]$等某个更适合拟合训练集的某个区间。</p>
+<p>所以针对每个层的激活引入了一对参数，使压缩区间可以移动和放缩：</p>
+<script type="math/tex; mode=display">
+y^{(k)}=\gamma^{(k)}\hat{x}^{(k)}+\beta^{(k)}</script><p><strong>其中$\gamma$和$\beta$可在训练中学得。</strong></p>
+<p>并且，当$\gamma^{(k)}=\sqrt{Var(x^())}$，$\beta^{(k)}=E(x^{(k)})$可还原出原先的分布。所以，这种拟合效果至少不会比原先的表示差！</p>
+<h3 id="forward"><a href="#forward" class="headerlink" title="forward"></a>forward</h3><p><img src="http://static.zybuluo.com/BYWMM/lch9k8tgu9qrx5pymm44inz5/fkklaglk.png" width="500"></p>
+<p>只要minibatch中的样本采样与同一分布，规范化后的输入 x 期望为0，方差为1，把规范后的 x 进行线性变换得到 y 作为后续层的输入，可以发现 后续层的输入具有固定的均值和方差的。尽管 规范化后的 x 的联合分布在训练过程中会改变(源于第一个简化，本文的规范化是把 x 向量中各个变量当作独立的，单独规范化的，所以他们的联合分布并不稳定，只是单独是稳定的)，但还是可以使训练加速。</p>
+<h3 id="backward"><a href="#backward" class="headerlink" title="backward"></a>backward</h3><p>优化中也需要对BN的两个参数进行优化，链式法则求导就可以了：</p>
+<p>具体推导可参见</p>
+<p><img src="http://static.zybuluo.com/BYWMM/smfpv59hpra5ddhwtsyqw2s5/bpdjsflja.png" width="500"></p>
+<p>BN是可微的，通过BN变换，可以减弱输入分布的 internal covariate shift ，并且学习到这个线性变换与网络本来的变换是等价的。</p>
+<h2 id="其他几个问题总结"><a href="#其他几个问题总结" class="headerlink" title="其他几个问题总结"></a>其他几个问题总结</h2><h3 id="Batch-Normalization的好处"><a href="#Batch-Normalization的好处" class="headerlink" title="Batch Normalization的好处"></a>Batch Normalization的好处</h3><ul>
+<li>保持各层输入的均值和方差稳定，来减弱 internal covariate shift；</li>
+<li>也让梯度受参数及其初值的减小；</li>
+<li>BN也算作正则项，减少对Dropout的依赖；</li>
+<li>它让卡在饱和区域的概率降低，以便可以使用 saturating nonlinearities（如Sigmoid，tanh等激活函数）</li>
+</ul>
+<h3 id="BN层的位置"><a href="#BN层的位置" class="headerlink" title="BN层的位置"></a>BN层的位置</h3><p>原本按照BN的思想，当在每一层的激活函数之后。例如$ReLU=\max(Wx+b,0)$之后，对数据进行归一化。然而，文章中说这样做在训练初期，分界面还在剧烈变化时，计算出的参数不稳定，所以退而求其次，在$Wx+b$之后进行归一化。因为初始的$W$是从标准高斯分布中采样得到的，而$W$中元素的数量远大于$x$，$Wx+b$每维的均值本身就接近0、方差接近1，<strong>所以在$Wx+b$后使用Batch Normalization能得到更稳定的结果。</strong></p>
+<h3 id="实验"><a href="#实验" class="headerlink" title="实验"></a>实验</h3><p>实验和梯度推导可参见</p>
+
+      
+    </div>
+    
+    
+    
+
+<div>
+  
+    <div>
+    
+        <div style="text-align:center;color: #555;font-size:14px;">-------------The End-------------</div>
+    
+</div>
+  
+</div>
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/cs231n/" rel="tag"># cs231n</a>
+          
+            <a href="/tags/神经网络/" rel="tag"># 神经网络</a>
+          
+            <a href="/tags/论文笔记/" rel="tag"># 论文笔记</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/11/26/cs231n_assignment2(FullyConnectedNets)/" rel="next" title="cs231n_assignment2(FullyConnectedNets)">
+                <i class="fa fa-chevron-left"></i> cs231n_assignment2(FullyConnectedNets)
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/12/02/cs231n_assignment2(BatchNormalization)/" rel="prev" title="cs231n_assignment2(BatchNormalization)">
+                cs231n_assignment2(BatchNormalization) <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="lv-container" data-id="city" data-uid="MTAyMC80MDY4Mi8xNzIwNw=="></div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/avatar2.jpg" alt="JF Wang">
+            
+              <p class="site-author-name" itemprop="name">JF Wang</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives">
+              
+                  <span class="site-state-item-count">25</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">9</span>
+                  <span class="site-state-item-name">categories</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">21</span>
+                  <span class="site-state-item-name">tags</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#论文笔记：Batch-Normalization"><span class="nav-number">1.</span> <span class="nav-text">论文笔记：Batch Normalization</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Abstract"><span class="nav-number">1.1.</span> <span class="nav-text">Abstract</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Introduction"><span class="nav-number">1.2.</span> <span class="nav-text">Introduction</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#SGD遇到的问题"><span class="nav-number">1.2.1.</span> <span class="nav-text">SGD遇到的问题</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Covariate-Shift扩展到子网络"><span class="nav-number">1.2.2.</span> <span class="nav-text">Covariate Shift扩展到子网络</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Towards-Reducing-Internal-Covariate-Shift"><span class="nav-number">1.3.</span> <span class="nav-text">Towards Reducing Internal Covariate Shift</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#算法思想"><span class="nav-number">1.3.1.</span> <span class="nav-text">算法思想</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#forward"><span class="nav-number">1.3.2.</span> <span class="nav-text">forward</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#backward"><span class="nav-number">1.3.3.</span> <span class="nav-text">backward</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#其他几个问题总结"><span class="nav-number">1.4.</span> <span class="nav-text">其他几个问题总结</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Batch-Normalization的好处"><span class="nav-number">1.4.1.</span> <span class="nav-text">Batch Normalization的好处</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#BN层的位置"><span class="nav-number">1.4.2.</span> <span class="nav-text">BN层的位置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#实验"><span class="nav-number">1.4.3.</span> <span class="nav-text">实验</span></a></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2018 &mdash; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">JF Wang</span>
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+      <span class="post-meta-item-text">Site words total count&#58;</span>
+    
+    <span title="Site words total count">44.2k</span>
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Gemini</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+    <script type="text/javascript">
+      (function(d, s) {
+        var j, e = d.getElementsByTagName(s)[0];
+        if (typeof LivereTower === 'function') { return; }
+        j = d.createElement(s);
+        j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+        j.async = true;
+        e.parentNode.insertBefore(j, e);
+      })(document, 'script');
+    </script>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.4.js"></script>
+  <script>AV.initialize("RNdl2wO1FNBvt55Si3t38Ur0-gzGzoHsz", "Bq8si1UE7hC2B4OsFFJYUcnQ");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+
+  
+
+  
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+  
+
+  
+
+</body>
+</html>

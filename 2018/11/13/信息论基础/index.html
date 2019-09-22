@@ -1,0 +1,1072 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="UTF-8">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="信息论,数学基础,">
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="bywmm's blog" type="application/atom+xml">
+
+
+
+
+
+
+<meta name="description" content="自信息；信息熵；联合熵；条件熵；KL散度(相对熵)；交叉熵；互信息；条件互信息；信息增益；信息增益率；">
+<meta name="keywords" content="信息论,数学基础">
+<meta property="og:type" content="article">
+<meta property="og:title" content="信息论基础">
+<meta property="og:url" content="https://bywmm.github.io/2018/11/13/信息论基础/index.html">
+<meta property="og:site_name" content="bywmm&#39;s blog">
+<meta property="og:description" content="自信息；信息熵；联合熵；条件熵；KL散度(相对熵)；交叉熵；互信息；条件互信息；信息增益；信息增益率；">
+<meta property="og:locale" content="UTF-8">
+<meta property="og:updated_time" content="2018-11-14T07:47:07.675Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="信息论基础">
+<meta name="twitter:description" content="自信息；信息熵；联合熵；条件熵；KL散度(相对熵)；交叉熵；互信息；条件互信息；信息增益；信息增益率；">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://bywmm.github.io/2018/11/13/信息论基础/">
+
+
+
+
+
+  <title>信息论基础 | bywmm's blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="UTF-8">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">bywmm's blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-主页">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            主页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-标签">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-分类">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-归档">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://bywmm.github.io/2018/11/13/信息论基础/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="JF Wang">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar2.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="bywmm's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">信息论基础</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-11-13T20:22:15+08:00">
+                2018-11-13
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/数学基础/" itemprop="url" rel="index">
+                    <span itemprop="name">数学基础</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2018/11/13/信息论基础/" class="leancloud_visitors" data-flag-title="信息论基础">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">Visitors&#58;</span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Words count in article&#58;</span>
+                
+                <span title="Words count in article">
+                  1.5k
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Reading time &asymp;</span>
+                
+                <span title="Reading time">
+                  6
+                </span>
+              
+            </div>
+          
+
+          
+              <div class="post-description">
+                  自信息；信息熵；联合熵；条件熵；KL散度(相对熵)；交叉熵；互信息；条件互信息；信息增益；信息增益率；
+              </div>
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="信息论基础"><a href="#信息论基础" class="headerlink" title="信息论基础"></a>信息论基础</h1><h2 id="自信息"><a href="#自信息" class="headerlink" title="自信息"></a>自信息</h2><p>在机器学习中，主要使用信息论的一些关键思想来描述概率分布或者<strong>量化概率分布之间的相似性</strong>。</p>
+<p>信息量的多少满足以下三个性质</p>
+<ul>
+<li><p>非常可能发生的实践信息量要比较少，并且极端情况下，确保能够发生的实践应该没有信息量。</p>
+</li>
+<li><p>较不可能发生的实践具有更高的信息量。</p>
+</li>
+<li><p>独立事件应具有增量的信息。例如，投掷的硬币两次正面朝上传递的信息量，应该是投掷一次硬币正面朝上的信息量的两倍。</p>
+</li>
+</ul>
+<p>由此，定义一个事件的<strong>自信息</strong>为</p>
+<script type="math/tex; mode=display">
+I(x)=-logP(x)</script><p>易知，事件发生的概率越小，信息量越大。</p>
+<p>本文中，我们总是用$\log$来表示自然对数，其底数为$e$。因此我们定义的$I(x)$单位是<strong>奈特</strong>，一奈特是以$\frac{1}{e}$的概率观测到一个事件时获得的信息量。</p>
+<p>其他材料中使用底数为2的对数，单位是<strong>比特</strong>或者<strong>香农</strong>，一比特是以$\frac{1}{2}$的概率观测到一个事件时获得的信息量。</p>
+<p>所以，通过比特度量的信息只是通过奈特度量信息的常数倍。</p>
+<h2 id="香农熵-信息熵"><a href="#香农熵-信息熵" class="headerlink" title="香农熵(信息熵)"></a>香农熵(信息熵)</h2><p>自信息只处理单个的输出。可以用<strong>香农熵</strong>来对整个概率分布中的不确定性<strong>总量</strong>进行量化</p>
+<script type="math/tex; mode=display">
+H(X)=E_{X\sim P}[I(x)]=-E_{X\sim P}[logP(x)]</script><p>离散形式</p>
+<script type="math/tex; mode=display">
+H(X)=-\sum_{x\epsilon X} P(x)logP(x)</script><p>连续(又称<strong>微分熵</strong>)</p>
+<script type="math/tex; mode=display">
+H(X)=-\int P(x)logP(x)\ dx</script><p>易知，那些接近确定性的分布（输出几乎可以确定）具有较低的熵；那些接近均匀分布的概率分布具有较高的熵。</p>
+<h2 id="联合熵"><a href="#联合熵" class="headerlink" title="联合熵"></a>联合熵</h2><p>度量二维随机变量的不确定性</p>
+<script type="math/tex; mode=display">
+H(X|Y)=-\sum_{x\epsilon X} \sum_{y\epsilon Y} P(x,y)logP(x,y)</script><h2 id="条件熵"><a href="#条件熵" class="headerlink" title="条件熵"></a>条件熵</h2><p>$H(Y|X)$表示已知X，求Y的不确定性</p>
+<script type="math/tex; mode=display">
+\begin{align*}
+H(Y|X)& =-\sum_i \sum_j P(x_i, y_j)logP(y_j|x_i)\\
+& =\sum_i P(x_i)H(Y|x_i)
+\end{align*}</script><blockquote>
+<p>证明：</p>
+<script type="math/tex; mode=display">
+\begin{align*}
+H(Y|X)& =-\sum_{x\epsilon{X}}\sum_{y\epsilon{Y}}P(x)P(y|x)logP(y,x)\\
+& =-\sum_{x\epsilon X} P(x) \sum_{y\epsilon Y} P(y|x)logP(y|x)\\
+& =-\sum_{x\epsilon X} P(x)H(Y|x)
+\end{align*}</script></blockquote>
+<p><strong>由联合熵和条件熵可得</strong></p>
+<script type="math/tex; mode=display">
+H(X,Y)=H(Y|X)+H(X)</script><blockquote>
+<p>证明</p>
+<script type="math/tex; mode=display">
+\begin{align*}
+H(X,Y)& =-\sum_{x\epsilon X} \sum_{y\epsilon Y} P(x, y)logP(y,x)\\
+& =-\sum_{x\epsilon X} \sum_{y\epsilon Y} P(x, y)logP(y|x)-\sum_{x\epsilon X} \sum_{y\epsilon Y} P(x, y)logP(x)\\
+& =-\sum_{x\epsilon X} \sum_{y\epsilon Y} P(x, y)logP(y|x)-\sum_{x\epsilon X} P(x)logP(x)\\
+& =H(Y|X)+H(X)
+\end{align*}</script></blockquote>
+<h2 id="KL散度-相对熵"><a href="#KL散度-相对熵" class="headerlink" title="KL散度(相对熵)"></a>KL散度(相对熵)</h2><p>用来衡量两个分布的相似度，假设连续随机变量X，真实概率分布为P(x)，模型得到的分布为$Q(x)$</p>
+<script type="math/tex; mode=display">
+D_{KL}(P||Q)=E_{X\sim{P}}[log\frac{P(x)}{Q(x)}]</script><p>即</p>
+<script type="math/tex; mode=display">
+D_{KL}(P||Q)=E_{X\sim{P}}[logP(x)-logQ(x)]</script><p>离散：</p>
+<script type="math/tex; mode=display">
+\begin{align*}
+D_{KL}(P||Q)=& -\sum_{x\epsilon X} P(x)logQ(x)+\sum_{x\epsilon X} P(x)logP(x)\\
+& =\sum_{x\epsilon X} P(x)log\frac{P(x)}{Q(x)}
+\end{align*}</script><p>连续：</p>
+<script type="math/tex; mode=display">
+\begin{align*}
+D_{KL}(P||Q)=& -\int P(x)logQ(x)\ dx+\int P(x)logP(x)\ dx\\
+& =\int P(x)log\frac{P(x)}{Q(x)} \ dx
+\end{align*}</script><blockquote>
+<p><code>KL散度</code>有很多很有用的性质，最重要的是，它是非负的。<code>KL散度</code>为0，当且仅当P和Q在离散性变量的情况下是相同的分布，或者在连续性变量的情况下是“几乎处处”相同的。</p>
+<p>因为<code>KL散度</code>是非负的并且衡量的是两个分布之间的差异，它经常被用作分布之间的某种距离。然而，它不是真的距离，因为它是不对称的：对于某些$P$和$Q$，$D_{KL}(P||Q)\neq{D}_{KL}(Q||P)$。这种非对称意味着选择$D_{KL}(P||Q)$还是$D_{KL}(Q||P)$影响很大。</p>
+</blockquote>
+<h2 id="交叉熵"><a href="#交叉熵" class="headerlink" title="交叉熵"></a>交叉熵</h2><script type="math/tex; mode=display">
+H(P,Q)=H(P)+D_{KL}(P||Q)</script><p>它和KL散度很像，但是缺少左边一项</p>
+<script type="math/tex; mode=display">
+H(P,Q)=-E_{X\sim P}logQ(x)</script><h2 id="互信息"><a href="#互信息" class="headerlink" title="互信息"></a>互信息</h2><p>相对熵是衡量同一个变量的两个一维分布之间的相似性，而互信息是用来衡量两个相同的一维分布变量之间的<strong>独立性</strong> </p>
+<p>$I(P,Q)$ 是衡量联合分布$P(X,Y)$和$P(X)P(Y)$分布之间的关系，即他们之间的相关系数 </p>
+<script type="math/tex; mode=display">
+\begin{align*}
+I(X,Y)& =D_{KL}(P(X,Y)||P(X)P(Y))\\
+& =\sum_{x\epsilon X} \sum_{y\epsilon Y}P(x,y)log\frac{P(x,y)}{P(x)P(y)}\\
+& =\sum_{x\epsilon X} \sum_{y\epsilon Y}P(x,y)logP(x,y)-\sum_{x\epsilon X} \sum_{y\epsilon Y}P(x,y)logP(x)-\sum_{x\epsilon X} \sum_{y\epsilon Y}P(x,y)logP(y)\\
+& =\sum_{x\epsilon X} \sum_{y\epsilon Y}P(x,y)logP(x,y)-\sum_{x\epsilon X} P(x)logP(x)- \sum_{y\epsilon Y}P(y)logP(y)\\
+& =-H(X,Y)+H(X)+H(Y)\\
+& =H(X)-H(X|Y)\\
+& =H(Y)-H(Y|X)
+\end{align*}</script><p>当且仅当X和Y独立的时候$I(X,Y)=0$，互信息越大$X$和$Y$越相关。</p>
+<h2 id="条件互信息"><a href="#条件互信息" class="headerlink" title="条件互信息"></a>条件互信息</h2><script type="math/tex; mode=display">
+\begin{align*}
+I(X,Y|Z)& =D_{KL}(P(X,Y|Z)||P(X|Z)P(Y|Z))\\
+& =\sum_{x\epsilon X} \sum_{y\epsilon Y}P(x,y|Z)log\frac{P(x,y|Z)}{P(x|Z)P(y|Z)}
+\end{align*}</script><p>当且仅当X和Y在给定Z时相互独立的时候$I(X,Y|Z)=0$，</p>
+<h2 id="信息增益-Information-Gain"><a href="#信息增益-Information-Gain" class="headerlink" title="信息增益(Information Gain)"></a>信息增益(Information Gain)</h2><p>假设系统原有的熵为$H(X)$，后来引入了特征T，在固定特征T的情况下，系统的混乱度减小，熵减小为$H(X|T)$，那么特征T给系统带来的信息增益为： </p>
+<script type="math/tex; mode=display">
+IG(T)=H(X)-H(X|T)</script><h2 id="信息增益率-Information-Gain-ratio"><a href="#信息增益率-Information-Gain-ratio" class="headerlink" title="信息增益率(Information Gain ratio)"></a>信息增益率(Information Gain ratio)</h2><script type="math/tex; mode=display">
+R(X,T)=\frac{IG(T)}{splitinfo(T)}</script><p>在特征提取与特征选择，和图像处理中有广泛的应用，比如在决策树中用于选择下次进行分支划分的特征。</p>
+
+      
+    </div>
+    
+    
+    
+
+<div>
+  
+    <div>
+    
+        <div style="text-align:center;color: #555;font-size:14px;">-------------The End-------------</div>
+    
+</div>
+  
+</div>
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/信息论/" rel="tag"># 信息论</a>
+          
+            <a href="/tags/数学基础/" rel="tag"># 数学基础</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/11/13/cs231n_assignment1(SVM)/" rel="next" title="cs231n_assignment1(SVM)">
+                <i class="fa fa-chevron-left"></i> cs231n_assignment1(SVM)
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/11/14/cs231n_assignment1(Softmax)/" rel="prev" title="cs231n_assignment1(Softmax)">
+                cs231n_assignment1(Softmax) <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="lv-container" data-id="city" data-uid="MTAyMC80MDY4Mi8xNzIwNw=="></div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/avatar2.jpg" alt="JF Wang">
+            
+              <p class="site-author-name" itemprop="name">JF Wang</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives">
+              
+                  <span class="site-state-item-count">25</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">9</span>
+                  <span class="site-state-item-name">categories</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">21</span>
+                  <span class="site-state-item-name">tags</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#信息论基础"><span class="nav-number">1.</span> <span class="nav-text">信息论基础</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#自信息"><span class="nav-number">1.1.</span> <span class="nav-text">自信息</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#香农熵-信息熵"><span class="nav-number">1.2.</span> <span class="nav-text">香农熵(信息熵)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#联合熵"><span class="nav-number">1.3.</span> <span class="nav-text">联合熵</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#条件熵"><span class="nav-number">1.4.</span> <span class="nav-text">条件熵</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#KL散度-相对熵"><span class="nav-number">1.5.</span> <span class="nav-text">KL散度(相对熵)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#交叉熵"><span class="nav-number">1.6.</span> <span class="nav-text">交叉熵</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#互信息"><span class="nav-number">1.7.</span> <span class="nav-text">互信息</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#条件互信息"><span class="nav-number">1.8.</span> <span class="nav-text">条件互信息</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#信息增益-Information-Gain"><span class="nav-number">1.9.</span> <span class="nav-text">信息增益(Information Gain)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#信息增益率-Information-Gain-ratio"><span class="nav-number">1.10.</span> <span class="nav-text">信息增益率(Information Gain ratio)</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2018 &mdash; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">JF Wang</span>
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+      <span class="post-meta-item-text">Site words total count&#58;</span>
+    
+    <span title="Site words total count">44.2k</span>
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Gemini</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+    <script type="text/javascript">
+      (function(d, s) {
+        var j, e = d.getElementsByTagName(s)[0];
+        if (typeof LivereTower === 'function') { return; }
+        j = d.createElement(s);
+        j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+        j.async = true;
+        e.parentNode.insertBefore(j, e);
+      })(document, 'script');
+    </script>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.4.js"></script>
+  <script>AV.initialize("RNdl2wO1FNBvt55Si3t38Ur0-gzGzoHsz", "Bq8si1UE7hC2B4OsFFJYUcnQ");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+
+  
+
+  
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+  
+
+  
+
+</body>
+</html>

@@ -1,0 +1,1025 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="UTF-8">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="cs231n,计算机视觉,神经网络,">
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="bywmm's blog" type="application/atom+xml">
+
+
+
+
+
+
+<meta name="description" content="Batch Normalization；Layer Normalization；">
+<meta name="keywords" content="cs231n,计算机视觉,神经网络">
+<meta property="og:type" content="article">
+<meta property="og:title" content="cs231n_assignment2(BatchNormalization)">
+<meta property="og:url" content="https://bywmm.github.io/2018/12/02/cs231n_assignment2(BatchNormalization)/index.html">
+<meta property="og:site_name" content="bywmm&#39;s blog">
+<meta property="og:description" content="Batch Normalization；Layer Normalization；">
+<meta property="og:locale" content="UTF-8">
+<meta property="og:image" content="http://static.zybuluo.com/BYWMM/lch9k8tgu9qrx5pymm44inz5/fkklaglk.png">
+<meta property="og:image" content="http://static.zybuluo.com/BYWMM/zipyeel2c8xqkebme9sks9ce/20170713154211034.png">
+<meta property="og:image" content="http://static.zybuluo.com/BYWMM/smfpv59hpra5ddhwtsyqw2s5/bpdjsflja.png">
+<meta property="og:image" content="http://static.zybuluo.com/BYWMM/7c45tnc0j926k6rldq5xc0jq/wjfwudikuailedkgjlasd%20%281%29.png">
+<meta property="og:image" content="http://static.zybuluo.com/BYWMM/5c1ojb9lixl2s3j393h9n427/wjfwudikuailedkgjlasd%20%282%29.png">
+<meta property="og:image" content="http://static.zybuluo.com/BYWMM/q98z1t2vudmdd4s7dbrz0fq9/wjfwudikuailedkgjlasd%20%283%29.png">
+<meta property="og:image" content="http://static.zybuluo.com/BYWMM/88md43o6jw0uqhvoixify9rc/zzzzzzzgkjkjjiri34t%20%281%29.png">
+<meta property="og:image" content="http://static.zybuluo.com/BYWMM/d5dr5uq845tw84i7biq7c3df/zzzzzzzgkjkjjiri34t%20%282%29.png">
+<meta property="og:image" content="http://static.zybuluo.com/BYWMM/zk93bh0b6hqghhiv1vsvlcl2/zzzzzzzgkjkjjiri34t%20%283%29.png">
+<meta property="og:image" content="http://static.zybuluo.com/BYWMM/l3ysq6i1o1kqcsv048hkff3a/hfsauidhgfksfgaf.png">
+<meta property="og:image" content="http://static.zybuluo.com/BYWMM/w2eb0t0fy3eu9i58qkmd7ba4/VI03%5D2ZPH%7DMRL1GS%2882L8AA.png">
+<meta property="og:image" content="http://static.zybuluo.com/BYWMM/i2768aeb3r7zaf7ccl9wosto/layernormklfdjgkasf.png">
+<meta property="og:updated_time" content="2018-12-05T14:21:32.965Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="cs231n_assignment2(BatchNormalization)">
+<meta name="twitter:description" content="Batch Normalization；Layer Normalization；">
+<meta name="twitter:image" content="http://static.zybuluo.com/BYWMM/lch9k8tgu9qrx5pymm44inz5/fkklaglk.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://bywmm.github.io/2018/12/02/cs231n_assignment2(BatchNormalization)/">
+
+
+
+
+
+  <title>cs231n_assignment2(BatchNormalization) | bywmm's blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="UTF-8">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">bywmm's blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-主页">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            主页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-标签">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-分类">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-归档">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://bywmm.github.io/2018/12/02/cs231n_assignment2(BatchNormalization)/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="JF Wang">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar2.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="bywmm's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">cs231n_assignment2(BatchNormalization)</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-12-02T20:28:13+08:00">
+                2018-12-02
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/cs231n-assignment/" itemprop="url" rel="index">
+                    <span itemprop="name">cs231n_assignment</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2018/12/02/cs231n_assignment2(BatchNormalization)/" class="leancloud_visitors" data-flag-title="cs231n_assignment2(BatchNormalization)">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">Visitors&#58;</span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Words count in article&#58;</span>
+                
+                <span title="Words count in article">
+                  1.4k
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Reading time &asymp;</span>
+                
+                <span title="Reading time">
+                  7
+                </span>
+              
+            </div>
+          
+
+          
+              <div class="post-description">
+                  Batch Normalization；Layer Normalization；
+              </div>
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="cs231n-assignment2-BatchNormalization"><a href="#cs231n-assignment2-BatchNormalization" class="headerlink" title="cs231n_assignment2(BatchNormalization)"></a>cs231n_assignment2(BatchNormalization)</h1><p>参考论文：<a href="https://arxiv.org/pdf/1502.03167v3.pdf" target="_blank" rel="noopener">Batch Normalization: Accelerating Deep Network Training by Reducing Internal Covariate Shift</a></p>
+<p>论文笔记：<a href="https://bywmm.github.io/2018/11/30/%E8%AE%BA%E6%96%87%E7%AC%94%E8%AE%B0%EF%BC%9ABatch%20Normalization/">Batch Normalization</a></p>
+<p>在机器学习中，当机器学习方法的输入数据包含零均值和单位方差的不相关特征时，机器学习方法往往更有效。<br>Batch Normalization即将这个想法，应用到了每层网络的输入中。</p>
+<h2 id="BatchNorMalization实现"><a href="#BatchNorMalization实现" class="headerlink" title="BatchNorMalization实现"></a>BatchNorMalization实现</h2><h3 id="BN-forward"><a href="#BN-forward" class="headerlink" title="BN forward"></a>BN forward</h3><p>归一化之后添加了两个scale and shift参数，使其压缩范围可以灵活变化。<br>公式如下，<br><img src="http://static.zybuluo.com/BYWMM/lch9k8tgu9qrx5pymm44inz5/fkklaglk.png" width="500"></p>
+<p><strong>注意：</strong>因为训练中计算均值和方差的时候，用的是batch来算的；测试时的mean和var使用训练时的<strong>指数加权平均数</strong>。<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> mode == <span class="string">'train'</span>:</span><br><span class="line">    <span class="comment"># cal the x_hat and y</span></span><br><span class="line">    x_mean = np.mean(x, axis=<span class="number">0</span>)</span><br><span class="line">    x_var = np.var(x, axis=<span class="number">0</span>)</span><br><span class="line"></span><br><span class="line">    x_hat = (x - x_mean) / np.sqrt(x_var + eps)</span><br><span class="line">    out = gamma * x_hat + beta</span><br><span class="line">    <span class="comment"># cal the running_paras</span></span><br><span class="line">    running_mean = momentum * running_mean + (<span class="number">1</span> - momentum) * x_mean</span><br><span class="line">    running_var = momentum * running_var + (<span class="number">1</span> - momentum) * x_var</span><br><span class="line">    cache = (x, x_hat, x_mean, x_var, gamma, beta, eps)</span><br><span class="line"><span class="keyword">elif</span> mode == <span class="string">'test'</span>:</span><br><span class="line">    x_hat = (x - running_mean) / np.sqrt(running_var + eps)</span><br><span class="line">    out = gamma * x_hat + beta</span><br><span class="line"><span class="keyword">else</span>:</span><br><span class="line">    <span class="keyword">raise</span> ValueError(<span class="string">'Invalid forward batchnorm mode "%s"'</span> % mode)</span><br></pre></td></tr></table></figure></p>
+<h3 id="BN-backward"><a href="#BN-backward" class="headerlink" title="BN backward"></a>BN backward</h3><p>参考博文：<a href="https://blog.csdn.net/pjia_1008/article/details/75073097" target="_blank" rel="noopener">传送门</a><br>对于每个batch，采用计算图求导的方法，进行求导。</p>
+<p>计算图如下：</p>
+<p><img src="http://static.zybuluo.com/BYWMM/zipyeel2c8xqkebme9sks9ce/20170713154211034.png"></p>
+<p><strong>forward pass</strong><br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line">N, D = x.shape</span><br><span class="line"></span><br><span class="line"><span class="comment"># step1: calculate mean</span></span><br><span class="line">mu = <span class="number">1.</span>/N * np.sum(x, axis=<span class="number">0</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># step2: subtract mean vector of every trainings example</span></span><br><span class="line">xmu = x - mu</span><br><span class="line"></span><br><span class="line"><span class="comment"># step3: following the lower branch - calculation denominator</span></span><br><span class="line">sq = xmu ** <span class="number">2</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># step4: calculate variance</span></span><br><span class="line">var = <span class="number">1.</span>/N * np.sum(sq, axis=<span class="number">0</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># step5: add eps for numerical stability, then sqrt</span></span><br><span class="line">sqrtvar = np.sqrt(var + eps)</span><br><span class="line"></span><br><span class="line"><span class="comment"># step6: invert sqrtvar</span></span><br><span class="line">ivar = <span class="number">1.</span>/sqrtvar</span><br><span class="line"></span><br><span class="line"><span class="comment"># step7: execute normalization</span></span><br><span class="line">xhat = xmu * ivar</span><br><span class="line"></span><br><span class="line"><span class="comment"># step8: Nor the two transformation steps</span></span><br><span class="line">gammax = gamma * xhat</span><br><span class="line"></span><br><span class="line"><span class="comment"># step9</span></span><br><span class="line">out = gammax + beta</span><br><span class="line"></span><br><span class="line"><span class="comment"># store intermediate</span></span><br><span class="line">cache = (xhat, gamma, xmu, ivar, sqrtvar, var, eps)</span><br></pre></td></tr></table></figure></p>
+<p><strong>backward pass</strong><br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># unfold the variables stored in cache</span></span><br><span class="line">xhat, gamma, xmu, ivar, sqrtvar, var, eps = cache</span><br><span class="line"></span><br><span class="line"><span class="comment"># get the dimensions of the input/output</span></span><br><span class="line">N, D = dout.shape</span><br><span class="line"></span><br><span class="line"><span class="comment"># step9</span></span><br><span class="line">dbeta = np.sum(dout, axis=<span class="number">0</span>)</span><br><span class="line">dgammax = dout <span class="comment"># not necessary, but more understandable</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># step8</span></span><br><span class="line">dgamma = np.sum(dgammax * xhat, axis = <span class="number">0</span>)</span><br><span class="line">dxhat = dgammax * gamma</span><br><span class="line"></span><br><span class="line"><span class="comment"># step7</span></span><br><span class="line">divar = np.sum(dxhat * xmu, axis=<span class="number">0</span>)</span><br><span class="line">dxmu1 = dxhat * ivar</span><br><span class="line"></span><br><span class="line"><span class="comment"># step6</span></span><br><span class="line">dsqrtvar = <span class="number">-1.</span>/(sqrtvar**<span class="number">2</span>) * divar</span><br><span class="line"></span><br><span class="line"><span class="comment"># step5</span></span><br><span class="line">dvar = <span class="number">0.5</span> * <span class="number">1.</span>/np.sqrt(var+eps) * dsqrtvar</span><br><span class="line"></span><br><span class="line"><span class="comment"># step4</span></span><br><span class="line">dsq = <span class="number">1.</span>/N * np.ones((N, D)) * dvar</span><br><span class="line"></span><br><span class="line"><span class="comment"># step3</span></span><br><span class="line">dxmu2 = <span class="number">2</span> * xmu * dsq</span><br><span class="line"></span><br><span class="line"><span class="comment"># step2</span></span><br><span class="line">dx1 = (dxmu1 + dxmu2)</span><br><span class="line">dmu = <span class="number">-1</span> * np.sum(dxmu1 + dxmu2, axis=<span class="number">0</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># step1</span></span><br><span class="line">dx2 = <span class="number">1.</span>/N * np.ones((N, D)) * dmu</span><br><span class="line"></span><br><span class="line"><span class="comment"># step0</span></span><br><span class="line">dx = dx1 + dx2</span><br></pre></td></tr></table></figure></p>
+<h3 id="BN-alternative-backward"><a href="#BN-alternative-backward" class="headerlink" title="BN alternative backward"></a>BN alternative backward</h3><p>将上文的梯度进行总和就得出了，链式求导的最终公式，论文也有给出。</p>
+<p><img src="http://static.zybuluo.com/BYWMM/smfpv59hpra5ddhwtsyqw2s5/bpdjsflja.png" width="500"></p>
+<p>关键代码<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">x, x_hat, x_mean, x_var, gamma, beta, eps = cache</span><br><span class="line">N, D = x.shape</span><br><span class="line"></span><br><span class="line">dx_hat = dout * gamma</span><br><span class="line">dx_var = <span class="number">-0.5</span> * np.sum(dx_hat * (x - x_mean) * np.power(x_var + eps, <span class="number">-3</span> / <span class="number">2</span>), axis=<span class="number">0</span>)</span><br><span class="line">dx_mean = np.sum(dx_hat * (<span class="number">-1.</span> / np.sqrt(x_var + eps)), axis=<span class="number">0</span>) + np.sum(<span class="number">-2</span> * dx_var * (x - x_mean), axis=<span class="number">0</span>) / N</span><br><span class="line"></span><br><span class="line">dx = dx_hat / np.sqrt(x_var + eps) + dx_var * <span class="number">2</span> * (x - x_mean) / N + dx_mean / N</span><br><span class="line">dgamma = np.sum(dout * x_hat, axis=<span class="number">0</span>)</span><br><span class="line">dbeta = np.sum(dout, axis=<span class="number">0</span>)</span><br></pre></td></tr></table></figure></p>
+<h3 id="Fully-Connected-Nets-with-BN"><a href="#Fully-Connected-Nets-with-BN" class="headerlink" title="Fully Connected Nets with BN"></a>Fully Connected Nets with BN</h3><p>实现了BN模块，接着就在上节实验中的Fully Connected Nets类中加入BN层。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># __init__ function</span></span><br><span class="line"><span class="keyword">if</span> self.normalization==<span class="string">'batchnorm'</span>:</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">1</span>, L):</span><br><span class="line">        self.params[<span class="string">'gamma'</span>+str(i)] = np.ones(hidden_dims[i<span class="number">-1</span>])</span><br><span class="line">        self.params[<span class="string">'beta'</span>+str(i)] = np.zeros(hidden_dims[i<span class="number">-1</span>])</span><br><span class="line">        </span><br><span class="line"><span class="comment"># loss function</span></span><br><span class="line">A = X</span><br><span class="line">L = self.num_layers</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">1</span>, L):</span><br><span class="line">    Z, params[<span class="string">'cache1'</span>+str(i)] = affine_forward(A, self.params[<span class="string">'W'</span>+str(i)], self.params[<span class="string">'b'</span>+str(i)])</span><br><span class="line">    <span class="keyword">if</span> self.normalization==<span class="string">'batchnorm'</span>:</span><br><span class="line">        Z, params[<span class="string">'cache2'</span>+str(i)] = batchnorm_forward(Z, self.params[<span class="string">'gamma'</span>+str(i)], self.params[<span class="string">'beta'</span>+str(i)], self.bn_params[i<span class="number">-1</span>])</span><br><span class="line">    A, params[<span class="string">'cache3'</span>+str(i)] = relu_forward(Z)</span><br><span class="line">    scores, cache = affine_forward(A, self.params[<span class="string">'W'</span>+str(L)], self.params[<span class="string">'b'</span>+str(L)])</span><br><span class="line"></span><br><span class="line"><span class="comment"># If test mode return early</span></span><br><span class="line"><span class="keyword">if</span> mode == <span class="string">'test'</span>:</span><br><span class="line">    <span class="keyword">return</span> scores</span><br><span class="line"></span><br><span class="line">loss, dscores = softmax_loss(scores, y)</span><br><span class="line">sum_W_norm = <span class="number">0.0</span></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(self.num_layers):</span><br><span class="line">    sum_W_norm += np.sum(self.params[<span class="string">'W'</span>+str(i+<span class="number">1</span>)]**<span class="number">2</span>)</span><br><span class="line">loss += <span class="number">0.5</span> * self.reg * sum_W_norm</span><br><span class="line"></span><br><span class="line">dA, grads[<span class="string">'W'</span>+str(L)], grads[<span class="string">'b'</span>+str(L)] = affine_backward(dscores, cache)</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(L<span class="number">-1</span>, <span class="number">0</span>, <span class="number">-1</span>):</span><br><span class="line">    dZ = relu_backward(dA, params[<span class="string">'cache3'</span>+str(i)])</span><br><span class="line">    <span class="keyword">if</span> self.normalization == <span class="string">'batchnorm'</span>:</span><br><span class="line">        dZ, grads[<span class="string">'gamma'</span>+str(i)], grads[<span class="string">'beta'</span>+str(i)] =  batchnorm_backward_alt(dZ, params[<span class="string">'cache2'</span>+str(i)])</span><br><span class="line">    dA, grads[<span class="string">'W'</span>+str(i)], grads[<span class="string">'b'</span>+str(i)] = affine_backward(dZ, params[<span class="string">'cache1'</span> + str(i)])</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(L):</span><br><span class="line">    grads[<span class="string">'W'</span>+str(i+<span class="number">1</span>)] += self.reg * self.params[<span class="string">'W'</span>+str(i+<span class="number">1</span>)]</span><br></pre></td></tr></table></figure>
+<h2 id="Batch-Normalization的实验结果"><a href="#Batch-Normalization的实验结果" class="headerlink" title="Batch Normalization的实验结果"></a>Batch Normalization的实验结果</h2><p>激活函数：ReLU<br>优化方法：Adam</p>
+<h3 id="with-or-without-batch-normalization"><a href="#with-or-without-batch-normalization" class="headerlink" title="with or without batch normalization"></a>with or without batch normalization</h3><p>在5个隐层，每个隐层100个神经元的网络中，用1000个训练数据进行测试。分别用或者不用batch normalization<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">weight_scale = <span class="number">2e-2</span></span><br><span class="line">bn_model = FullyConnectedNet(hidden_dims, weight_scale=weight_scale, normalization=<span class="string">'batchnorm'</span>)</span><br><span class="line">model = FullyConnectedNet(hidden_dims, weight_scale=weight_scale, normalization=<span class="keyword">None</span>)</span><br><span class="line"></span><br><span class="line">bn_solver = Solver(bn_model, small_data,</span><br><span class="line">                num_epochs=<span class="number">10</span>, batch_size=<span class="number">50</span>,</span><br><span class="line">                update_rule=<span class="string">'adam'</span>,</span><br><span class="line">                optim_config=&#123;</span><br><span class="line">                  <span class="string">'learning_rate'</span>: <span class="number">1e-3</span>,</span><br><span class="line">                &#125;,</span><br><span class="line">                verbose=<span class="keyword">True</span>,print_every=<span class="number">20</span>)</span><br><span class="line">bn_solver.train()</span><br><span class="line"></span><br><span class="line">solver = Solver(model, small_data,</span><br><span class="line">                num_epochs=<span class="number">10</span>, batch_size=<span class="number">50</span>,</span><br><span class="line">                update_rule=<span class="string">'adam'</span>,</span><br><span class="line">                optim_config=&#123;</span><br><span class="line">                  <span class="string">'learning_rate'</span>: <span class="number">1e-3</span>,</span><br><span class="line">                &#125;,</span><br><span class="line">                verbose=<span class="keyword">True</span>, print_every=<span class="number">20</span>)</span><br><span class="line">solver.train()</span><br></pre></td></tr></table></figure></p>
+<p><img src="http://static.zybuluo.com/BYWMM/7c45tnc0j926k6rldq5xc0jq/wjfwudikuailedkgjlasd%20%281%29.png"><br><img src="http://static.zybuluo.com/BYWMM/5c1ojb9lixl2s3j393h9n427/wjfwudikuailedkgjlasd%20%282%29.png"><br><img src="http://static.zybuluo.com/BYWMM/q98z1t2vudmdd4s7dbrz0fq9/wjfwudikuailedkgjlasd%20%283%29.png"></p>
+<p>可以看到Adam优化，同样的学习率下，用batch normalization的网络loss下降更为快速，致使训练集拟合的更好。（两个泛化都很低）</p>
+<h3 id="different-weight-initialization-scale"><a href="#different-weight-initialization-scale" class="headerlink" title="different weight initialization scale"></a>different weight initialization scale</h3><p>采用20种不同的weight initialization scale，查看with or without normalization的表现。</p>
+<p><img src="http://static.zybuluo.com/BYWMM/88md43o6jw0uqhvoixify9rc/zzzzzzzgkjkjjiri34t%20%281%29.png"><br><img src="http://static.zybuluo.com/BYWMM/d5dr5uq845tw84i7biq7c3df/zzzzzzzgkjkjjiri34t%20%282%29.png"><br><img src="http://static.zybuluo.com/BYWMM/zk93bh0b6hqghhiv1vsvlcl2/zzzzzzzgkjkjjiri34t%20%283%29.png"></p>
+<p>可以看出，在用较小的weight scale时，with norm的表现要更好。</p>
+<h3 id="different-batch-size"><a href="#different-batch-size" class="headerlink" title="different batch size"></a>different batch size</h3><p>因为Batch Normalization是对每个batch单独进行标准化，所以当batch size较小的时候，batch均值和方差不能很好的代表整体的均值和方差。<br>可以看到，当batch size到达一定值是，Batch Normalization才能显示出效果来。（同样，因为数据比较少，只观察拟合训练集的效果就好了）<br><img src="http://static.zybuluo.com/BYWMM/l3ysq6i1o1kqcsv048hkff3a/hfsauidhgfksfgaf.png"><br><img src="http://static.zybuluo.com/BYWMM/w2eb0t0fy3eu9i58qkmd7ba4/VI03%5D2ZPH%7DMRL1GS%2882L8AA.png"></p>
+<h2 id="Layer-Normalization"><a href="#Layer-Normalization" class="headerlink" title="Layer Normalization"></a>Layer Normalization</h2><p>参见论文：<a href="https://arxiv.org/pdf/1607.06450.pdf" target="_blank" rel="noopener">Layer Normalization</a></p>
+<h3 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h3><p>Batch Normalization是对输入数据在batch上做操作。比如输入为（N,D）的数据，求均值是对N个样本的各个维度分别求均值。所以需要较大的batch size。<br>而Layer Normalization是对输入的数据的每一个样本（1，D），求均值方差等等，不依赖batch。</p>
+<h3 id="Forward-Pass"><a href="#Forward-Pass" class="headerlink" title="Forward Pass"></a>Forward Pass</h3><p>因为其原理与BN只是标准化的维度不同，代码只需在BN的基础上稍作修改。<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># cal the x_hat and y</span></span><br><span class="line">x_T = x.T</span><br><span class="line">x_mean_T = np.mean(x_T, axis=<span class="number">0</span>)</span><br><span class="line">x_var_T = np.var(x_T, axis=<span class="number">0</span>)</span><br><span class="line"></span><br><span class="line">x_hat_T = (x_T - x_mean_T) / np.sqrt(x_var_T + eps)</span><br><span class="line">x_hat = x_hat_T.T</span><br><span class="line">out = gamma * x_hat + beta</span><br><span class="line"></span><br><span class="line">cache = (x_T, x_hat_T, x_mean_T, x_var_T, gamma, beta, eps)</span><br></pre></td></tr></table></figure></p>
+<h3 id="Backward-Pass"><a href="#Backward-Pass" class="headerlink" title="Backward Pass"></a>Backward Pass</h3><p>同样，在BN的BP上稍作修改<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">x, x_hat, x_mean, x_var, gamma, beta, eps = cache</span><br><span class="line">N, D = x.shape</span><br><span class="line"></span><br><span class="line">dx_hat = dout * gamma</span><br><span class="line">dx_hat_T = dx_hat.T</span><br><span class="line">dx_var = <span class="number">-0.5</span> * np.sum(dx_hat_T * (x - x_mean) * np.power(x_var + eps, <span class="number">-3</span> / <span class="number">2</span>), axis=<span class="number">0</span>)</span><br><span class="line">dx_mean = np.sum(dx_hat_T * (<span class="number">-1</span> / np.sqrt(x_var + eps)), axis=<span class="number">0</span>) + np.sum(<span class="number">-2</span> * dx_var * (x - x_mean), axis=<span class="number">0</span>) / N</span><br><span class="line"></span><br><span class="line">dx_T = dx_hat_T / np.sqrt(x_var + eps) + dx_var * <span class="number">2</span> * (x - x_mean) / N + dx_mean / N</span><br><span class="line">dx = dx_T.T</span><br><span class="line"></span><br><span class="line">dgamma = np.sum(dout * x_hat.T, axis=<span class="number">0</span>)</span><br><span class="line">dbeta = np.sum(dout, axis=<span class="number">0</span>)</span><br><span class="line">    </span><br><span class="line"><span class="keyword">return</span> dx, dgamma, dbeta</span><br></pre></td></tr></table></figure></p>
+<h3 id="实验结果"><a href="#实验结果" class="headerlink" title="实验结果"></a>实验结果</h3><p>Layer Normalization因为不与batch size相关，可以看到其性能与batch size似乎关系不大。对比baseline有比较好的效果。</p>
+<p><img src="http://static.zybuluo.com/BYWMM/i2768aeb3r7zaf7ccl9wosto/layernormklfdjgkasf.png"></p>
+
+      
+    </div>
+    
+    
+    
+
+<div>
+  
+    <div>
+    
+        <div style="text-align:center;color: #555;font-size:14px;">-------------The End-------------</div>
+    
+</div>
+  
+</div>
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/cs231n/" rel="tag"># cs231n</a>
+          
+            <a href="/tags/计算机视觉/" rel="tag"># 计算机视觉</a>
+          
+            <a href="/tags/神经网络/" rel="tag"># 神经网络</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/11/30/论文笔记：Batch Normalization/" rel="next" title="论文笔记：Batch Normalization">
+                <i class="fa fa-chevron-left"></i> 论文笔记：Batch Normalization
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/12/03/cs231n_assignment2(Dropout)/" rel="prev" title="cs231n_assignment2(Dropout)">
+                cs231n_assignment2(Dropout) <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="lv-container" data-id="city" data-uid="MTAyMC80MDY4Mi8xNzIwNw=="></div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/avatar2.jpg" alt="JF Wang">
+            
+              <p class="site-author-name" itemprop="name">JF Wang</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives">
+              
+                  <span class="site-state-item-count">25</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">9</span>
+                  <span class="site-state-item-name">categories</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">21</span>
+                  <span class="site-state-item-name">tags</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#cs231n-assignment2-BatchNormalization"><span class="nav-number">1.</span> <span class="nav-text">cs231n_assignment2(BatchNormalization)</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#BatchNorMalization实现"><span class="nav-number">1.1.</span> <span class="nav-text">BatchNorMalization实现</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#BN-forward"><span class="nav-number">1.1.1.</span> <span class="nav-text">BN forward</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#BN-backward"><span class="nav-number">1.1.2.</span> <span class="nav-text">BN backward</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#BN-alternative-backward"><span class="nav-number">1.1.3.</span> <span class="nav-text">BN alternative backward</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Fully-Connected-Nets-with-BN"><span class="nav-number">1.1.4.</span> <span class="nav-text">Fully Connected Nets with BN</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Batch-Normalization的实验结果"><span class="nav-number">1.2.</span> <span class="nav-text">Batch Normalization的实验结果</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#with-or-without-batch-normalization"><span class="nav-number">1.2.1.</span> <span class="nav-text">with or without batch normalization</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#different-weight-initialization-scale"><span class="nav-number">1.2.2.</span> <span class="nav-text">different weight initialization scale</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#different-batch-size"><span class="nav-number">1.2.3.</span> <span class="nav-text">different batch size</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Layer-Normalization"><span class="nav-number">1.3.</span> <span class="nav-text">Layer Normalization</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#原理"><span class="nav-number">1.3.1.</span> <span class="nav-text">原理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Forward-Pass"><span class="nav-number">1.3.2.</span> <span class="nav-text">Forward Pass</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Backward-Pass"><span class="nav-number">1.3.3.</span> <span class="nav-text">Backward Pass</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#实验结果"><span class="nav-number">1.3.4.</span> <span class="nav-text">实验结果</span></a></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2018 &mdash; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">JF Wang</span>
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+      <span class="post-meta-item-text">Site words total count&#58;</span>
+    
+    <span title="Site words total count">44.2k</span>
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Gemini</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+    <script type="text/javascript">
+      (function(d, s) {
+        var j, e = d.getElementsByTagName(s)[0];
+        if (typeof LivereTower === 'function') { return; }
+        j = d.createElement(s);
+        j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+        j.async = true;
+        e.parentNode.insertBefore(j, e);
+      })(document, 'script');
+    </script>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.4.js"></script>
+  <script>AV.initialize("RNdl2wO1FNBvt55Si3t38Ur0-gzGzoHsz", "Bq8si1UE7hC2B4OsFFJYUcnQ");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+
+  
+
+  
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+  
+
+  
+
+</body>
+</html>

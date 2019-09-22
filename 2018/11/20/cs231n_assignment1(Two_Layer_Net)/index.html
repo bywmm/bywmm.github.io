@@ -1,0 +1,1021 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="UTF-8">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="cs231n,计算机视觉,神经网络,">
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="bywmm's blog" type="application/atom+xml">
+
+
+
+
+
+
+<meta name="description" content="Backpropogation；learning decay rate；debug the training；">
+<meta name="keywords" content="cs231n,计算机视觉,神经网络">
+<meta property="og:type" content="article">
+<meta property="og:title" content="cs231n_assignment1(Two_Layer_Net)">
+<meta property="og:url" content="https://bywmm.github.io/2018/11/20/cs231n_assignment1(Two_Layer_Net)/index.html">
+<meta property="og:site_name" content="bywmm&#39;s blog">
+<meta property="og:description" content="Backpropogation；learning decay rate；debug the training；">
+<meta property="og:locale" content="UTF-8">
+<meta property="og:image" content="http://static.zybuluo.com/BYWMM/80jq2lwznnfjq9mde11kvhnh/ojgrhejsgkjlkfaf.png">
+<meta property="og:image" content="http://static.zybuluo.com/BYWMM/9w7bo1qx54pl5crn9lfzjsfb/RLVDUJVOWDOMV207MXC.png">
+<meta property="og:image" content="http://static.zybuluo.com/BYWMM/8sqeholdfyvze5g888l89ju4/zheshiyigebiaoxianbuhaodeW1.png">
+<meta property="og:image" content="http://static.zybuluo.com/BYWMM/j5gzymxys50d4e7ij6nu829i/zheshiyigebiaoxianhaibucuodeW1.png">
+<meta property="og:image" content="http://static.zybuluo.com/BYWMM/ifywu12y2ifu2dlolobh25am/Y9BP4I664PODQL88.png">
+<meta property="og:image" content="http://static.zybuluo.com/BYWMM/d9qht9lyqitvo28bi46hjja3/kgrklsgmldhdsf.png">
+<meta property="og:updated_time" content="2018-12-01T11:06:30.536Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="cs231n_assignment1(Two_Layer_Net)">
+<meta name="twitter:description" content="Backpropogation；learning decay rate；debug the training；">
+<meta name="twitter:image" content="http://static.zybuluo.com/BYWMM/80jq2lwznnfjq9mde11kvhnh/ojgrhejsgkjlkfaf.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://bywmm.github.io/2018/11/20/cs231n_assignment1(Two_Layer_Net)/">
+
+
+
+
+
+  <title>cs231n_assignment1(Two_Layer_Net) | bywmm's blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="UTF-8">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">bywmm's blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-主页">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            主页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-标签">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-分类">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-归档">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://bywmm.github.io/2018/11/20/cs231n_assignment1(Two_Layer_Net)/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="JF Wang">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar2.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="bywmm's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">cs231n_assignment1(Two_Layer_Net)</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-11-20T19:39:52+08:00">
+                2018-11-20
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/cs231n-assignment/" itemprop="url" rel="index">
+                    <span itemprop="name">cs231n_assignment</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2018/11/20/cs231n_assignment1(Two_Layer_Net)/" class="leancloud_visitors" data-flag-title="cs231n_assignment1(Two_Layer_Net)">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">Visitors&#58;</span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Words count in article&#58;</span>
+                
+                <span title="Words count in article">
+                  1.3k
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Reading time &asymp;</span>
+                
+                <span title="Reading time">
+                  6
+                </span>
+              
+            </div>
+          
+
+          
+              <div class="post-description">
+                  Backpropogation；learning decay rate；debug the training；
+              </div>
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="cs231n-assignment1-Two-Layer-Net"><a href="#cs231n-assignment1-Two-Layer-Net" class="headerlink" title="cs231n_assignment1(Two_Layer_Net)"></a>cs231n_assignment1(Two_Layer_Net)</h1><h2 id="两层网络（code）"><a href="#两层网络（code）" class="headerlink" title="两层网络（code）"></a>两层网络（code）</h2><p>首先来回顾一下我们的网络结结构：</p>
+<p>输入层($D$个神经元)，全连接层-ReLu($H$)，softmax($C$)。<br>输入：$X [N\times{D}]$，输出 $y [N\times{1}]$<br>网络参数：$W1[D×H],b1[1×H],W2[H×C],b2[1×C]$</p>
+<h3 id="Propagation"><a href="#Propagation" class="headerlink" title="Propagation"></a>Propagation</h3><script type="math/tex; mode=display">Z1=X⋅W1+b1</script><script type="math/tex; mode=display">A1=maximum(0,Z1)</script><script type="math/tex; mode=display">Z2=A1⋅W2+b2</script><script type="math/tex; mode=display">A2=softmax(Z2)</script><script type="math/tex; mode=display">P=A2</script><p>$Z2 \color{Blue}{[N\times{C}]}$就是每个样本在每个类别下的分数（score）<br>$A2 \color{Blue}{[N\times{C}]}$就是每个样本在每个类别下的概率（prob）</p>
+<p>关键代码如下：<br>（Propagation中计算的值，Backpropogation的计算中要用到）<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">Z1 = np.dot(X, W1) + b1</span><br><span class="line">A1 = np.maximum(<span class="number">0</span>, Z1)</span><br><span class="line">Z2 = np.dot(A1, W2) + b2</span><br><span class="line">scores = Z2</span><br><span class="line">scores -= np.max(scores, axis=<span class="number">1</span>, keepdims=<span class="keyword">True</span>)</span><br><span class="line">A2 = np.exp(scores) / np.sum(np.exp(scores), axis=<span class="number">1</span>, keepdims=<span class="keyword">True</span>) </span><br><span class="line">prob = A2</span><br></pre></td></tr></table></figure></p>
+<h3 id="loss"><a href="#loss" class="headerlink" title="loss"></a>loss</h3><script type="math/tex; mode=display">L = \frac{1}{m}\sum_{i=1}^m-\log{P_{y_i}}+R(W)</script><p>关键代码如下：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 最大似然项</span></span><br><span class="line">loss += -np.sum(np.log(prob[(range(N), y)])) / N</span><br><span class="line"><span class="comment"># 正则化项</span></span><br><span class="line">loss += reg * (np.sum(W1 * W1) + np.sum(W2 * W2))</span><br></pre></td></tr></table></figure></p>
+<h3 id="Backpropogation"><a href="#Backpropogation" class="headerlink" title="Backpropogation"></a>Backpropogation</h3><p>反向传播的推导，主要还是依据链式法则，从后至前进行推导。</p>
+<script type="math/tex; mode=display">\frac{\partial{L}}{\partial{Z2}}=A2−MaskMat\ \color{Blue}{[N×C]}</script><p>MaskMat参见<a href="https://bywmm.github.io/2018/11/14/cs231n_assignment1%28Softmax%29/#more">softmax_no_loop梯度推导</a></p>
+<script type="math/tex; mode=display">\frac{\partial{L}}{\partial{W2}}=\frac{\partial{Z2}}{\partial{W2}}\cdot\frac{\partial{L}}{\partial{Z2}}=A1^T\cdot\frac{\partial{L}}{\partial{Z2}}</script><script type="math/tex; mode=display">\frac{\partial{L}}{\partial{b2}}=\frac{\partial{Z2}}{\partial{b2}}\cdot\frac{\partial{L}}{\partial{Z2}}=[1...1]\ \color{Blue}{[1×H]}\cdot\frac{\partial{L}}{\partial{Z2}}</script><script type="math/tex; mode=display">\frac{\partial{L}}{\partial{A1}}=\frac{\partial{L}}{\partial{Z2}}\cdot\frac{\partial{Z2}}{\partial{A1}}=\frac{\partial{L}}{\partial{Z2}}\cdot{W2^T}</script><script type="math/tex; mode=display">\frac{\partial{L}}{\partial{Z1}}=\frac{\partial{L}}{\partial{A1}}\cdot\frac{\partial{A1}}{\partial{Z1}}=\left\{\begin{matrix}
+\frac{\partial{L}}{\partial{A1}}&if\ A1>0,\\ 
+0&otherwise.
+\end{matrix}\right.</script><script type="math/tex; mode=display">\frac{\partial{L}}{\partial{W1}}=\frac{\partial{Z1}}{\partial{W1}}\cdot\frac{\partial{L}}{\partial{Z1}}=X^T\cdot\frac{\partial{L}}{\partial{Z1}}</script><script type="math/tex; mode=display">\frac{\partial{L}}{\partial{b1}}=\frac{\partial{Z1}}{\partial{b1}}\cdot\frac{\partial{L}}{\partial{Z1}}=[1...1]\ \color{Blue}{[1×N]}\cdot\frac{\partial{L}}{\partial{Z1}}</script><p>关键代码：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># softmax函数求导</span></span><br><span class="line">prob[(range(N), y)] -= <span class="number">1</span></span><br><span class="line">dZ2 = prob / N</span><br><span class="line"></span><br><span class="line">dW2 = np.dot(A1.T, dZ2)</span><br><span class="line">db2 = np.ones((<span class="number">1</span>, A1.shape[<span class="number">0</span>])).dot(dZ2)</span><br><span class="line"></span><br><span class="line">dA1 = dZ2.dot(W2.T)</span><br><span class="line">dZ1 = dA1.copy()</span><br><span class="line">dZ1[A1 &lt;= <span class="number">0</span>] = <span class="number">0</span></span><br><span class="line">dW1 = X.T.dot(dZ1)</span><br><span class="line">db1 = np.ones((<span class="number">1</span>, N)).dot(dZ1)</span><br><span class="line"></span><br><span class="line"><span class="comment"># regulation</span></span><br><span class="line">dW1 += <span class="number">2</span> * reg * W1</span><br><span class="line">dW2 += <span class="number">2</span> * reg * W2</span><br></pre></td></tr></table></figure></p>
+<h2 id="训练"><a href="#训练" class="headerlink" title="训练"></a>训练</h2><h3 id="train函数"><a href="#train函数" class="headerlink" title="train函数"></a>train函数</h3><p>还是采用<strong>stochastic gradient descent (SGD)</strong>进行优化。</p>
+<p>具体操作与前面的线性学习器相同。每次迭代随机一小部分样本进行梯度下降：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> it <span class="keyword">in</span> range(num_iters):</span><br><span class="line">    index = np.random.choice(num_train, batch_size)</span><br><span class="line">    X_batch = X[index]</span><br><span class="line">    y_batch = y[index]</span><br><span class="line">    ...</span><br></pre></td></tr></table></figure></p>
+<p>值得一提的是，随着优化的进行，我们离最小点越来越近，所以希望learning rate也越来越小，这样更可能不错过最小点的位置。<br>所以设置一个<strong>decay rate</strong>，每次Echo后与学习率相乘，使其相应变小。<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">iterations_per_epoch = max(num_train / batch_size, <span class="number">1</span>)</span><br><span class="line"><span class="comment"># Every epoch, decay learning rate.</span></span><br><span class="line"><span class="keyword">if</span> it % iterations_per_epoch == <span class="number">0</span>:</span><br><span class="line">    learning_rate *= learning_rate_decay</span><br></pre></td></tr></table></figure></p>
+<h3 id="train-a-network"><a href="#train-a-network" class="headerlink" title="train a network"></a>train a network</h3><p>先用默认的参数，训练一个网络<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">input_size = <span class="number">32</span> * <span class="number">32</span> * <span class="number">3</span></span><br><span class="line">hidden_size = <span class="number">50</span></span><br><span class="line">num_classes = <span class="number">10</span></span><br><span class="line">net = TwoLayerNet(input_size, hidden_size, num_classes)</span><br><span class="line"></span><br><span class="line"><span class="comment"># Train the network</span></span><br><span class="line">stats = net.train(X_train, y_train, X_val, y_val,</span><br><span class="line">            num_iters=<span class="number">1000</span>, batch_size=<span class="number">200</span>,</span><br><span class="line">            learning_rate=<span class="number">1e-4</span>, learning_rate_decay=<span class="number">0.95</span>,</span><br><span class="line">            reg=<span class="number">0.25</span>, verbose=<span class="keyword">True</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># Predict on the validation set</span></span><br><span class="line">val_acc = (net.predict(X_val) == y_val).mean()</span><br><span class="line">print(<span class="string">'Validation accuracy: '</span>, val_acc)</span><br></pre></td></tr></table></figure></p>
+<p><img src="http://static.zybuluo.com/BYWMM/80jq2lwznnfjq9mde11kvhnh/ojgrhejsgkjlkfaf.png" width="320"></p>
+<h3 id="debug-the-training"><a href="#debug-the-training" class="headerlink" title="debug the training"></a>debug the training</h3><p>可以看到我们用默认参数训练出的模型只有0.287的准确度。</p>
+<p><strong>一种方法就是，画出优化中损失函数和准确度的变化</strong>（可能每隔100次梯度下降就记录一下，然后画出来），找一下问题。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Plot the loss function and train / validation accuracies</span></span><br><span class="line">plt.subplot(<span class="number">2</span>, <span class="number">1</span>, <span class="number">1</span>)</span><br><span class="line">plt.plot(stats[<span class="string">'loss_history'</span>])</span><br><span class="line">plt.title(<span class="string">'Loss history'</span>)</span><br><span class="line">plt.xlabel(<span class="string">'Iteration'</span>)</span><br><span class="line">plt.ylabel(<span class="string">'Loss'</span>)</span><br><span class="line"></span><br><span class="line">plt.subplot(<span class="number">2</span>, <span class="number">1</span>, <span class="number">2</span>)</span><br><span class="line">plt.plot(stats[<span class="string">'train_acc_history'</span>], label=<span class="string">'train'</span>)</span><br><span class="line">plt.plot(stats[<span class="string">'val_acc_history'</span>], label=<span class="string">'val'</span>)</span><br><span class="line">plt.title(<span class="string">'Classification accuracy history'</span>)</span><br><span class="line">plt.xlabel(<span class="string">'Epoch'</span>)</span><br><span class="line">plt.ylabel(<span class="string">'Clasification accuracy'</span>)</span><br><span class="line">plt.legend()</span><br><span class="line">plt.show()</span><br></pre></td></tr></table></figure>
+<p>代码中的<code>loss_history</code>、<code>train_acc_history</code>、<code>val_acc_history</code>都是在模型训练中，每隔100次迭代记录下来的。目的就是为了这时候，可以将梯度下降的过程可视化。</p>
+<p><img src="http://static.zybuluo.com/BYWMM/9w7bo1qx54pl5crn9lfzjsfb/RLVDUJVOWDOMV207MXC.png" width="500"></p>
+<ul>
+<li>损失曲线下降趋势有点直，问题应该是learning rate太小了。</li>
+<li>train_acc和val_acc相差不大而且都挺低的，可能就是模型太小了，没有很好的拟合，应该增加模型的容量。</li>
+<li>如果train_acc和val_acc相差挺大的话，可能是过拟合了。（当然这里没有）</li>
+</ul>
+<p><strong>另一个方法就是，把第一层的权重W1可视化。</strong>大多数网络中，W1可以看到一些直观的结构。</p>
+<p>表现不好的$W1$：<br><img src="http://static.zybuluo.com/BYWMM/8sqeholdfyvze5g888l89ju4/zheshiyigebiaoxianbuhaodeW1.png" width="300"><br>表现较好的$W1$：<br><img src="http://static.zybuluo.com/BYWMM/j5gzymxys50d4e7ij6nu829i/zheshiyigebiaoxianhaibucuodeW1.png" width="300"><br>好吧，这个是要培养些直觉？</p>
+<h2 id="调参"><a href="#调参" class="headerlink" title="调参"></a>调参</h2><p>和之前差不多，超参数有隐层神经元个数、学习率、正则化参数、梯度下降次数、dacayrate等等。</p>
+<p>代码和之前差不多<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br></pre></td><td class="code"><pre><span class="line">best_net = <span class="keyword">None</span> <span class="comment"># store the best model into this </span></span><br><span class="line">best_acc = <span class="number">-1.0</span> <span class="comment"># store the best score</span></span><br><span class="line">best_stats = <span class="keyword">None</span></span><br><span class="line"></span><br><span class="line">iput_size = <span class="number">32</span> * <span class="number">32</span> * <span class="number">3</span></span><br><span class="line">num_classes = <span class="number">10</span></span><br><span class="line"></span><br><span class="line">results = &#123;&#125;</span><br><span class="line">hidden_sizes = [<span class="number">300</span>]</span><br><span class="line">learning_rates = [<span class="number">1e-3</span>, <span class="number">1.2e-3</span>, <span class="number">1.4e-3</span>, <span class="number">1.6e-3</span>, <span class="number">1.8e-3</span>]</span><br><span class="line">regularization_strengths = [<span class="number">1e-4</span>, <span class="number">1e-3</span>, <span class="number">1e-2</span>]</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">hyperparameters = [(x, y, z) <span class="keyword">for</span> x <span class="keyword">in</span> hidden_sizes <span class="keyword">for</span> y <span class="keyword">in</span> learning_rates <span class="keyword">for</span> z <span class="keyword">in</span> regularization_strengths]</span><br><span class="line"><span class="keyword">for</span> hs, lr, reg <span class="keyword">in</span> hyperparameters:</span><br><span class="line">    print(<span class="string">'hs %e lr %e reg %e'</span> % (hs, lr, reg))</span><br><span class="line">    net_now = TwoLayerNet(iput_size, hs, num_classes)</span><br><span class="line">    <span class="comment"># Train the network</span></span><br><span class="line">    stats = net.train(X_train, y_train, X_val, y_val,</span><br><span class="line">                num_iters=<span class="number">2000</span>, batch_size=<span class="number">200</span>,</span><br><span class="line">                learning_rate=lr, learning_rate_decay=<span class="number">0.95</span>,</span><br><span class="line">                reg=reg, verbose=<span class="keyword">True</span>)</span><br><span class="line">    train_acc = (net.predict(X_train) == y_train).mean()</span><br><span class="line">    val_acc = (net.predict(X_val) == y_val).mean()</span><br><span class="line">    results[(hs, lr, reg)] = (train_acc, val_acc)</span><br><span class="line">    <span class="comment"># update the best net</span></span><br><span class="line">    <span class="keyword">if</span> val_acc &gt; best_acc:</span><br><span class="line">        best_net = net_now</span><br><span class="line">        best_acc = val_acc</span><br><span class="line">        best_stats = stats</span><br><span class="line"></span><br><span class="line"><span class="comment"># Print out results.        </span></span><br><span class="line"><span class="keyword">for</span> hs, lr, reg <span class="keyword">in</span> results:</span><br><span class="line">    train_acc, val_acc = results[(hs, lr, reg)]</span><br><span class="line">    print(<span class="string">'hs %e lr %e reg %e train accuracy: %f val accuracy: %f'</span> % (hs, lr, reg, train_acc, val_acc))</span><br><span class="line"></span><br><span class="line">print(<span class="string">'best val accuracy is '</span>+ str(best_acc))</span><br><span class="line"></span><br><span class="line"><span class="comment"># Plot the loss function and train / validation accuracies</span></span><br><span class="line">plt.figure()</span><br><span class="line">plt.subplot(<span class="number">2</span>, <span class="number">1</span>, <span class="number">1</span>)</span><br><span class="line">plt.plot(best_stats[<span class="string">'loss_history'</span>])</span><br><span class="line">plt.title(<span class="string">'Loss history'</span>)</span><br><span class="line">plt.xlabel(<span class="string">'Iteration'</span>)</span><br><span class="line">plt.ylabel(<span class="string">'Loss'</span>)</span><br><span class="line"></span><br><span class="line">plt.subplot(<span class="number">2</span>, <span class="number">1</span>, <span class="number">2</span>)</span><br><span class="line">plt.plot(best_stats[<span class="string">'train_acc_history'</span>], label=<span class="string">'train'</span>)</span><br><span class="line">plt.plot(best_stats[<span class="string">'val_acc_history'</span>], label=<span class="string">'val'</span>)</span><br><span class="line">plt.title(<span class="string">'Classification accuracy history'</span>)</span><br><span class="line">plt.xlabel(<span class="string">'Epoch'</span>)</span><br><span class="line">plt.ylabel(<span class="string">'Clasification accuracy'</span>)</span><br><span class="line">plt.legend()</span><br><span class="line">plt.show()</span><br></pre></td></tr></table></figure></p>
+<p>结果<br><img src="http://static.zybuluo.com/BYWMM/ifywu12y2ifu2dlolobh25am/Y9BP4I664PODQL88.png" alt="fansdkgnjknheh.png-12.9kB"><br><img src="http://static.zybuluo.com/BYWMM/d9qht9lyqitvo28bi46hjja3/kgrklsgmldhdsf.png" alt="kgrklsgmldhdsf.png-33.7kB"></p>
+
+      
+    </div>
+    
+    
+    
+
+<div>
+  
+    <div>
+    
+        <div style="text-align:center;color: #555;font-size:14px;">-------------The End-------------</div>
+    
+</div>
+  
+</div>
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/cs231n/" rel="tag"># cs231n</a>
+          
+            <a href="/tags/计算机视觉/" rel="tag"># 计算机视觉</a>
+          
+            <a href="/tags/神经网络/" rel="tag"># 神经网络</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/11/14/cs231n_assignment1(Softmax)/" rel="next" title="cs231n_assignment1(Softmax)">
+                <i class="fa fa-chevron-left"></i> cs231n_assignment1(Softmax)
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/11/23/常用隐层激活函数/" rel="prev" title="常用隐层激活函数">
+                常用隐层激活函数 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="lv-container" data-id="city" data-uid="MTAyMC80MDY4Mi8xNzIwNw=="></div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/avatar2.jpg" alt="JF Wang">
+            
+              <p class="site-author-name" itemprop="name">JF Wang</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives">
+              
+                  <span class="site-state-item-count">25</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">9</span>
+                  <span class="site-state-item-name">categories</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">21</span>
+                  <span class="site-state-item-name">tags</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#cs231n-assignment1-Two-Layer-Net"><span class="nav-number">1.</span> <span class="nav-text">cs231n_assignment1(Two_Layer_Net)</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#两层网络（code）"><span class="nav-number">1.1.</span> <span class="nav-text">两层网络（code）</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Propagation"><span class="nav-number">1.1.1.</span> <span class="nav-text">Propagation</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#loss"><span class="nav-number">1.1.2.</span> <span class="nav-text">loss</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Backpropogation"><span class="nav-number">1.1.3.</span> <span class="nav-text">Backpropogation</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#训练"><span class="nav-number">1.2.</span> <span class="nav-text">训练</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#train函数"><span class="nav-number">1.2.1.</span> <span class="nav-text">train函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#train-a-network"><span class="nav-number">1.2.2.</span> <span class="nav-text">train a network</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#debug-the-training"><span class="nav-number">1.2.3.</span> <span class="nav-text">debug the training</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#调参"><span class="nav-number">1.3.</span> <span class="nav-text">调参</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2018 &mdash; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">JF Wang</span>
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+      <span class="post-meta-item-text">Site words total count&#58;</span>
+    
+    <span title="Site words total count">44.2k</span>
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Gemini</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+    <script type="text/javascript">
+      (function(d, s) {
+        var j, e = d.getElementsByTagName(s)[0];
+        if (typeof LivereTower === 'function') { return; }
+        j = d.createElement(s);
+        j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+        j.async = true;
+        e.parentNode.insertBefore(j, e);
+      })(document, 'script');
+    </script>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.4.js"></script>
+  <script>AV.initialize("RNdl2wO1FNBvt55Si3t38Ur0-gzGzoHsz", "Bq8si1UE7hC2B4OsFFJYUcnQ");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+
+  
+
+  
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+  
+
+  
+
+</body>
+</html>

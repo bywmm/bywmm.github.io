@@ -1,0 +1,1012 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="UTF-8">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="cs231n,计算机视觉,神经网络,">
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="bywmm's blog" type="application/atom+xml">
+
+
+
+
+
+
+<meta name="description" content="实现几个层：卷积层、最大池化、BN、GN(new)">
+<meta name="keywords" content="cs231n,计算机视觉,神经网络">
+<meta property="og:type" content="article">
+<meta property="og:title" content="cs231n_assignment2(ConvolutionalNetworks)">
+<meta property="og:url" content="https://bywmm.github.io/2018/12/05/cs231n_assignment2(ConvolutionalNetworks)/index.html">
+<meta property="og:site_name" content="bywmm&#39;s blog">
+<meta property="og:description" content="实现几个层：卷积层、最大池化、BN、GN(new)">
+<meta property="og:locale" content="UTF-8">
+<meta property="og:image" content="http://static.zybuluo.com/BYWMM/rpkjafixzz9tl2kwcpxiinbb/12522150-02baf749c0d7a33b.png">
+<meta property="og:image" content="http://static.zybuluo.com/BYWMM/r2c9dldwzff2qmpa7ois3m0t/12522150-771831a611f4cf37.jpg">
+<meta property="og:updated_time" content="2018-12-05T14:27:15.199Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="cs231n_assignment2(ConvolutionalNetworks)">
+<meta name="twitter:description" content="实现几个层：卷积层、最大池化、BN、GN(new)">
+<meta name="twitter:image" content="http://static.zybuluo.com/BYWMM/rpkjafixzz9tl2kwcpxiinbb/12522150-02baf749c0d7a33b.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://bywmm.github.io/2018/12/05/cs231n_assignment2(ConvolutionalNetworks)/">
+
+
+
+
+
+  <title>cs231n_assignment2(ConvolutionalNetworks) | bywmm's blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="UTF-8">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">bywmm's blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-主页">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            主页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-标签">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-分类">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-归档">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://bywmm.github.io/2018/12/05/cs231n_assignment2(ConvolutionalNetworks)/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="JF Wang">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar2.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="bywmm's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">cs231n_assignment2(ConvolutionalNetworks)</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-12-05T21:18:25+08:00">
+                2018-12-05
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/cs231n-assignment/" itemprop="url" rel="index">
+                    <span itemprop="name">cs231n_assignment</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2018/12/05/cs231n_assignment2(ConvolutionalNetworks)/" class="leancloud_visitors" data-flag-title="cs231n_assignment2(ConvolutionalNetworks)">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">Visitors&#58;</span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Words count in article&#58;</span>
+                
+                <span title="Words count in article">
+                  2.5k
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Reading time &asymp;</span>
+                
+                <span title="Reading time">
+                  14
+                </span>
+              
+            </div>
+          
+
+          
+              <div class="post-description">
+                  实现几个层：卷积层、最大池化、BN、GN(new)
+              </div>
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="cs231n-assignment2-ConvolutionalNetworks"><a href="#cs231n-assignment2-ConvolutionalNetworks" class="headerlink" title="cs231n_assignment2(ConvolutionalNetworks)"></a>cs231n_assignment2(ConvolutionalNetworks)</h1><h2 id="Convolution-Naive-forward-pass"><a href="#Convolution-Naive-forward-pass" class="headerlink" title="Convolution: Naive forward pass"></a>Convolution: Naive forward pass</h2><p><strong>Input data of shape：</strong> $(N, C, H_{prev}, W_{prev})$<br>其中$N$是样本数，$C$是channel数。<br>下一层的$H,W$可由以下公式得出：</p>
+<script type="math/tex; mode=display">H = \lfloor \frac{H_{prev} - HH + 2 \times pad}{stride} \rfloor +1</script><script type="math/tex; mode=display">W = \lfloor \frac{W_{prev} - WW + 2 \times pad}{stride} \rfloor +1</script><p><strong>Output data of shape：</strong> $(N, F, H, W)$<br>其中$F$是本层filters的个数。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">conv_forward_naive</span><span class="params">(x, w, b, conv_param)</span>:</span></span><br><span class="line">    <span class="string">"""</span></span><br><span class="line"><span class="string">    A naive implementation of the forward pass for a convolutional layer.</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">    The input consists of N data points, each with C channels, height H and</span></span><br><span class="line"><span class="string">    width W. We convolve each input with F different filters, where each filter</span></span><br><span class="line"><span class="string">    spans all C channels and has height HH and width WW.</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">    Input:</span></span><br><span class="line"><span class="string">    - x: Input data of shape (N, C, H, W)</span></span><br><span class="line"><span class="string">    - w: Filter weights of shape (F, C, HH, WW)</span></span><br><span class="line"><span class="string">    - b: Biases, of shape (F,)</span></span><br><span class="line"><span class="string">    - conv_param: A dictionary with the following keys:</span></span><br><span class="line"><span class="string">      - 'stride': The number of pixels between adjacent receptive fields in the</span></span><br><span class="line"><span class="string">        horizontal and vertical directions.</span></span><br><span class="line"><span class="string">      - 'pad': The number of pixels that will be used to zero-pad the input. </span></span><br><span class="line"><span class="string">        </span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">    During padding, 'pad' zeros should be placed symmetrically (i.e equally on both sides)</span></span><br><span class="line"><span class="string">    along the height and width axes of the input. Be careful not to modfiy the original</span></span><br><span class="line"><span class="string">    input x directly.</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">    Returns a tuple of:</span></span><br><span class="line"><span class="string">    - out: Output data, of shape (N, F, H', W') where H' and W' are given by</span></span><br><span class="line"><span class="string">      H' = 1 + (H + 2 * pad - HH) / stride</span></span><br><span class="line"><span class="string">      W' = 1 + (W + 2 * pad - WW) / stride</span></span><br><span class="line"><span class="string">    - cache: (x, w, b, conv_param)</span></span><br><span class="line"><span class="string">    """</span></span><br><span class="line">    <span class="comment">###########################################################################</span></span><br><span class="line">    <span class="comment"># <span class="doctag">TODO:</span> Implement the convolutional forward pass.                         #</span></span><br><span class="line">    <span class="comment"># Hint: you can use the function np.pad for padding.                      #</span></span><br><span class="line">    <span class="comment">###########################################################################</span></span><br><span class="line">    N, C, H_prev, W_prev = x.shape</span><br><span class="line">    F, _, HH, WW = w.shape</span><br><span class="line">    stride = conv_param[<span class="string">'stride'</span>]   <span class="comment"># stride</span></span><br><span class="line">    pad = conv_param[<span class="string">'pad'</span>]   <span class="comment"># pad</span></span><br><span class="line"></span><br><span class="line">    <span class="comment"># python3除法的结果都是float</span></span><br><span class="line">    H_out = <span class="number">1</span> + (H_prev + <span class="number">2</span> * pad - HH) // stride</span><br><span class="line">    W_out = <span class="number">1</span> + (W_prev + pad * <span class="number">2</span> - WW) // stride</span><br><span class="line">    Z = np.zeros((N, F, H_out, W_out))</span><br><span class="line">    <span class="comment"># zero padding</span></span><br><span class="line">    x_pad = np.pad(x, ((<span class="number">0</span>, <span class="number">0</span>), (<span class="number">0</span>, <span class="number">0</span>), (pad, pad), (pad, pad)), <span class="string">'constant'</span>, constant_values=<span class="number">0</span>)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> range(N): </span><br><span class="line">        <span class="keyword">for</span> h_i <span class="keyword">in</span> range(H_out):  </span><br><span class="line">            <span class="keyword">for</span> w_i <span class="keyword">in</span> range(W_out): </span><br><span class="line">                </span><br><span class="line">                h_start = h_i * stride</span><br><span class="line">                h_end = h_start + HH</span><br><span class="line">                w_start = w_i * stride</span><br><span class="line">                w_end = w_start + WW</span><br><span class="line">                </span><br><span class="line">                xi_slice = x[i, :, h_start:h_end, w_start:w_end]</span><br><span class="line">                <span class="keyword">for</span> f <span class="keyword">in</span> range(F):                   <span class="comment"># loop over channels (= #filters) of the output volume</span></span><br><span class="line">                    Z[i, f, h_i, w_i] = np.sum(np.multiply(xi_slice, w[f])) + b[f]</span><br><span class="line">    out = Z</span><br><span class="line">    <span class="comment">###########################################################################</span></span><br><span class="line">    <span class="comment">#                             END OF YOUR CODE                            #</span></span><br><span class="line">    <span class="comment">###########################################################################</span></span><br><span class="line">    cache = (x, w, b, conv_param)</span><br><span class="line">    <span class="keyword">return</span> out, cache</span><br></pre></td></tr></table></figure>
+<h2 id="Convolution-Naive-backward-pass"><a href="#Convolution-Naive-backward-pass" class="headerlink" title="Convolution: Naive backward pass"></a>Convolution: Naive backward pass</h2><p>在Forward Pass中，最关键的就这一句代码了</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Z[i, f, h_i, w_i] = np.sum(np.multiply(xi_slice, w[f])) + b[f]</span><br></pre></td></tr></table></figure>
+<p>反向传播中，就根据这个来进行求导：</p>
+<script type="math/tex; mode=display">dX\ += \sum _{h=0} ^{H} \sum_{w=0} ^{W} W_c \times dZ_{hw}</script><script type="math/tex; mode=display">dW_c\ += \sum _{h=0} ^{H} \sum_{w=0} ^ {W} x_{slice} \times dZ_{hw}</script><script type="math/tex; mode=display">db\ += \sum_h \sum_w dZ_{hw}</script><p>代码如下：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">conv_backward_naive</span><span class="params">(dout, cache)</span>:</span></span><br><span class="line">    <span class="string">"""</span></span><br><span class="line"><span class="string">    A naive implementation of the backward pass for a convolutional layer.</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">    Inputs:</span></span><br><span class="line"><span class="string">    - dout: Upstream derivatives.</span></span><br><span class="line"><span class="string">    - cache: A tuple of (x, w, b, conv_param) as in conv_forward_naive</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">    Returns a tuple of:</span></span><br><span class="line"><span class="string">    - dx: Gradient with respect to x</span></span><br><span class="line"><span class="string">    - dw: Gradient with respect to w</span></span><br><span class="line"><span class="string">    - db: Gradient with respect to b</span></span><br><span class="line"><span class="string">    """</span></span><br><span class="line">    <span class="comment">###########################################################################</span></span><br><span class="line">    <span class="comment"># <span class="doctag">TODO:</span> Implement the convolutional backward pass.                        #</span></span><br><span class="line">    <span class="comment">###########################################################################</span></span><br><span class="line">    x, w, b, conv_param = cache</span><br><span class="line">    stride = conv_param[<span class="string">'stride'</span>]  <span class="comment"># stride</span></span><br><span class="line">    pad = conv_param[<span class="string">'pad'</span>]  <span class="comment"># pad</span></span><br><span class="line"></span><br><span class="line">    N, C, H_prev, W_prev = x.shape</span><br><span class="line">    F, _, HH, WW = w.shape</span><br><span class="line">    N, F, H_out, W_out = dout.shape</span><br><span class="line">    <span class="comment"># zero padding</span></span><br><span class="line">    x_pad = np.pad(x, ((<span class="number">0</span>, <span class="number">0</span>), (<span class="number">0</span>, <span class="number">0</span>), (pad, pad), (pad, pad)), <span class="string">'constant'</span>, constant_values=<span class="number">0</span>)</span><br><span class="line">    dx = np.zeros(x.shape)</span><br><span class="line">    dx_pad = np.zeros(x_pad.shape)</span><br><span class="line">    dw = np.zeros(w.shape)</span><br><span class="line">    db = np.zeros(b.shape)</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> range(N):  <span class="comment"># loop over the batch of training examples</span></span><br><span class="line">        xi = x_pad[i]  <span class="comment"># Select ith training example's padded activation</span></span><br><span class="line">        <span class="keyword">for</span> h_i <span class="keyword">in</span> range(H_out):  <span class="comment"># loop over vertical axis of the output volume</span></span><br><span class="line">            <span class="keyword">for</span> w_i <span class="keyword">in</span> range(W_out):  <span class="comment"># loop over horizontal axis of the output volume</span></span><br><span class="line">                h_start = h_i * stride</span><br><span class="line">                h_end = h_start + HH</span><br><span class="line">                w_start = w_i * stride</span><br><span class="line">                w_end = w_start + WW</span><br><span class="line">                xi_slice = xi[:, h_start:h_end, w_start:w_end]</span><br><span class="line">                <span class="keyword">for</span> f <span class="keyword">in</span> range(F):  <span class="comment"># loop over channels (= #filters) of the output volume</span></span><br><span class="line">                    dx_pad[i, :, h_start:h_end, w_start:w_end] += w[f] * dout[i, f, h_i, w_i]</span><br><span class="line">                    dw[f] += xi_slice * dout[i, f, h_i, w_i]</span><br><span class="line">                    db[f] += dout[i, f, h_i, w_i]</span><br><span class="line">        dx[i, :, :, :] = dx_pad[i,:, pad:-pad, pad:-pad]</span><br><span class="line">    <span class="comment">###########################################################################</span></span><br><span class="line">    <span class="comment">#                             END OF YOUR CODE                            #</span></span><br><span class="line">    <span class="comment">###########################################################################</span></span><br><span class="line">    <span class="keyword">return</span> dx, dw, db</span><br></pre></td></tr></table></figure></p>
+<h2 id="Max-Pooling-Naive-forward"><a href="#Max-Pooling-Naive-forward" class="headerlink" title="Max-Pooling: Naive forward"></a>Max-Pooling: Naive forward</h2><p>Max-Pooling就对Convolution层简化一下就可以了。</p>
+<p><strong>Input data of shape：</strong> $(N, C, H_{prev}, W_{prev})$<br>其中$N$是样本数，$C$是channel数。</p>
+<p>下一层的$H,W$：（没有考虑padding）</p>
+<script type="math/tex; mode=display">H = \lfloor \frac{H_{prev} - HH }{stride} \rfloor +1</script><script type="math/tex; mode=display">W = \lfloor \frac{W_{prev} - WW }{stride} \rfloor +1</script><p><strong>Output data of shape：</strong> $(N, C, H, W)$</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">max_pool_forward_naive</span><span class="params">(x, pool_param)</span>:</span></span><br><span class="line">    <span class="string">"""</span></span><br><span class="line"><span class="string">    A naive implementation of the forward pass for a max-pooling layer.</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">    Inputs:</span></span><br><span class="line"><span class="string">    - x: Input data, of shape (N, C, H, W)</span></span><br><span class="line"><span class="string">    - pool_param: dictionary with the following keys:</span></span><br><span class="line"><span class="string">      - 'pool_height': The height of each pooling region</span></span><br><span class="line"><span class="string">      - 'pool_width': The width of each pooling region</span></span><br><span class="line"><span class="string">      - 'stride': The distance between adjacent pooling regions</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">    No padding is necessary here. Output size is given by </span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">    Returns a tuple of:</span></span><br><span class="line"><span class="string">    - out: Output data, of shape (N, C, H', W') where H' and W' are given by</span></span><br><span class="line"><span class="string">      H' = 1 + (H - pool_height) / stride</span></span><br><span class="line"><span class="string">      W' = 1 + (W - pool_width) / stride</span></span><br><span class="line"><span class="string">    - cache: (x, pool_param)</span></span><br><span class="line"><span class="string">    """</span></span><br><span class="line">    out = <span class="keyword">None</span></span><br><span class="line">    <span class="comment">###########################################################################</span></span><br><span class="line">    <span class="comment"># <span class="doctag">TODO:</span> Implement the max-pooling forward pass                            #</span></span><br><span class="line">    <span class="comment">###########################################################################</span></span><br><span class="line">    N, C, H_prev, W_prev = x.shape</span><br><span class="line">    pool_height = pool_param[<span class="string">'pool_height'</span>]</span><br><span class="line">    pool_width = pool_param[<span class="string">'pool_width'</span>]</span><br><span class="line">    stride = pool_param[<span class="string">'stride'</span>]  <span class="comment"># stride</span></span><br><span class="line"></span><br><span class="line">    <span class="comment"># python3除法的结果都是float</span></span><br><span class="line">    H_out = <span class="number">1</span> + (H_prev - pool_height) // stride</span><br><span class="line">    W_out = <span class="number">1</span> + (W_prev - pool_width) // stride</span><br><span class="line">    Z = np.zeros((N, C, H_out, W_out))</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> range(N):  <span class="comment"># loop over the batch of training examples</span></span><br><span class="line">        <span class="keyword">for</span> h_i <span class="keyword">in</span> range(H_out):  <span class="comment"># loop over vertical axis of the output volume</span></span><br><span class="line">            <span class="keyword">for</span> w_i <span class="keyword">in</span> range(W_out):  <span class="comment"># loop over horizontal axis of the output volume</span></span><br><span class="line">                h_start = h_i * stride</span><br><span class="line">                h_end = h_start + pool_height</span><br><span class="line">                w_start = w_i * stride</span><br><span class="line">                w_end = w_start + pool_width</span><br><span class="line">                <span class="keyword">for</span> c <span class="keyword">in</span> range(C):  <span class="comment"># loop over channels (= #filters) of the output volume</span></span><br><span class="line">                    Z[i, c, h_i, w_i] = np.max(x[i, c, h_start:h_end, w_start:w_end])</span><br><span class="line">    out = Z</span><br><span class="line">    <span class="comment">###########################################################################</span></span><br><span class="line">    <span class="comment">#                             END OF YOUR CODE                            #</span></span><br><span class="line">    <span class="comment">###########################################################################</span></span><br><span class="line">    cache = (x, pool_param)</span><br><span class="line">    <span class="keyword">return</span> out, cache</span><br></pre></td></tr></table></figure>
+<h2 id="Max-Pooling-Naive-backward"><a href="#Max-Pooling-Naive-backward" class="headerlink" title="Max-Pooling: Naive backward"></a>Max-Pooling: Naive backward</h2><p>对Max-Pooling的求导类似于max函数，最大为1，否则为0.<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">mask = (x == np.max(x))</span><br><span class="line"><span class="comment">##########等价于########</span></span><br><span class="line">mask[i,j] = <span class="keyword">True</span> <span class="keyword">if</span> X[i,j] = x</span><br><span class="line">mask[i,j] = <span class="keyword">False</span> <span class="keyword">if</span> X[i,j] != x</span><br></pre></td></tr></table></figure></p>
+<p>代码如下：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">max_pool_backward_naive</span><span class="params">(dout, cache)</span>:</span></span><br><span class="line">    <span class="string">"""</span></span><br><span class="line"><span class="string">    A naive implementation of the backward pass for a max-pooling layer.</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">    Inputs:</span></span><br><span class="line"><span class="string">    - dout: Upstream derivatives</span></span><br><span class="line"><span class="string">    - cache: A tuple of (x, pool_param) as in the forward pass.</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">    Returns:</span></span><br><span class="line"><span class="string">    - dx: Gradient with respect to x</span></span><br><span class="line"><span class="string">    """</span></span><br><span class="line">    <span class="comment">###########################################################################</span></span><br><span class="line">    <span class="comment"># <span class="doctag">TODO:</span> Implement the max-pooling backward pass                           #</span></span><br><span class="line">    <span class="comment">###########################################################################</span></span><br><span class="line">    x, pool_param = cache</span><br><span class="line">    pool_height = pool_param[<span class="string">'pool_height'</span>]</span><br><span class="line">    pool_width = pool_param[<span class="string">'pool_width'</span>]</span><br><span class="line">    stride = pool_param[<span class="string">'stride'</span>]  <span class="comment"># stride</span></span><br><span class="line"></span><br><span class="line">    N, C, H_out, W_out = dout.shape</span><br><span class="line"></span><br><span class="line">    dx = np.zeros(x.shape)</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> range(N):  <span class="comment"># loop over the batch of training examples</span></span><br><span class="line">        <span class="keyword">for</span> h_i <span class="keyword">in</span> range(H_out):  <span class="comment"># loop over vertical axis of the output volume</span></span><br><span class="line">            <span class="keyword">for</span> w_i <span class="keyword">in</span> range(W_out):  <span class="comment"># loop over horizontal axis of the output volume</span></span><br><span class="line">                h_start = h_i * stride</span><br><span class="line">                h_end = h_start + pool_height</span><br><span class="line">                w_start = w_i * stride</span><br><span class="line">                w_end = w_start + pool_width</span><br><span class="line">                <span class="keyword">for</span> c <span class="keyword">in</span> range(C):  <span class="comment"># loop over channels (= #filters) of the output volume</span></span><br><span class="line">                    x_slice = x[i, c, h_start:h_end, w_start:w_end]</span><br><span class="line">                    mask = (x_slice == np.max(x_slice))</span><br><span class="line">                    dx[i, c, h_start:h_end, w_start:w_end] += mask * dout[i, c, h_i, w_i]</span><br><span class="line">    <span class="comment">###########################################################################</span></span><br><span class="line">    <span class="comment">#                             END OF YOUR CODE                            #</span></span><br><span class="line">    <span class="comment">###########################################################################</span></span><br><span class="line">    <span class="keyword">return</span> dx</span><br></pre></td></tr></table></figure></p>
+<h2 id="Spatial-batch-normalization-forward"><a href="#Spatial-batch-normalization-forward" class="headerlink" title="Spatial batch normalization: forward"></a>Spatial batch normalization: forward</h2><p>由于维度的差别，卷积网络的Batch Normalization和全连接网络略有不同，卷积层的输入是$(N,C,H,W)$，BN是对每个batch的每个channel进行Normalization。及将每个channel看成全连接的一个属性:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">x_reshaped = x.transpose(0, 2, 3, 1).reshape(N * H * W, C)</span><br></pre></td></tr></table></figure></p>
+<p><code>x_reshaped</code>就是新的$(N’,D’)$的输入。<br>代码如下：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">spatial_batchnorm_forward</span><span class="params">(x, gamma, beta, bn_param)</span>:</span></span><br><span class="line">    <span class="string">"""</span></span><br><span class="line"><span class="string">    Computes the forward pass for spatial batch normalization.</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">    Inputs:</span></span><br><span class="line"><span class="string">    - x: Input data of shape (N, C, H, W)</span></span><br><span class="line"><span class="string">    - gamma: Scale parameter, of shape (C,)</span></span><br><span class="line"><span class="string">    - beta: Shift parameter, of shape (C,)</span></span><br><span class="line"><span class="string">    - bn_param: Dictionary with the following keys:</span></span><br><span class="line"><span class="string">      - mode: 'train' or 'test'; required</span></span><br><span class="line"><span class="string">      - eps: Constant for numeric stability</span></span><br><span class="line"><span class="string">      - momentum: Constant for running mean / variance. momentum=0 means that</span></span><br><span class="line"><span class="string">        old information is discarded completely at every time step, while</span></span><br><span class="line"><span class="string">        momentum=1 means that new information is never incorporated. The</span></span><br><span class="line"><span class="string">        default of momentum=0.9 should work well in most situations.</span></span><br><span class="line"><span class="string">      - running_mean: Array of shape (D,) giving running mean of features</span></span><br><span class="line"><span class="string">      - running_var Array of shape (D,) giving running variance of features</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">    Returns a tuple of:</span></span><br><span class="line"><span class="string">    - out: Output data, of shape (N, C, H, W)</span></span><br><span class="line"><span class="string">    - cache: Values needed for the backward pass</span></span><br><span class="line"><span class="string">    """</span></span><br><span class="line">    out, cache = <span class="keyword">None</span>, []</span><br><span class="line"></span><br><span class="line">    <span class="comment">###########################################################################</span></span><br><span class="line">    <span class="comment"># <span class="doctag">TODO:</span> Implement the forward pass for spatial batch normalization.       #</span></span><br><span class="line">    <span class="comment">#                                                                         #</span></span><br><span class="line">    <span class="comment"># HINT: You can implement spatial batch normalization by calling the      #</span></span><br><span class="line">    <span class="comment"># vanilla version of batch normalization you implemented above.           #</span></span><br><span class="line">    <span class="comment"># Your implementation should be very short; ours is less than five lines. #</span></span><br><span class="line">    <span class="comment">###########################################################################</span></span><br><span class="line">    N, C, H, W = x.shape</span><br><span class="line">    x_reshaped = x.transpose(<span class="number">0</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">1</span>).reshape(N * H * W, C)</span><br><span class="line">    out_tmp, cache = batchnorm_forward(x_reshaped, gamma, beta, bn_param)</span><br><span class="line">    out = out_tmp.reshape(N, H, W, C).transpose(<span class="number">0</span>, <span class="number">3</span>, <span class="number">1</span>, <span class="number">2</span>)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> out, cache</span><br></pre></td></tr></table></figure></p>
+<h2 id="Spatial-batch-normalization-backward"><a href="#Spatial-batch-normalization-backward" class="headerlink" title="Spatial batch normalization: backward"></a>Spatial batch normalization: backward</h2><p>一样的思想应用于反向传播。<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">spatial_batchnorm_backward</span><span class="params">(dout, cache)</span>:</span></span><br><span class="line">    <span class="string">"""</span></span><br><span class="line"><span class="string">    Computes the backward pass for spatial batch normalization.</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">    Inputs:</span></span><br><span class="line"><span class="string">    - dout: Upstream derivatives, of shape (N, C, H, W)</span></span><br><span class="line"><span class="string">    - cache: Values from the forward pass</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">    Returns a tuple of:</span></span><br><span class="line"><span class="string">    - dx: Gradient with respect to inputs, of shape (N, C, H, W)</span></span><br><span class="line"><span class="string">    - dgamma: Gradient with respect to scale parameter, of shape (C,)</span></span><br><span class="line"><span class="string">    - dbeta: Gradient with respect to shift parameter, of shape (C,)</span></span><br><span class="line"><span class="string">    """</span></span><br><span class="line">    dx, dgamma, dbeta = <span class="keyword">None</span>, <span class="keyword">None</span>, <span class="keyword">None</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">###########################################################################</span></span><br><span class="line">    <span class="comment"># <span class="doctag">TODO:</span> Implement the backward pass for spatial batch normalization.      #</span></span><br><span class="line">    <span class="comment">#                                                                         #</span></span><br><span class="line">    <span class="comment"># HINT: You can implement spatial batch normalization by calling the      #</span></span><br><span class="line">    <span class="comment"># vanilla version of batch normalization you implemented above.           #</span></span><br><span class="line">    <span class="comment"># Your implementation should be very short; ours is less than five lines. #</span></span><br><span class="line">    <span class="comment">###########################################################################</span></span><br><span class="line">    N, C, H, W = dout.shape</span><br><span class="line">    dout_reshaped = dout.transpose(<span class="number">0</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">1</span>).reshape(N * H * W, C)</span><br><span class="line">    dx_reshaped, dgamma, dbeta = batchnorm_backward(dout_reshaped, cache)</span><br><span class="line">    dx = dx_reshaped.reshape(N, H, W, C).transpose(<span class="number">0</span>, <span class="number">3</span>, <span class="number">1</span>, <span class="number">2</span>)</span><br><span class="line">    <span class="comment">###########################################################################</span></span><br><span class="line">    <span class="comment">#                             END OF YOUR CODE                            #</span></span><br><span class="line">    <span class="comment">###########################################################################</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> dx, dgamma, dbeta</span><br></pre></td></tr></table></figure></p>
+<h2 id="Spatial-group-normalization-forward"><a href="#Spatial-group-normalization-forward" class="headerlink" title="Spatial group normalization: forward"></a>Spatial group normalization: forward</h2><p>Group Normalization是18年才提出来的一个方法，算是Layer Normalization的一种变形把，不同点是，将C个channels分成G个Group，对每个Group分别Normalizaiton。</p>
+<p><img src="http://static.zybuluo.com/BYWMM/rpkjafixzz9tl2kwcpxiinbb/12522150-02baf749c0d7a33b.png" width="600"></p>
+<p>paper给的效果图，CNN中也一般，可能batch小一点的时候可以选用一下。</p>
+<p><img src="http://static.zybuluo.com/BYWMM/r2c9dldwzff2qmpa7ois3m0t/12522150-771831a611f4cf37.jpg" width="400"></p>
+<p>实现上，首先考类似上面那个BN的卷积版，每次要把一个batch$(N,C,H,W)$的哪些数据进行Normalization？</p>
+<p>对于group normalization来说，<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">num = C // G</span><br><span class="line">x_group = x.reshape(N*G, num*H*W)</span><br></pre></td></tr></table></figure></p>
+<p>就可以类似BN（或者LN）的应用了。<br>另外要注意，gamma和beta是，所以当涉及它们的运算的时候还要变成$(N, C,H,W)$</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">spatial_groupnorm_forward</span><span class="params">(x, gamma, beta, G, gn_param)</span>:</span></span><br><span class="line">    <span class="string">"""</span></span><br><span class="line"><span class="string">    Computes the forward pass for spatial group normalization.</span></span><br><span class="line"><span class="string">    In contrast to layer normalization, group normalization splits each entry </span></span><br><span class="line"><span class="string">    in the data into G contiguous pieces, which it then normalizes independently.</span></span><br><span class="line"><span class="string">    Per feature shifting and scaling are then applied to the data, in a manner identical to that of batch normalization and layer normalization.</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">    Inputs:</span></span><br><span class="line"><span class="string">    - x: Input data of shape (N, C, H, W)</span></span><br><span class="line"><span class="string">    - gamma: Scale parameter, of shape (C,)</span></span><br><span class="line"><span class="string">    - beta: Shift parameter, of shape (C,)</span></span><br><span class="line"><span class="string">    - G: Integer number of groups to split into, should be a divisor of C</span></span><br><span class="line"><span class="string">    - gn_param: Dictionary with the following keys:</span></span><br><span class="line"><span class="string">      - eps: Constant for numeric stability</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">    Returns a tuple of:</span></span><br><span class="line"><span class="string">    - out: Output data, of shape (N, C, H, W)</span></span><br><span class="line"><span class="string">    - cache: Values needed for the backward pass</span></span><br><span class="line"><span class="string">    """</span></span><br><span class="line">    out, cache = <span class="keyword">None</span>, <span class="keyword">None</span></span><br><span class="line">    eps = gn_param.get(<span class="string">'eps'</span>,<span class="number">1e-5</span>)</span><br><span class="line">    <span class="comment">###########################################################################</span></span><br><span class="line">    <span class="comment"># <span class="doctag">TODO:</span> Implement the forward pass for spatial group normalization.       #</span></span><br><span class="line">    <span class="comment"># This will be extremely similar to the layer norm implementation.        #</span></span><br><span class="line">    <span class="comment"># In particular, think about how you could transform the matrix so that   #</span></span><br><span class="line">    <span class="comment"># the bulk of the code is similar to both train-time batch normalization  #</span></span><br><span class="line">    <span class="comment"># and layer normalization!                                                # </span></span><br><span class="line">    <span class="comment">###########################################################################</span></span><br><span class="line">    N, C, H, W = x.shape</span><br><span class="line">    num = C // G</span><br><span class="line">    x_group = x.reshape(N*G, num*H*W)</span><br><span class="line">    <span class="comment"># adapt gamma/beta to the function</span></span><br><span class="line"></span><br><span class="line">    <span class="comment"># Same as LayerNorm Forward Pass</span></span><br><span class="line">    x_T = x_group.T</span><br><span class="line">    x_mean_T = np.mean(x_T, axis=<span class="number">0</span>)</span><br><span class="line">    x_var_T = np.var(x_T, axis=<span class="number">0</span>)</span><br><span class="line"></span><br><span class="line">    x_group_hat_T = (x_T - x_mean_T) / np.sqrt(x_var_T + eps)</span><br><span class="line">    x_group_hat = x_group_hat_T.T <span class="comment"># shape of (N*G, num*H*W)</span></span><br><span class="line"></span><br><span class="line">    <span class="comment"># shape of (N, C, H, W) to cal the gamma and beta</span></span><br><span class="line">    x_hat = x_group_hat.reshape(N, C, H, W)</span><br><span class="line"></span><br><span class="line">    out = gamma * x_hat + beta</span><br><span class="line">    cache = (G, x_T, x_hat, x_mean_T, x_var_T, gamma, beta, eps)</span><br><span class="line">    <span class="comment">###########################################################################</span></span><br><span class="line">    <span class="comment">#                             END OF YOUR CODE                            #</span></span><br><span class="line">    <span class="comment">###########################################################################</span></span><br><span class="line">    <span class="keyword">return</span> out, cache</span><br></pre></td></tr></table></figure>
+<h2 id="Spatial-group-normalization-backward"><a href="#Spatial-group-normalization-backward" class="headerlink" title="Spatial group normalization: backward"></a>Spatial group normalization: backward</h2><p>反向传播稍微有点难？？调的时候忽略了把LN代码中的<code>N</code>改为<code>tmp_N = num * H * W</code>。<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">spatial_groupnorm_backward</span><span class="params">(dout, cache)</span>:</span></span><br><span class="line">    <span class="string">"""</span></span><br><span class="line"><span class="string">    Computes the backward pass for spatial group normalization.</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">    Inputs:</span></span><br><span class="line"><span class="string">    - dout: Upstream derivatives, of shape (N, C, H, W)</span></span><br><span class="line"><span class="string">    - cache: Values from the forward pass</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">    Returns a tuple of:</span></span><br><span class="line"><span class="string">    - dx: Gradient with respect to inputs, of shape (N, C, H, W)</span></span><br><span class="line"><span class="string">    - dgamma: Gradient with respect to scale parameter, of shape (C,)</span></span><br><span class="line"><span class="string">    - dbeta: Gradient with respect to shift parameter, of shape (C,)</span></span><br><span class="line"><span class="string">    """</span></span><br><span class="line">    <span class="comment">###########################################################################</span></span><br><span class="line">    <span class="comment"># <span class="doctag">TODO:</span> Implement the backward pass for spatial group normalization.      #</span></span><br><span class="line">    <span class="comment"># This will be extremely similar to the layer norm implementation.        #</span></span><br><span class="line">    <span class="comment">###########################################################################</span></span><br><span class="line">    N, C, H, W = dout.shape</span><br><span class="line">    G, x, x_hat, x_mean, x_var, gamma, beta, eps = cache</span><br><span class="line">    num = C // G</span><br><span class="line">    <span class="comment"># dx_hat (N, C, H, W)</span></span><br><span class="line">    dx_hat = dout * gamma</span><br><span class="line"></span><br><span class="line">    <span class="comment"># Calculation with the shape of(N*G, num*H*W)</span></span><br><span class="line">    dx_hat = dx_hat.reshape(N*G, num*H*W)</span><br><span class="line">    dx_hat_T = dx_hat.T</span><br><span class="line">    tmp_N = num * H * W</span><br><span class="line"></span><br><span class="line">    dx_var = <span class="number">-0.5</span> * np.sum(dx_hat_T * (x - x_mean) * np.power(x_var + eps, <span class="number">-3</span> / <span class="number">2</span>), axis=<span class="number">0</span>)</span><br><span class="line">    dx_mean = np.sum(dx_hat_T * (<span class="number">-1</span> / np.sqrt(x_var + eps)), axis=<span class="number">0</span>) + np.sum(<span class="number">-2</span> * dx_var * (x - x_mean), axis=<span class="number">0</span>) / tmp_N</span><br><span class="line"></span><br><span class="line">    dx_group_T = dx_hat_T / np.sqrt(x_var + eps) + dx_var * <span class="number">2</span> * (x - x_mean) / tmp_N + dx_mean / tmp_N</span><br><span class="line">    dx = dx_group_T.T.reshape(N, C, H, W)</span><br><span class="line"></span><br><span class="line">    dgamma = np.sum(dout * x_hat, axis=(<span class="number">0</span>,<span class="number">2</span>,<span class="number">3</span>)).reshape(<span class="number">1</span>, C, <span class="number">1</span>, <span class="number">1</span>)</span><br><span class="line">    dbeta = np.sum(dout, axis=(<span class="number">0</span>,<span class="number">2</span>,<span class="number">3</span>)).reshape(<span class="number">1</span>, C, <span class="number">1</span>, <span class="number">1</span>)</span><br><span class="line">    <span class="comment">###########################################################################</span></span><br><span class="line">    <span class="comment">#                             END OF YOUR CODE                            #</span></span><br><span class="line">    <span class="comment">###########################################################################</span></span><br><span class="line">    <span class="keyword">return</span> dx, dgamma, dbeta</span><br></pre></td></tr></table></figure></p>
+
+      
+    </div>
+    
+    
+    
+
+<div>
+  
+    <div>
+    
+        <div style="text-align:center;color: #555;font-size:14px;">-------------The End-------------</div>
+    
+</div>
+  
+</div>
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/cs231n/" rel="tag"># cs231n</a>
+          
+            <a href="/tags/计算机视觉/" rel="tag"># 计算机视觉</a>
+          
+            <a href="/tags/神经网络/" rel="tag"># 神经网络</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/12/03/cs231n_assignment2(Dropout)/" rel="next" title="cs231n_assignment2(Dropout)">
+                <i class="fa fa-chevron-left"></i> cs231n_assignment2(Dropout)
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/12/10/如何训练一个网络/" rel="prev" title="如何训练一个网络">
+                如何训练一个网络 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="lv-container" data-id="city" data-uid="MTAyMC80MDY4Mi8xNzIwNw=="></div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/avatar2.jpg" alt="JF Wang">
+            
+              <p class="site-author-name" itemprop="name">JF Wang</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives">
+              
+                  <span class="site-state-item-count">25</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">9</span>
+                  <span class="site-state-item-name">categories</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">21</span>
+                  <span class="site-state-item-name">tags</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#cs231n-assignment2-ConvolutionalNetworks"><span class="nav-number">1.</span> <span class="nav-text">cs231n_assignment2(ConvolutionalNetworks)</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Convolution-Naive-forward-pass"><span class="nav-number">1.1.</span> <span class="nav-text">Convolution: Naive forward pass</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Convolution-Naive-backward-pass"><span class="nav-number">1.2.</span> <span class="nav-text">Convolution: Naive backward pass</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Max-Pooling-Naive-forward"><span class="nav-number">1.3.</span> <span class="nav-text">Max-Pooling: Naive forward</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Max-Pooling-Naive-backward"><span class="nav-number">1.4.</span> <span class="nav-text">Max-Pooling: Naive backward</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Spatial-batch-normalization-forward"><span class="nav-number">1.5.</span> <span class="nav-text">Spatial batch normalization: forward</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Spatial-batch-normalization-backward"><span class="nav-number">1.6.</span> <span class="nav-text">Spatial batch normalization: backward</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Spatial-group-normalization-forward"><span class="nav-number">1.7.</span> <span class="nav-text">Spatial group normalization: forward</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Spatial-group-normalization-backward"><span class="nav-number">1.8.</span> <span class="nav-text">Spatial group normalization: backward</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2018 &mdash; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">JF Wang</span>
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+      <span class="post-meta-item-text">Site words total count&#58;</span>
+    
+    <span title="Site words total count">44.2k</span>
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Gemini</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+    <script type="text/javascript">
+      (function(d, s) {
+        var j, e = d.getElementsByTagName(s)[0];
+        if (typeof LivereTower === 'function') { return; }
+        j = d.createElement(s);
+        j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+        j.async = true;
+        e.parentNode.insertBefore(j, e);
+      })(document, 'script');
+    </script>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.4.js"></script>
+  <script>AV.initialize("RNdl2wO1FNBvt55Si3t38Ur0-gzGzoHsz", "Bq8si1UE7hC2B4OsFFJYUcnQ");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+
+  
+
+  
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+  
+
+  
+
+</body>
+</html>
