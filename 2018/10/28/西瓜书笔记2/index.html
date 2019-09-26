@@ -117,8 +117,8 @@
 <meta property="og:locale" content="UTF-8">
 <meta property="og:image" content="http://static.zybuluo.com/BYWMM/xlyb0cj73sgft50a30xmi84t/image_1cqivvinr1s3m1u36a39lrl17b4m.png">
 <meta property="og:image" content="http://static.zybuluo.com/BYWMM/mq871imp22pudicdeijpprjh/image_1cqj8jemkeo6eq8vsqhn8k9p2i.png">
-<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/13977285-7b3183682467896f.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
-<meta property="og:updated_time" content="2018-11-14T07:45:34.572Z">
+<meta property="og:image" content="http://static.zybuluo.com/BYWMM/8i6ju4rq6lzhbg4jzxhtqc24/image_1dlf87p0n18vg15vi1qc416449r4m.png">
+<meta property="og:updated_time" content="2019-09-26T08:04:27.757Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="西瓜书笔记2 模型评估与选择">
 <meta name="twitter:description" content="评估方法；性能度量；比较检验；偏差与方差；">
@@ -422,7 +422,7 @@
       
         <h1 id="西瓜书笔记2-模型评估与选择"><a href="#西瓜书笔记2-模型评估与选择" class="headerlink" title="西瓜书笔记2 模型评估与选择"></a>西瓜书笔记2 模型评估与选择</h1><h2 id="经验误差与过拟合"><a href="#经验误差与过拟合" class="headerlink" title="经验误差与过拟合"></a>经验误差与过拟合</h2><p>几个概念问题</p>
 <h3 id="精度与错误率"><a href="#精度与错误率" class="headerlink" title="精度与错误率"></a>精度与错误率</h3><p>m个样本中有a个样本分类错误，则</p>
-<p><strong>错误率</strong> $ E=\frac{a}{m} $<strong>精度</strong> $ 1-\frac{a}{m}$</p>
+<p><strong>错误率</strong> $E=\frac{a}{m}$ <strong>精度</strong> $1-\frac{a}{m}$</p>
 <h3 id="误差"><a href="#误差" class="headerlink" title="误差"></a>误差</h3><p><strong>误差</strong>：学习器的实际预测输出与样本的真实输出之间的差异</p>
 <p><strong>训练误差（经验误差）</strong>：学习器在训练集上的误差</p>
 <p><strong>泛化误差</strong>：学习器在新样本上的误差</p>
@@ -565,7 +565,8 @@ AUC=1-\ell_{rank}</script><blockquote>
 <p>期望输出与真实标记的差别称为偏差</p>
 <script type="math/tex; mode=display">bias^2(\boldsymbol{x})=(\overline{f}(\boldsymbol{x})-y)^2</script><p>对算法的期望泛化误差进行分解：</p>
 <script type="math/tex; mode=display">E(f;D)=bias^2(\boldsymbol{x})+var(\boldsymbol{x})+\varepsilon^2</script><p><strong>泛化误差可分解为偏差、方差与噪声之和</strong>。</p>
-<p><strong>偏差-方差窘境</strong><br>一般来说，偏差与方差是有冲突的。<br><img src="https://upload-images.jianshu.io/upload_images/13977285-7b3183682467896f.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="泛化误差与偏差、方差的关系示意图"></p>
+<p><strong>偏差-方差窘境</strong><br>一般来说，偏差与方差是有冲突的。</p>
+<p><img src="http://static.zybuluo.com/BYWMM/8i6ju4rq6lzhbg4jzxhtqc24/image_1dlf87p0n18vg15vi1qc416449r4m.png" width="400"></p>
 <blockquote>
 <ul>
 <li>训练不足时，学习器的拟合能力不够强，训练数据的扰动不足以使学习器产生显著变化，此时偏差主导了泛化错误率；</li>
@@ -746,7 +747,7 @@ AUC=1-\ell_{rank}</script><blockquote>
               
                 <a href="/archives">
               
-                  <span class="site-state-item-count">25</span>
+                  <span class="site-state-item-count">27</span>
                   <span class="site-state-item-name">posts</span>
                 </a>
               </div>
@@ -757,7 +758,7 @@ AUC=1-\ell_{rank}</script><blockquote>
               
               <div class="site-state-item site-state-categories">
                 <a href="/categories/index.html">
-                  <span class="site-state-item-count">9</span>
+                  <span class="site-state-item-count">10</span>
                   <span class="site-state-item-name">categories</span>
                 </a>
               </div>
@@ -768,7 +769,7 @@ AUC=1-\ell_{rank}</script><blockquote>
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">21</span>
+                  <span class="site-state-item-count">22</span>
                   <span class="site-state-item-name">tags</span>
                 </a>
               </div>
@@ -842,7 +843,7 @@ AUC=1-\ell_{rank}</script><blockquote>
     
       <span class="post-meta-item-text">Site words total count&#58;</span>
     
-    <span title="Site words total count">44.2k</span>
+    <span title="Site words total count">45.5k</span>
   
 </div>
 
