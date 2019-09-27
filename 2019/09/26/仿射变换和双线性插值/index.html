@@ -118,9 +118,10 @@
 <meta property="og:image" content="https://bywmm.github.io/2019/09/26/images/stn/scale.png">
 <meta property="og:image" content="https://bywmm.github.io/2019/09/26/images/stn/rot.png">
 <meta property="og:image" content="https://bywmm.github.io/2019/09/26/images/stn/shear.png">
+<meta property="og:image" content="https://bywmm.github.io/2019/09/26/仿射变换和双线性插值/shear.png">
 <meta property="og:image" content="https://bywmm.github.io/2019/09/26/images/stn/stickman.png">
 <meta property="og:image" content="https://bywmm.github.io/2019/09/26/images/stn/interpol.png">
-<meta property="og:updated_time" content="2019-09-26T15:46:46.161Z">
+<meta property="og:updated_time" content="2019-09-27T01:24:22.991Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="仿射变换&amp;双线性插值">
 <meta name="twitter:description" content="仿射变换=线性变换+平移">
@@ -381,7 +382,7 @@
                   <span class="post-meta-item-text">Words count in article&#58;</span>
                 
                 <span title="Words count in article">
-                  1k
+                  1.1k
                 </span>
               
 
@@ -461,6 +462,7 @@ K'= \left[\begin{matrix}\cos\theta & -\sin\theta \\ \sin\theta & \cos\theta
   \left[\begin{matrix}x\cos\theta-y\sin\theta \\ x\sin\theta+y\cos\theta
   \end{matrix}\right]</script><p><a href="https://blog.csdn.net/wodownload2/article/details/72637897" target="_blank" rel="noopener">旋转矩阵推导</a></p>
 <h3 id="裁剪-Shear"><a href="#裁剪-Shear" class="headerlink" title="裁剪(Shear)"></a>裁剪(Shear)</h3><p><img src="../images/stn/shear.png" height="200"></p>
+<p><img src="shear.png" alt="123"></p>
 <p>（好吧，这个变换我根本不懂什么意义）</p>
 <h3 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h3><p>我们定义了3个基本的线性变换：</p>
 <ul>
@@ -488,9 +490,10 @@ M=\left[\begin{matrix}
 <script type="math/tex; mode=display">
 M=\left[\begin{matrix}
   a & b & e\\ c & d & f
-  \end{matrix}\right]</script><h2 id="双线性插值"><a href="#双线性插值" class="headerlink" title="双线性插值"></a>双线性插值</h2><p>当我们进行了仿射变换后，比如旋转或者放缩，得到右图中对应的位置（往往不是整数）。我们需要右图每个整数点的像素值才能渲染出这张image，所以需要逆仿射变换回左图找到原点的坐标，此时原点坐标为小数，例如(6.7,3.2)，我们使用双线性插值对该点的像素值进行估计。</p>
-<p>（这理解感觉是错误的，总不能求$M$的逆吧）</p>
+  \end{matrix}\right]</script><h2 id="双线性插值"><a href="#双线性插值" class="headerlink" title="双线性插值"></a>双线性插值</h2><p>当我们进行了仿射变换后，比如旋转或者放缩，得到左图各像素点在右图中对应的位置，但转换后的坐标往往不是整数。我们需要得到右图每个整数点的像素值才能渲染出这张image。所以要想点办法。</p>
 <p><img src="../images/stn/stickman.png"></p>
+<p>考虑到，我们将左图乘了一个$M$得到变换后的坐标，同样存在一种逆变换$M’$可以让我们将右图各像素点还原到左图相对应的位置。同样，这些位置虽然不一定是整数，但我们可以使用<strong>双线性插值</strong>等方法对其像素值进行估计。</p>
+<p><strong>所以在实际操作中所求的$M$其实是一种从后到前的逆变换。</strong><br>（个人理解）</p>
 <h3 id="算法原理"><a href="#算法原理" class="headerlink" title="算法原理"></a>算法原理</h3><p><img src="../images/stn/interpol.png" width="400"></p>
 <p>先做$x$轴方向的线性插值得到$R_2$和$R_1$。</p>
 <script type="math/tex; mode=display">
@@ -498,6 +501,7 @@ R_1=\frac{x_2-x}{x_2-x_1}Q_{11}+\frac{x-x_1}{x_2-x_1}Q_{21}</script><script type
 R_2=\frac{x_2-x}{x_2-x_1}Q_{12}+\frac{x-x_1}{x_2-x_1}Q_{22}</script><p>再做$y$轴方向的线性插值</p>
 <script type="math/tex; mode=display">
 P=\frac{y_2-y}{y_2-y_1}R_1+\frac{y-y_1}{y_2-y_1}R_2</script><p>当然也可以先做$y$轴的插值在做$x$轴的插值。</p>
+<h2 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h2><p>搬运自：<a href="https://kevinzakka.github.io/2017/01/10/stn-part1/" target="_blank" rel="noopener">kevin’s blog</a></p>
 
       
     </div>
@@ -634,7 +638,7 @@ P=\frac{y_2-y}{y_2-y_1}R_1+\frac{y-y_1}{y_2-y_1}R_2</script><p>当然也可以�
               
                 <a href="/archives">
               
-                  <span class="site-state-item-count">27</span>
+                  <span class="site-state-item-count">26</span>
                   <span class="site-state-item-name">posts</span>
                 </a>
               </div>
@@ -645,7 +649,7 @@ P=\frac{y_2-y}{y_2-y_1}R_1+\frac{y-y_1}{y_2-y_1}R_2</script><p>当然也可以�
               
               <div class="site-state-item site-state-categories">
                 <a href="/categories/index.html">
-                  <span class="site-state-item-count">10</span>
+                  <span class="site-state-item-count">9</span>
                   <span class="site-state-item-name">categories</span>
                 </a>
               </div>
@@ -656,7 +660,7 @@ P=\frac{y_2-y}{y_2-y_1}R_1+\frac{y-y_1}{y_2-y_1}R_2</script><p>当然也可以�
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">22</span>
+                  <span class="site-state-item-count">21</span>
                   <span class="site-state-item-name">tags</span>
                 </a>
               </div>
@@ -696,7 +700,7 @@ P=\frac{y_2-y}{y_2-y_1}R_1+\frac{y-y_1}{y_2-y_1}R_2</script><p>当然也可以�
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#仿射变换-amp-双线性插值"><span class="nav-number">1.</span> <span class="nav-text">仿射变换&amp;双线性插值</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#线性变换"><span class="nav-number">1.1.</span> <span class="nav-text">线性变换</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#放缩-Scaling"><span class="nav-number">1.1.1.</span> <span class="nav-text">放缩(Scaling)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#旋转-Rotation"><span class="nav-number">1.1.2.</span> <span class="nav-text">旋转(Rotation)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#裁剪-Shear"><span class="nav-number">1.1.3.</span> <span class="nav-text">裁剪(Shear)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#小结"><span class="nav-number">1.1.4.</span> <span class="nav-text">小结</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#仿射变换"><span class="nav-number">1.2.</span> <span class="nav-text">仿射变换</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#双线性插值"><span class="nav-number">1.3.</span> <span class="nav-text">双线性插值</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#算法原理"><span class="nav-number">1.3.1.</span> <span class="nav-text">算法原理</span></a></li></ol></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#仿射变换-amp-双线性插值"><span class="nav-number">1.</span> <span class="nav-text">仿射变换&amp;双线性插值</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#线性变换"><span class="nav-number">1.1.</span> <span class="nav-text">线性变换</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#放缩-Scaling"><span class="nav-number">1.1.1.</span> <span class="nav-text">放缩(Scaling)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#旋转-Rotation"><span class="nav-number">1.1.2.</span> <span class="nav-text">旋转(Rotation)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#裁剪-Shear"><span class="nav-number">1.1.3.</span> <span class="nav-text">裁剪(Shear)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#小结"><span class="nav-number">1.1.4.</span> <span class="nav-text">小结</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#仿射变换"><span class="nav-number">1.2.</span> <span class="nav-text">仿射变换</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#双线性插值"><span class="nav-number">1.3.</span> <span class="nav-text">双线性插值</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#算法原理"><span class="nav-number">1.3.1.</span> <span class="nav-text">算法原理</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#代码"><span class="nav-number">1.4.</span> <span class="nav-text">代码</span></a></li></ol></li></ol></div>
             
 
           </div>
