@@ -120,7 +120,7 @@
 <meta property="og:image" content="https://bywmm.github.io/2019/09/26/仿射变换和双线性插值/shear.png">
 <meta property="og:image" content="https://bywmm.github.io/2019/09/26/仿射变换和双线性插值/stickman.png">
 <meta property="og:image" content="https://bywmm.github.io/2019/09/26/仿射变换和双线性插值/interpol.png">
-<meta property="og:updated_time" content="2019-09-27T01:36:29.564Z">
+<meta property="og:updated_time" content="2019-09-29T07:23:24.586Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="仿射变换&amp;双线性插值">
 <meta name="twitter:description" content="仿射变换=线性变换+平移">
@@ -424,12 +424,12 @@
       
         <h1 id="仿射变换-amp-双线性插值"><a href="#仿射变换-amp-双线性插值" class="headerlink" title="仿射变换&amp;双线性插值"></a>仿射变换&amp;双线性插值</h1><h2 id="线性变换"><a href="#线性变换" class="headerlink" title="线性变换"></a>线性变换</h2><p>在介绍仿射变换之前，先提一下线性变换。<br>我们定义：</p>
 <ul>
-<li>点$k$二维空间内一点，用列向量$\left[<br>\begin{matrix}<br>x \ y<br>\end{matrix}<br>\right]<br>$表示</li>
-<li>矩阵$M=\left[<br>\begin{matrix}<br>a &amp; b \ c &amp; d<br>\end{matrix}<br>\right]$表示一个$(2\times2)$的一个方阵</li>
+<li>点$k$二维空间内一点，用列向量$\left[<br>\begin{matrix}<br>x \\y<br>\end{matrix}<br>\right]<br>$表示</li>
+<li>矩阵$M=\left[<br>\begin{matrix}<br>a &amp; b \\c &amp; d<br>\end{matrix}<br>\right]$表示一个$(2\times2)$的一个方阵</li>
 </ul>
 <p>通过对$M$取不同的值，可以对$k$完成不同的线性变换。</p>
 <script type="math/tex; mode=display">
-K'=MK</script><p>例如，当$M=\left[<br> \begin{matrix}<br>  1 &amp; 0 \ 0 &amp; 1<br>  \end{matrix}<br>  \right]$时，</p>
+K'=MK</script><p>例如，当$M=\left[<br> \begin{matrix}<br>  1 &amp; 0 \\0 &amp; 1<br>  \end{matrix}<br>  \right]$时，</p>
 <script type="math/tex; mode=display">
 K'= \left[\begin{matrix}1 & 0 \\ 0 & 1
   \end{matrix}\right]
@@ -478,7 +478,7 @@ K'=(RHS)K=MK</script><p>当我们进行多次线性变换的时候，不需要�
 <p>所以，我们用一个三维的<strong>齐次坐标</strong>来表示二维向量：</p>
 <ul>
 <li>点$k$用一个$(3\times1)$列向量$\left[\begin{matrix}x \ y \ 1<br>\end{matrix}\right]$表示</li>
-<li>矩阵$M=\left[<br>\begin{matrix}<br>a &amp; b &amp; 0\ c &amp; d &amp; 0 \\0 &amp; 0 &amp; 1<br>\end{matrix}<br>\right]$表示一个$(3\times3)$的一个方阵</li>
+<li>矩阵$M=\left[<br>\begin{matrix}<br>a &amp; b &amp; 0\\c &amp; d &amp; 0 \\0 &amp; 0 &amp; 1<br>\end{matrix}<br>\right]$表示一个$(3\times3)$的一个方阵</li>
 </ul>
 <p>为了表示<strong>平移变换</strong>，我们只需要在$M$的第三列放两个新的参数$e,f$</p>
 <script type="math/tex; mode=display">
