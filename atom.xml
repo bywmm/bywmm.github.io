@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://bywmm.github.io/"/>
-  <updated>2019-09-29T03:58:32.703Z</updated>
+  <updated>2019-09-29T04:05:28.733Z</updated>
   <id>https://bywmm.github.io/</id>
   
   <author>
@@ -18,16 +18,16 @@
   
   <entry>
     <title>论文笔记：Spatial Transformer Networks</title>
-    <link href="https://bywmm.github.io/2019/09/26/%E8%AE%BA%E6%96%87%E7%AC%94%E8%AE%B0%EF%BC%9ASpatial%20Transformer%20Networks/"/>
-    <id>https://bywmm.github.io/2019/09/26/论文笔记：Spatial Transformer Networks/</id>
+    <link href="https://bywmm.github.io/2019/09/26/%E8%AE%BA%E6%96%87%E7%AC%94%E8%AE%B0%EF%BC%9ASpatial-Transformer-Networks/"/>
+    <id>https://bywmm.github.io/2019/09/26/论文笔记：Spatial-Transformer-Networks/</id>
     <published>2019-09-26T15:45:15.000Z</published>
-    <updated>2019-09-29T03:58:32.703Z</updated>
+    <updated>2019-09-29T04:05:28.733Z</updated>
     
-    <content type="html"><![CDATA[<h1 id="论文笔记：Spatial-Transformer-Networks"><a href="#论文笔记：Spatial-Transformer-Networks" class="headerlink" title="论文笔记：Spatial Transformer Networks"></a>论文笔记：Spatial Transformer Networks</h1><h2 id="STN的作用"><a href="#STN的作用" class="headerlink" title="STN的作用"></a>STN的作用</h2><p>CNN本身对平移、旋转、放缩等许多基础变换是不具有不变性的。</p><p>举个例子，如果一个CNN一直在学习如何识别一直猫，训练样本都是一整只猫放满整张图片，如果我们输入一只小猫，那它很有可能不能正确识别。</p><p>当然我们可以通过data argumentation来手动使CNN学习到各种基础变换后的猫。</p><p>但attention model告诉我们，与其让网络隐式的学习到某种能力，不如为网络设计一个显式的处理模块，专门处理以上的各种变换。</p><h2 id="两个概念"><a href="#两个概念" class="headerlink" title="两个概念"></a>两个概念</h2><p><a href="https://bywmm.github.io/2019/09/26/%E4%BB%BF%E5%B0%84%E5%8F%98%E6%8D%A2%E5%92%8C%E5%8F%8C%E7%BA%BF%E6%80%A7%E6%8F%92%E5%80%BC/">仿射变换和双线性插值</a></p><h2 id="STN的基本构架"><a href="#STN的基本构架" class="headerlink" title="STN的基本构架"></a>STN的基本构架</h2><p><img src="/2019/09/26/论文笔记：Spatial Transformer Networks/stn.png" alt="stn结构"></p><p>如图是空间转换模型（spatial transformer module）的基本结构，包括三部分：</p><ul><li>localisation net</li><li>grid generator</li><li>sampler</li></ul><h3 id="如何工作"><a href="#如何工作" class="headerlink" title="如何工作"></a>如何工作</h3><p>有了第2部分的基础，可以很容易理解STN的做法：</p><ol><li>生成$V$的meshgrid，然后通过一个$(2\times3)$的变换矩阵$M$得到每个坐标在$U$中对应的像素位置。</li><li>这个位置可能不是整数，使用双线性插值对该位置的像素值进行估计。</li></ol><p>通过<strong>仿射变换+双线性插值</strong>就可以得到我们需要的图像的相关变形。唯一未知的参数就是变换矩阵$M$，需要什么样的仿射由$M$的值确定。</p><h3 id="三部分"><a href="#三部分" class="headerlink" title="三部分"></a>三部分</h3><p>这就是<strong>localisation net</strong>的作用：</p><script type="math/tex; mode=display">\theta=f_{loc}(U)</script><p>通过前一层的特征$U$找到一个合适的$M$。这个$f_{loc}$可以是任何形式的，通常用一个全连接网络。</p><p>而grid generator，就是通过localisation net得到的$\theta$，也就是变换矩阵$M$，来对$V$的meshgrid进行仿射变换。</p><p>最后一步$Sampler$使用双线性插值得到最终的$V$。</p><h2 id="优点"><a href="#优点" class="headerlink" title="优点"></a>优点</h2><p>模块化：<strong>STN可以插入到模型的任意位置with small tweaking。</strong></p><p>可微分：可以使用反向传播进行收敛操作。</p><p>动态变换：STN对每个输入样本的特征图都进行不同的仿射变换。相比，pooling layer对所有输入样本的作用相同。</p><h2 id="code"><a href="#code" class="headerlink" title="code"></a>code</h2><p><a href="https://github.com/bywmm/Spatia-Transformer-Networks-Demo" target="_blank" rel="noopener">https://github.com/bywmm/Spatia-Transformer-Networks-Demo</a></p>]]></content>
+    <content type="html"><![CDATA[<h1 id="论文笔记：Spatial-Transformer-Networks"><a href="#论文笔记：Spatial-Transformer-Networks" class="headerlink" title="论文笔记：Spatial Transformer Networks"></a>论文笔记：Spatial Transformer Networks</h1><h2 id="STN的作用"><a href="#STN的作用" class="headerlink" title="STN的作用"></a>STN的作用</h2><p>CNN本身对平移、旋转、放缩等许多基础变换是不具有不变性的。</p><p>举个例子，如果一个CNN一直在学习如何识别一直猫，训练样本都是一整只猫放满整张图片，如果我们输入一只小猫，那它很有可能不能正确识别。</p><p>当然我们可以通过data argumentation来手动使CNN学习到各种基础变换后的猫。</p><p>但attention model告诉我们，与其让网络隐式的学习到某种能力，不如为网络设计一个显式的处理模块，专门处理以上的各种变换。</p><h2 id="两个概念"><a href="#两个概念" class="headerlink" title="两个概念"></a>两个概念</h2><p><a href="https://bywmm.github.io/2019/09/26/%E4%BB%BF%E5%B0%84%E5%8F%98%E6%8D%A2%E5%92%8C%E5%8F%8C%E7%BA%BF%E6%80%A7%E6%8F%92%E5%80%BC/">仿射变换和双线性插值</a></p><h2 id="STN的基本构架"><a href="#STN的基本构架" class="headerlink" title="STN的基本构架"></a>STN的基本构架</h2><p><img src="/2019/09/26/论文笔记：Spatial-Transformer-Networks/stn.png" alt="stn结构"></p><p>如图是空间转换模型（spatial transformer module）的基本结构，包括三部分：</p><ul><li>localisation net</li><li>grid generator</li><li>sampler</li></ul><h3 id="如何工作"><a href="#如何工作" class="headerlink" title="如何工作"></a>如何工作</h3><p>有了第2部分的基础，可以很容易理解STN的做法：</p><ol><li>生成$V$的meshgrid，然后通过一个$(2\times3)$的变换矩阵$M$得到每个坐标在$U$中对应的像素位置。</li><li>这个位置可能不是整数，使用双线性插值对该位置的像素值进行估计。</li></ol><p>通过<strong>仿射变换+双线性插值</strong>就可以得到我们需要的图像的相关变形。唯一未知的参数就是变换矩阵$M$，需要什么样的仿射由$M$的值确定。</p><h3 id="三部分"><a href="#三部分" class="headerlink" title="三部分"></a>三部分</h3><p>这就是<strong>localisation net</strong>的作用：</p><script type="math/tex; mode=display">\theta=f_{loc}(U)</script><p>通过前一层的特征$U$找到一个合适的$M$。这个$f_{loc}$可以是任何形式的，通常用一个全连接网络。</p><p>而grid generator，就是通过localisation net得到的$\theta$，也就是变换矩阵$M$，来对$V$的meshgrid进行仿射变换。</p><p>最后一步$Sampler$使用双线性插值得到最终的$V$。</p><h2 id="优点"><a href="#优点" class="headerlink" title="优点"></a>优点</h2><p>模块化：<strong>STN可以插入到模型的任意位置with small tweaking。</strong></p><p>可微分：可以使用反向传播进行收敛操作。</p><p>动态变换：STN对每个输入样本的特征图都进行不同的仿射变换。相比，pooling layer对所有输入样本的作用相同。</p><h2 id="code"><a href="#code" class="headerlink" title="code"></a>code</h2><p><a href="https://github.com/bywmm/Spatia-Transformer-Networks-Demo" target="_blank" rel="noopener">https://github.com/bywmm/Spatia-Transformer-Networks-Demo</a></p>]]></content>
     
     <summary type="html">
     
-      Batch Normalization：Accelerating Deep Network Training by Reducing Internal Covariate Shift
+      Make CNN have translation invariance
     
     </summary>
     
