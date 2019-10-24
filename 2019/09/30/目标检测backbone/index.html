@@ -1,0 +1,1017 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="UTF-8">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="目标检测,backbone,">
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="bywmm's blog" type="application/atom+xml">
+
+
+
+
+
+
+<meta name="description" content="读到Mask R-CNN，文中使用多种backbone的结果效果进行对比。这里对目标检测的各种backbone进行总结。">
+<meta name="keywords" content="目标检测,backbone">
+<meta property="og:type" content="article">
+<meta property="og:title" content="目标检测backbone">
+<meta property="og:url" content="https://bywmm.github.io/2019/09/30/目标检测backbone/index.html">
+<meta property="og:site_name" content="bywmm&#39;s blog">
+<meta property="og:description" content="读到Mask R-CNN，文中使用多种backbone的结果效果进行对比。这里对目标检测的各种backbone进行总结。">
+<meta property="og:locale" content="UTF-8">
+<meta property="og:image" content="https://bywmm.github.io/2019/09/30/目标检测backbone/building-block.png">
+<meta property="og:image" content="https://bywmm.github.io/2019/09/30/目标检测backbone/building-block-examples.png">
+<meta property="og:image" content="https://bywmm.github.io/2019/09/30/目标检测backbone/architecture-of-ResNet-xx.png">
+<meta property="og:image" content="http://static.zybuluo.com/BYWMM/yyaz5su9uchaw68gfpf5kqx0/image_1dl8r5jsf1n0hqsveqa6em1bi39.png">
+<meta property="og:image" content="http://static.zybuluo.com/BYWMM/eie86ipgtl44mzsty4gvvydf/image_1dl8s0fgs1oma1tnu1ks8m32hlsm.png">
+<meta property="og:updated_time" content="2019-10-24T03:54:15.210Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="目标检测backbone">
+<meta name="twitter:description" content="读到Mask R-CNN，文中使用多种backbone的结果效果进行对比。这里对目标检测的各种backbone进行总结。">
+<meta name="twitter:image" content="https://bywmm.github.io/2019/09/30/目标检测backbone/building-block.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://bywmm.github.io/2019/09/30/目标检测backbone/">
+
+
+
+
+
+  <title>目标检测backbone | bywmm's blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="UTF-8">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">bywmm's blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-主页">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            主页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-标签">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-分类">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-归档">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://bywmm.github.io/2019/09/30/目标检测backbone/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="JF Wang">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar2.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="bywmm's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">目标检测backbone</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-09-30T09:32:51+08:00">
+                2019-09-30
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/object-detection/" itemprop="url" rel="index">
+                    <span itemprop="name">object detection</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2019/09/30/目标检测backbone/" class="leancloud_visitors" data-flag-title="目标检测backbone">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">Visitors&#58;</span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Words count in article&#58;</span>
+                
+                <span title="Words count in article">
+                  1.7k
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Reading time &asymp;</span>
+                
+                <span title="Reading time">
+                  6
+                </span>
+              
+            </div>
+          
+
+          
+              <div class="post-description">
+                  读到Mask R-CNN，文中使用多种backbone的结果效果进行对比。这里对目标检测的各种backbone进行总结。
+              </div>
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="目标检测的backbone"><a href="#目标检测的backbone" class="headerlink" title="目标检测的backbone"></a>目标检测的backbone</h1><h2 id="ResNet"><a href="#ResNet" class="headerlink" title="ResNet"></a>ResNet</h2><p>Deeper neural networks are more difficult to train.残差网络的提出，可以训练更深的网络。</p>
+<h3 id="A-building-block"><a href="#A-building-block" class="headerlink" title="A building block"></a>A building block</h3><p>残差块使用了一种”shortcut connection”的链接方式，顾名思义，shortcut就是“抄近道”的意思，看下图我们就能大致理解：</p>
+<p><img src="/2019/09/30/目标检测backbone/building-block.png" width="350"></p>
+<p>真正在使用的残差块并不是这么单一，文章中就提出了两种方式：</p>
+<p><img src="/2019/09/30/目标检测backbone/building-block-examples.png" width="800"></p>
+<p>这两种结构分别针对ResNet34（左图）和ResNet50/101/152（右图）。</p>
+<p>其中右图又称为”<strong>bottleneck design</strong>“，目的就是为了<strong>降低参数的数目</strong>。</p>
+<p>第一个1x1的卷积把256维channel降到64维，然后在最后通过1x1卷积恢复，整体上用的参数数目：1x1x256x64 + 3x3x64x64 + 1x1x64x256 = 69632；而不使用bottleneck的话就是两个3x3x256的卷积，参数数目: 3x3x256x256x2 = 1179648，差了16.94倍。<br>对于常规building blocks，可以用于34层或者更少的网络中，而bottleneck design通常用于更深的如ResNet101这样的网络中，目的是减少计算和参数量。</p>
+<script type="math/tex; mode=display">y = F(\boldsymbol{x}) + \boldsymbol{x}</script><p>我们看到残差块是通过一条 shortcut connection 保留低层网络学到的特征$\boldsymbol{x}$，和这几层新学的特征$F(\boldsymbol{x})$相加。这样理论上网络最差也不会比低层网络的效果差。</p>
+<script type="math/tex; mode=display">y = F(\boldsymbol{x}) + W_s\boldsymbol{x}</script><p>如果$F(\boldsymbol{x})$和$\boldsymbol{x}$维度不同的话，通过一个$W_s$进行线性的维度映射（mask-rcnn <a href="https://github.com/matterport/Mask_RCNN" target="_blank" rel="noopener">keras&amp;tf实现</a>中是用的一个ConvNet）。</p>
+<h3 id="ResNet50和ResNet101"><a href="#ResNet50和ResNet101" class="headerlink" title="ResNet50和ResNet101"></a>ResNet50和ResNet101</h3><p>下表一共列出了5种深度ResNet的architecture。所有的ResNet都分成5部分，分别是：conv1，conv2_x，conv3_x，conv4_x，conv5_x，之后的其他论文也会专门用这个称呼指代ResNet50或者101的每部分。</p>
+<p><img src="/2019/09/30/目标检测backbone/architecture-of-ResNet-xx.png"></p>
+<p>很多方法都建立在<strong>ResNet50或者ResNet101</strong>的基础上完成的。这里我们关注50-layer和101-layer这两列，可以发现，它们<strong>唯一的不同在于conv4_x</strong>，ResNet50有6个block，而ResNet101有23个block，相差17个block，也就是17 x 3 = 51层。</p>
+<p>注：101层网络仅仅指卷积或者全连接层，而激活层或者Pooling层并没有计算在内；</p>
+<p><strong>ResNet50的keras实现：<a href="https://github.com/fchollet/deep-learning-models/blob/master/resnet50.py" target="_blank" rel="noopener">https://github.com/fchollet/deep-learning-models/blob/master/resnet50.py</a></strong></p>
+<h2 id="FPN"><a href="#FPN" class="headerlink" title="FPN"></a>FPN</h2><h3 id="FPN解决了什么问题"><a href="#FPN解决了什么问题" class="headerlink" title="FPN解决了什么问题"></a>FPN解决了什么问题</h3><p>在以往的faster r-cnn进行目标检测的时候，roi都只作用在最后一层。这对于大目标的检测没有问题，但对于小目标的检测就会出现问题，因为随着卷积操作会缩小特征图的尺寸，小目标的语义信息到高层已经不存在了。卷积网络在较低层分辨率高，学习到了较多的细节信息；较高层分辨率低，学习到了较多的语义信息。<br>所以<strong>为了解决多尺度检测的问题，引入了特征金字塔网络</strong>。</p>
+<p><img src="http://static.zybuluo.com/BYWMM/yyaz5su9uchaw68gfpf5kqx0/image_1dl8r5jsf1n0hqsveqa6em1bi39.png"></p>
+<ul>
+<li>图（a）使用了图像金字塔来建立一个特征金字塔。通过不同尺度的图像训练得到不同尺度的特征。慢。</li>
+<li>图（b）CNN</li>
+<li>图（c）SSD较早尝试了使用CNN金字塔形的层级特征。理想情况下，SSD风格的金字塔 重利用了前向过程计算出的来自多层的多尺度特征图，因此这种形式是不消耗额外的资源的。<strong>但是SSD为了避免使用low-level的特征，放弃了浅层的feature map</strong>，而是从conv4_3开始建立金字塔，而且加入了一些新的层。因此SSD放弃了重利用更高分辨率的feature map，但是这些feature map对检测小目标非常重要。这就是SSD与FPN的区别。</li>
+<li>图（d）FPN</li>
+</ul>
+<h3 id="如何工作"><a href="#如何工作" class="headerlink" title="如何工作"></a>如何工作</h3><p>FPN为了自然地利用CNN层级特征的金字塔形式，同时生成在所有尺度上都具有强语义信息的特征金字塔。所以FPN的结构设计了top-down结构和横向连接，以此融合具有高分辨率的浅层layer和具有丰富语义信息的深层layer。这样就实现了从单尺度的单张输入图像，快速构建在所有尺度上都具有强语义信息的特征金字塔，同时不产生明显的代价。</p>
+<p><strong>自下而上的路径</strong><br>CNN的前馈计算就是自下而上的路径，特征图经过卷积核计算，通常是越变越小的，也有一些特征层的输出和原来大小一样，称为”same network stage”。对于每个stage选择最后一层的输出作为特征图的参考集。 这种选择是很自然的，因为每个阶段的最深层应该具有最强的特征。<br>具体来说，对于ResNets，作者使用了每个阶段的最后一个残差结构的特征激活输出。将这些残差模块输出表示为{C2, C3, C4, C5}，对应于conv2，conv3，conv4和conv5的输出，并且注意它们相对于输入图像具有{4, 8, 16, 32}像素的步长。考虑到内存占用，没有将conv1包含在金字塔中。</p>
+<p><strong>自上而下的路径和横向连接</strong><br>自上而下的路径（the top-down pathway ）是如何去结合低层高分辨率的特征呢？方法就是，把更抽象，语义更强的高层特征图进行上取样，然后把该特征横向连接（lateral connections ）至前一层特征，因此高层特征得到加强。值得注意的是，横向连接的两层特征在空间尺寸上要相同。这样做应该主要是为了利用底层的定位细节信息。</p>
+<p><img src="http://static.zybuluo.com/BYWMM/eie86ipgtl44mzsty4gvvydf/image_1dl8s0fgs1oma1tnu1ks8m32hlsm.png"></p>
+<p>上图显示连接细节。把高层特征做2倍上采样（最邻近上采样法，可以参考反卷积），然后将其和对应的前一层特征结合（前一层要经过1 <em> 1的卷积核才能用，目的是改变channels，应该是要和后一层的channels相同），结合方式就是做像素间的加法。重复迭代该过程，直至生成最精细的特征图。迭代开始阶段，作者在C5层后面加了一个1 </em> 1的卷积核来产生最粗略的特征图，最后，作者用3 <em> 3的卷积核去处理已经融合的特征图（为了消除上采样的混叠效应），以生成最后需要的特征图。为了后面的应用能够在所有层级共享分类层，这里坐着固定了3</em>3卷积后的输出通道为d,这里设为256.因此所有额外的卷积层（比如P2）具有256通道输出。这些额外层没有用非线性。</p>
+<p>{C2, C3, C4, C5}层对应的融合特征层为{P2, P3, P4, P5}，对应的层空间尺寸是相通的。</p>
+<p>源码可参考mask r-cnn</p>
+
+      
+    </div>
+    
+    
+    
+
+<div>
+  
+    <div>
+    
+        <div style="text-align:center;color: #555;font-size:14px;">-------------The End-------------</div>
+    
+</div>
+  
+</div>
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/目标检测/" rel="tag"># 目标检测</a>
+          
+            <a href="/tags/backbone/" rel="tag"># backbone</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/09/26/论文笔记：Spatial-Transformer-Networks/" rel="next" title="论文笔记：Spatial Transformer Networks">
+                <i class="fa fa-chevron-left"></i> 论文笔记：Spatial Transformer Networks
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/10/07/西瓜书笔记6/" rel="prev" title="西瓜书笔记6 支持向量机">
+                西瓜书笔记6 支持向量机 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="lv-container" data-id="city" data-uid="MTAyMC80MDY4Mi8xNzIwNw=="></div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/avatar2.jpg" alt="JF Wang">
+            
+              <p class="site-author-name" itemprop="name">JF Wang</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives">
+              
+                  <span class="site-state-item-count">30</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">22</span>
+                  <span class="site-state-item-name">categories</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">28</span>
+                  <span class="site-state-item-name">tags</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#目标检测的backbone"><span class="nav-number">1.</span> <span class="nav-text">目标检测的backbone</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#ResNet"><span class="nav-number">1.1.</span> <span class="nav-text">ResNet</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#A-building-block"><span class="nav-number">1.1.1.</span> <span class="nav-text">A building block</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ResNet50和ResNet101"><span class="nav-number">1.1.2.</span> <span class="nav-text">ResNet50和ResNet101</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#FPN"><span class="nav-number">1.2.</span> <span class="nav-text">FPN</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#FPN解决了什么问题"><span class="nav-number">1.2.1.</span> <span class="nav-text">FPN解决了什么问题</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#如何工作"><span class="nav-number">1.2.2.</span> <span class="nav-text">如何工作</span></a></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2018 &mdash; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">JF Wang</span>
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+      <span class="post-meta-item-text">Site words total count&#58;</span>
+    
+    <span title="Site words total count">50.8k</span>
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Gemini</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+    <script type="text/javascript">
+      (function(d, s) {
+        var j, e = d.getElementsByTagName(s)[0];
+        if (typeof LivereTower === 'function') { return; }
+        j = d.createElement(s);
+        j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+        j.async = true;
+        e.parentNode.insertBefore(j, e);
+      })(document, 'script');
+    </script>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.4.js"></script>
+  <script>AV.initialize("RNdl2wO1FNBvt55Si3t38Ur0-gzGzoHsz", "Bq8si1UE7hC2B4OsFFJYUcnQ");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+
+  
+
+  
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+  
+
+  
+
+</body>
+</html>

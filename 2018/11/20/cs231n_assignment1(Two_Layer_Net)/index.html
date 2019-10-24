@@ -110,7 +110,7 @@
 <meta name="description" content="Backpropogation；learning decay rate；debug the training；">
 <meta name="keywords" content="cs231n,计算机视觉,神经网络">
 <meta property="og:type" content="article">
-<meta property="og:title" content="cs231n_assignment1(Two_Layer_Net)">
+<meta property="og:title" content="cs231n assignment1(Two_Layer_Net)">
 <meta property="og:url" content="https://bywmm.github.io/2018/11/20/cs231n_assignment1(Two_Layer_Net)/index.html">
 <meta property="og:site_name" content="bywmm&#39;s blog">
 <meta property="og:description" content="Backpropogation；learning decay rate；debug the training；">
@@ -121,9 +121,9 @@
 <meta property="og:image" content="http://static.zybuluo.com/BYWMM/j5gzymxys50d4e7ij6nu829i/zheshiyigebiaoxianhaibucuodeW1.png">
 <meta property="og:image" content="http://static.zybuluo.com/BYWMM/ifywu12y2ifu2dlolobh25am/Y9BP4I664PODQL88.png">
 <meta property="og:image" content="http://static.zybuluo.com/BYWMM/d9qht9lyqitvo28bi46hjja3/kgrklsgmldhdsf.png">
-<meta property="og:updated_time" content="2018-12-01T11:06:30.536Z">
+<meta property="og:updated_time" content="2019-10-24T03:42:28.703Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="cs231n_assignment1(Two_Layer_Net)">
+<meta name="twitter:title" content="cs231n assignment1(Two_Layer_Net)">
 <meta name="twitter:description" content="Backpropogation；learning decay rate；debug the training；">
 <meta name="twitter:image" content="http://static.zybuluo.com/BYWMM/80jq2lwznnfjq9mde11kvhnh/ojgrhejsgkjlkfaf.png">
 
@@ -161,7 +161,7 @@
 
 
 
-  <title>cs231n_assignment1(Two_Layer_Net) | bywmm's blog</title>
+  <title>cs231n assignment1(Two_Layer_Net) | bywmm's blog</title>
   
 
 
@@ -305,7 +305,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">cs231n_assignment1(Two_Layer_Net)</h1>
+          <h1 class="post-title" itemprop="name headline">cs231n assignment1(Two_Layer_Net)</h1>
         
 
         <div class="post-meta">
@@ -340,8 +340,8 @@
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/cs231n-assignment/" itemprop="url" rel="index">
-                    <span itemprop="name">cs231n_assignment</span>
+                  <a href="/categories/cs231n/" itemprop="url" rel="index">
+                    <span itemprop="name">cs231n</span>
                   </a>
                 </span>
 
@@ -357,7 +357,7 @@
 
           
           
-             <span id="/2018/11/20/cs231n_assignment1(Two_Layer_Net)/" class="leancloud_visitors" data-flag-title="cs231n_assignment1(Two_Layer_Net)">
+             <span id="/2018/11/20/cs231n_assignment1(Two_Layer_Net)/" class="leancloud_visitors" data-flag-title="cs231n assignment1(Two_Layer_Net)">
                <span class="post-meta-divider">|</span>
                <span class="post-meta-item-icon">
                  <i class="fa fa-eye"></i>
@@ -423,7 +423,7 @@
       
 
       
-        <h1 id="cs231n-assignment1-Two-Layer-Net"><a href="#cs231n-assignment1-Two-Layer-Net" class="headerlink" title="cs231n_assignment1(Two_Layer_Net)"></a>cs231n_assignment1(Two_Layer_Net)</h1><h2 id="两层网络（code）"><a href="#两层网络（code）" class="headerlink" title="两层网络（code）"></a>两层网络（code）</h2><p>首先来回顾一下我们的网络结结构：</p>
+        <h1 id="cs231n-assignment1-Two-Layer-Net"><a href="#cs231n-assignment1-Two-Layer-Net" class="headerlink" title="cs231n assignment1(Two_Layer_Net)"></a>cs231n assignment1(Two_Layer_Net)</h1><h2 id="两层网络（code）"><a href="#两层网络（code）" class="headerlink" title="两层网络（code）"></a>两层网络（code）</h2><p>首先来回顾一下我们的网络结结构：</p>
 <p>输入层($D$个神经元)，全连接层-ReLu($H$)，softmax($C$)。<br>输入：$X [N\times{D}]$，输出 $y [N\times{1}]$<br>网络参数：$W1[D×H],b1[1×H],W2[H×C],b2[1×C]$</p>
 <h3 id="Propagation"><a href="#Propagation" class="headerlink" title="Propagation"></a>Propagation</h3><script type="math/tex; mode=display">Z1=X⋅W1+b1</script><script type="math/tex; mode=display">A1=maximum(0,Z1)</script><script type="math/tex; mode=display">Z2=A1⋅W2+b2</script><script type="math/tex; mode=display">A2=softmax(Z2)</script><script type="math/tex; mode=display">P=A2</script><p>$Z2 \color{Blue}{[N\times{C}]}$就是每个样本在每个类别下的分数（score）<br>$A2 \color{Blue}{[N\times{C}]}$就是每个样本在每个类别下的概率（prob）</p>
 <p>关键代码如下：<br>（Propagation中计算的值，Backpropogation的计算中要用到）<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">Z1 = np.dot(X, W1) + b1</span><br><span class="line">A1 = np.maximum(<span class="number">0</span>, Z1)</span><br><span class="line">Z2 = np.dot(A1, W2) + b2</span><br><span class="line">scores = Z2</span><br><span class="line">scores -= np.max(scores, axis=<span class="number">1</span>, keepdims=<span class="keyword">True</span>)</span><br><span class="line">A2 = np.exp(scores) / np.sum(np.exp(scores), axis=<span class="number">1</span>, keepdims=<span class="keyword">True</span>) </span><br><span class="line">prob = A2</span><br></pre></td></tr></table></figure></p>
@@ -498,8 +498,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2018/11/14/cs231n_assignment1(Softmax)/" rel="next" title="cs231n_assignment1(Softmax)">
-                <i class="fa fa-chevron-left"></i> cs231n_assignment1(Softmax)
+              <a href="/2018/11/14/cs231n_assignment1(Softmax)/" rel="next" title="cs231n assignment1(Softmax)">
+                <i class="fa fa-chevron-left"></i> cs231n assignment1(Softmax)
               </a>
             
           </div>
@@ -594,7 +594,7 @@
               
                 <a href="/archives">
               
-                  <span class="site-state-item-count">26</span>
+                  <span class="site-state-item-count">30</span>
                   <span class="site-state-item-name">posts</span>
                 </a>
               </div>
@@ -605,7 +605,7 @@
               
               <div class="site-state-item site-state-categories">
                 <a href="/categories/index.html">
-                  <span class="site-state-item-count">9</span>
+                  <span class="site-state-item-count">22</span>
                   <span class="site-state-item-name">categories</span>
                 </a>
               </div>
@@ -616,7 +616,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">21</span>
+                  <span class="site-state-item-count">28</span>
                   <span class="site-state-item-name">tags</span>
                 </a>
               </div>
@@ -656,7 +656,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#cs231n-assignment1-Two-Layer-Net"><span class="nav-number">1.</span> <span class="nav-text">cs231n_assignment1(Two_Layer_Net)</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#两层网络（code）"><span class="nav-number">1.1.</span> <span class="nav-text">两层网络（code）</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Propagation"><span class="nav-number">1.1.1.</span> <span class="nav-text">Propagation</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#loss"><span class="nav-number">1.1.2.</span> <span class="nav-text">loss</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Backpropogation"><span class="nav-number">1.1.3.</span> <span class="nav-text">Backpropogation</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#训练"><span class="nav-number">1.2.</span> <span class="nav-text">训练</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#train函数"><span class="nav-number">1.2.1.</span> <span class="nav-text">train函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#train-a-network"><span class="nav-number">1.2.2.</span> <span class="nav-text">train a network</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#debug-the-training"><span class="nav-number">1.2.3.</span> <span class="nav-text">debug the training</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#调参"><span class="nav-number">1.3.</span> <span class="nav-text">调参</span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#cs231n-assignment1-Two-Layer-Net"><span class="nav-number">1.</span> <span class="nav-text">cs231n assignment1(Two_Layer_Net)</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#两层网络（code）"><span class="nav-number">1.1.</span> <span class="nav-text">两层网络（code）</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Propagation"><span class="nav-number">1.1.1.</span> <span class="nav-text">Propagation</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#loss"><span class="nav-number">1.1.2.</span> <span class="nav-text">loss</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Backpropogation"><span class="nav-number">1.1.3.</span> <span class="nav-text">Backpropogation</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#训练"><span class="nav-number">1.2.</span> <span class="nav-text">训练</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#train函数"><span class="nav-number">1.2.1.</span> <span class="nav-text">train函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#train-a-network"><span class="nav-number">1.2.2.</span> <span class="nav-text">train a network</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#debug-the-training"><span class="nav-number">1.2.3.</span> <span class="nav-text">debug the training</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#调参"><span class="nav-number">1.3.</span> <span class="nav-text">调参</span></a></li></ol></li></ol></div>
             
 
           </div>
@@ -690,7 +690,7 @@
     
       <span class="post-meta-item-text">Site words total count&#58;</span>
     
-    <span title="Site words total count">45.9k</span>
+    <span title="Site words total count">50.8k</span>
   
 </div>
 

@@ -1,0 +1,1297 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="UTF-8">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="西瓜书笔记,机器学习,">
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="bywmm's blog" type="application/atom+xml">
+
+
+
+
+
+
+<meta name="description" content="间隔与支持向量；对偶问题；软间隔与正则化；核函数；SMO算法；支持向量回归；核方法">
+<meta name="keywords" content="西瓜书笔记,机器学习">
+<meta property="og:type" content="article">
+<meta property="og:title" content="西瓜书笔记6 支持向量机">
+<meta property="og:url" content="https://bywmm.github.io/2019/10/07/西瓜书笔记6/index.html">
+<meta property="og:site_name" content="bywmm&#39;s blog">
+<meta property="og:description" content="间隔与支持向量；对偶问题；软间隔与正则化；核函数；SMO算法；支持向量回归；核方法">
+<meta property="og:locale" content="UTF-8">
+<meta property="og:updated_time" content="2019-10-24T03:44:15.582Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="西瓜书笔记6 支持向量机">
+<meta name="twitter:description" content="间隔与支持向量；对偶问题；软间隔与正则化；核函数；SMO算法；支持向量回归；核方法">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://bywmm.github.io/2019/10/07/西瓜书笔记6/">
+
+
+
+
+
+  <title>西瓜书笔记6 支持向量机 | bywmm's blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="UTF-8">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">bywmm's blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-主页">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            主页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-标签">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-分类">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-归档">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://bywmm.github.io/2019/10/07/西瓜书笔记6/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="JF Wang">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar2.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="bywmm's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">西瓜书笔记6 支持向量机</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-10-07T21:09:37+08:00">
+                2019-10-07
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/机器学习/" itemprop="url" rel="index">
+                    <span itemprop="name">机器学习</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2019/10/07/西瓜书笔记6/" class="leancloud_visitors" data-flag-title="西瓜书笔记6 支持向量机">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">Visitors&#58;</span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Words count in article&#58;</span>
+                
+                <span title="Words count in article">
+                  2.2k
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Reading time &asymp;</span>
+                
+                <span title="Reading time">
+                  10
+                </span>
+              
+            </div>
+          
+
+          
+              <div class="post-description">
+                  间隔与支持向量；对偶问题；软间隔与正则化；核函数；SMO算法；支持向量回归；核方法
+              </div>
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="西瓜书笔记6-支持向量机"><a href="#西瓜书笔记6-支持向量机" class="headerlink" title="西瓜书笔记6 支持向量机"></a>西瓜书笔记6 支持向量机</h1><h2 id="间隔与支持向量"><a href="#间隔与支持向量" class="headerlink" title="间隔与支持向量"></a>间隔与支持向量</h2><p>存在多个划分超平面将两类训练样本分开</p>
+<p>在样本空间中，划分超平面可通过如下线性方程来描述</p>
+<script type="math/tex; mode=display">
+\boldsymbol{\omega}^{T}\boldsymbol{x}+b=0</script><p>其中$\boldsymbol{\omega} = (\omega_1;\omega_2;…;\omega_d)$为法向量，决定了超平面的方向；b是位移项，决定了超平面与原点之间的距离。</p>
+<p><strong>样本空间中的任意点$x$到超平面$(\boldsymbol{\omega},b)$的距离：</strong></p>
+<script type="math/tex; mode=display">
+r = \frac{|\boldsymbol{\omega}^{T}\boldsymbol{x}+b|}{||\boldsymbol{\omega}||}</script><p>假设超平面$(\boldsymbol{\omega},b)$能将训练样本<strong>正确分类</strong>，即对于样本$(\boldsymbol{x}_i,y_i)\in D$，若标签$y_i=+1$，则有$\boldsymbol{\omega}^{T}\boldsymbol{x}_i+b&gt;0$；若$y_i=-1$，则有$\boldsymbol{\omega}^{T}\boldsymbol{x}_i+b&lt;0$。</p>
+<p>进一步可以令：</p>
+<script type="math/tex; mode=display">
+\left\{\begin{matrix}
+ \boldsymbol{\omega}^{T}\boldsymbol{x}_i+b\geq+1,&y_i=+1; \\ 
+ \boldsymbol{\omega}^{T}\boldsymbol{x}_i+b\leq-1,&y_i=-1
+\end{matrix}\right.</script><blockquote>
+<p>若超平面$(\boldsymbol{\omega}’,b’)$能将训练样本正确分类，则总存在缩放变换$\varsigma\boldsymbol{\omega}\mapsto\boldsymbol{\omega}’$和$\varsigma b\mapsto b’$使得上式成立。</p>
+</blockquote>
+<p>距离超平面最近的几个样本点使上式等号成立，称之为“<strong>支持向量</strong>”。</p>
+<p>两个异类支持向量到超平面的距离之和，称之为“<strong>间隔</strong>”</p>
+<script type="math/tex; mode=display">
+\gamma=\frac{2}{||\boldsymbol{\omega}||}</script><p>我们的目标就是在确保超平面能够正确分类的同时，最大化间隔：</p>
+<script type="math/tex; mode=display">
+\begin{matrix}
+\underset{\omega,b}{max} \frac{2}{||\boldsymbol{\omega}||}& \\ 
+s.t.\ y_i(\boldsymbol{\omega}^T\boldsymbol{x}_i+b)\geq1,&i=1,2,...,m
+\end{matrix}</script><p>等价于</p>
+<script type="math/tex; mode=display">
+\begin{matrix}
+\underset{\omega,b}{min} \frac{1}{2}||\boldsymbol{\omega}||^{2}& \\ 
+s.t.\ y_i(\boldsymbol{\omega}^T\boldsymbol{x}_i+b)\geq1,&i=1,2,...,m
+\end{matrix}</script><p>这就是支持向量机(Support Vector Machine)的基本型。</p>
+<h2 id="对偶问题"><a href="#对偶问题" class="headerlink" title="对偶问题"></a>对偶问题</h2><p>上式是一个凸二次规划问题。对其使<strong>用拉格朗日乘子法</strong>可得到其“<strong>对偶问题</strong>”。</p>
+<p>该问题的拉格朗日函数可写为</p>
+<script type="math/tex; mode=display">
+L(\boldsymbol{\omega},b,\boldsymbol{\alpha})=\frac{1}{2}||\boldsymbol{\omega}||^2+\sum_{i=1}^{m}\alpha_i(1-y_i(\boldsymbol{\omega}^T\boldsymbol{x}_i+b))</script><p>其中$\boldsymbol{\alpha}=(\alpha_1;\alpha_2;…;\alpha_m),\alpha_i\geq0$。</p>
+<p>由于引入了拉格朗日乘子，我们的优化目标变为</p>
+<script type="math/tex; mode=display">
+\underset{\boldsymbol{w},b}{\min}\;\underset{\boldsymbol{\alpha}}{\max}L(\boldsymbol{\omega},b,\boldsymbol{\alpha})</script><p>转化成对偶问题，现在我们要解决的是</p>
+<script type="math/tex; mode=display">
+\underset{\boldsymbol{\alpha}}{\max}\;\underset{\boldsymbol{w},b}{\min}L(\boldsymbol{\omega},b,\boldsymbol{\alpha})</script><p>首先我们来求令$L(\boldsymbol{\omega},b,\boldsymbol{\alpha})$基于$\boldsymbol{\omega}$和b的最小值，即$\underset{\boldsymbol{w},b}{\min}L(\boldsymbol{\omega},b,\boldsymbol{\alpha})$。这个值，我们可以对$\boldsymbol{\omega}$和b分别求偏导数得到</p>
+<script type="math/tex; mode=display">
+\frac{\partial{L}}{\partial{\boldsymbol{\omega}}}=0\Rightarrow \boldsymbol{\omega}=\sum_{i=1}^{m}\alpha_iy_i\boldsymbol{x}_i</script><script type="math/tex; mode=display">
+\frac{\partial{L}}{\partial{b}}=0\Rightarrow 0=\sum_{i=1}^m\alpha_iy_i</script><p>将上式带入$L(\boldsymbol{\omega}, b,\boldsymbol{\alpha})$，可得</p>
+<script type="math/tex; mode=display">
+\underset{\boldsymbol{\alpha}}{\max}\sum_{i=1}^{m}\alpha_i-\frac{1}{2}\sum_{i=1}^{m}\sum_{j=1}^{m}\alpha_i\alpha_jy_iy_j\boldsymbol{x}_i^T\boldsymbol{x}_j
+\\
+s.t.\ \sum_{i=1}^m\alpha_iy_i=0
+\\
+\alpha_i\geq0</script><p>解出$\alpha$后，求出$\boldsymbol{\omega}$与b即可得到模型</p>
+<script type="math/tex; mode=display">
+f(\boldsymbol{x})=\boldsymbol{\omega}^T\boldsymbol{x}+b
+
+=\sum_{i=1}^{m}\alpha_iy_i\boldsymbol{x}_i^T\boldsymbol{x}+b</script><h2 id="软间隔与正则化"><a href="#软间隔与正则化" class="headerlink" title="软间隔与正则化"></a>软间隔与正则化</h2><p>回顾一下硬间隔支持向量机，最大化的目标：</p>
+<script type="math/tex; mode=display">
+\underset{\boldsymbol{\omega},b}{\min}\frac{1}{2}||\boldsymbol{\omega}||^2
+\\
+s.t.\ y_i(\boldsymbol{\omega}^T\boldsymbol{x}_i+b)\geq1</script><p>“<strong>软间隔</strong>”：允许支持向量机在<strong>一些样本</strong>上出错，即允许某些样本不满足约束$y_i(\boldsymbol{\omega}^T\boldsymbol{x}_i+b)\geq1$。</p>
+<p>对每个样本$(\boldsymbol{x}_i,y_i)$引入一个<strong>松弛变量</strong>$\xi_i\geq0$，使函数间隔加上松弛变量大于等于1，即</p>
+<script type="math/tex; mode=display">
+y_i(\boldsymbol{\omega}^T\boldsymbol{x}_i+b)\geq1-\xi_i</script><h3 id="软间隔最大化"><a href="#软间隔最大化" class="headerlink" title="软间隔最大化"></a>软间隔最大化</h3><p>对比硬间隔最大化，可以看到我们对样本到超平面的函数距离的要求放松了，之前是一定要大于等于1，现在只需要加上一个大于等于0的松弛变量能大于等于1就可以了。当然，松弛变量不能白加，这是有成本的，每一个松弛变量$\xi_i$, 对应了一个损失$\xi_i$，这个就得到了我们的软间隔最大化的SVM学习条件如下</p>
+<script type="math/tex; mode=display">
+\underset{\boldsymbol{\omega},b,\xi_i}{\min}\frac{1}{2}||\boldsymbol{\omega}||^2+C\sum_{i=1}^{m}\xi_i
+\\
+s.t.\ y_i(\boldsymbol{\omega}^T\boldsymbol{x}_i+b)\geq1-\xi_i
+\\
+\xi_i\geq0</script><p>这里，C&gt;0为惩罚参数，可以理解为我们一般回归和分类问题正则化时候的参数。C越大，对误分类的惩罚越大，C越小，对误分类的惩罚越小。</p>
+<h3 id="最大化函数的优化"><a href="#最大化函数的优化" class="headerlink" title="最大化函数的优化"></a>最大化函数的优化</h3><p>首先将软间隔最大化的约束问题用拉格朗日函数转化为无约束问题</p>
+<script type="math/tex; mode=display">
+L(\boldsymbol{\omega},b,\boldsymbol{\alpha}, \boldsymbol{\xi},\boldsymbol{\mu})=\frac{1}{2}||\boldsymbol{\omega}||^2+C\sum_{i=1}^{m}\xi_i
+\\
++\sum_{i=1}^{m}\alpha_i(1-\xi_i-y_i(\boldsymbol{\omega}^T\boldsymbol{x}_i+b))-\sum_{i=1}^{m}\mu_i\xi_i</script><p>其中$\alpha_i\geq0,\mu_i\geq0$是拉格朗日乘子</p>
+<p>现在要求得是</p>
+<script type="math/tex; mode=display">
+\underset{\boldsymbol{\omega},b,\boldsymbol{\xi}}{\min}\;\underset{\boldsymbol{\alpha},\boldsymbol{\mu}}{\max}L(\boldsymbol{\omega},b,\boldsymbol{\alpha}, \boldsymbol{\xi},\boldsymbol{\mu})</script><p>同样转换成等价的对偶问题：</p>
+<script type="math/tex; mode=display">
+\underset{\boldsymbol{\alpha},\boldsymbol{\mu}}{\max}\;\underset{\boldsymbol{\omega},b,\boldsymbol{\xi}}{\min}L(\boldsymbol{\omega},b,\boldsymbol{\alpha}, \boldsymbol{\xi},\boldsymbol{\mu})</script><p>首先求$\underset{\boldsymbol{\omega},b,\boldsymbol{\xi}}{\min}L(\boldsymbol{\omega},b,\boldsymbol{\alpha}, \boldsymbol{\xi},\boldsymbol{\mu})$，可以通过求偏导数求得</p>
+<script type="math/tex; mode=display">
+\frac{\partial{L}}{\partial{\boldsymbol{\omega}}}=0\Rightarrow \boldsymbol{\omega}=\sum_{i=1}^{m}\alpha_iy_i\boldsymbol{x}_i</script><script type="math/tex; mode=display">
+\frac{\partial{L}}{\partial{b}}=0\Rightarrow \sum_{i=1}^{m}\alpha_iy_i=0</script><script type="math/tex; mode=display">
+\frac{\partial{L}}{\partial{\boldsymbol{\xi}}}=0\Rightarrow \alpha_i+\mu_i=C</script><p>带入对偶问题式可得</p>
+<script type="math/tex; mode=display">
+\underset{\boldsymbol{\alpha}}{\max}\sum_{i=1}^{m}-\frac{1}{2}\sum_{i=1}^{m}\sum_{j=1}^{m}\alpha_i\alpha_jy_iy_j\boldsymbol{x}_i^T\boldsymbol{x}_j
+\\
+s.t. \sum_{i=1}^{m}\alpha_iy_i=0
+\\
+0\leq\alpha_i\leq C</script><hr>
+<h3 id="核函数"><a href="#核函数" class="headerlink" title="核函数"></a>核函数</h3><p>有些训练样本是线性不可分的，可将样本从原始空间映射到一个更高维的特征空间，使得样本在这个特征空间内线性可分。如果原始空间是有限维，即属性数有限，那么一定存在一个高维特征空间使样本可分。<font color="red">（至于为什么，以后再证，参见12章？）</font></p>
+<p>令$\phi(\boldsymbol{x})$表示将$\boldsymbol{x}$映射后的特征向量。在特征空间中划分超平面对应的模型可表示为</p>
+<script type="math/tex; mode=display">
+f(\boldsymbol{x})=\boldsymbol{\omega}^T\phi(\boldsymbol{x})+b</script><p>SVM的优化目标函数变为</p>
+<script type="math/tex; mode=display">
+\underset{\boldsymbol{\alpha}}{\min}\frac{1}{2}\sum_{i=1}^{m}\sum_{j=1}^{m}\alpha_i\alpha_jy_iy_j\phi(\boldsymbol{x}_i)^T\phi(\boldsymbol{x}_j)-\sum_{i=1}^{m}\alpha_i
+\\
+s.t.\sum_{i=1}^{m}\alpha_iy_i=0
+\\
+0\leq\alpha_i\leq C</script><p>上式中涉及到计算$\phi(\boldsymbol{x}_i)^T\phi(\boldsymbol{x}_j)$，这是样本映射后的内积。由于映射后的特征空间维数可能很高，计算量太大；甚至是无穷维，无法计算。这时候，就需要我们的核函数了。设想有这么一个函数</p>
+<script type="math/tex; mode=display">
+K(\boldsymbol{x}_i,\boldsymbol{x}_j)=\phi(\boldsymbol{x_i})^T\phi(\boldsymbol{x_j})</script><p>核函数在低维上进行计算，而将实质上的分类效果（利用了内积）表现在了高维上，这样避免了直接在高维空间中的复杂计算，真正解决了SVM的线性不可分问题。</p>
+<h4 id="有哪些核函数呢"><a href="#有哪些核函数呢" class="headerlink" title="有哪些核函数呢"></a>有哪些核函数呢</h4><p><strong>定理（核函数）</strong></p>
+<p>令$\chi$为输入空间，$\kappa(\cdot,\cdot)$是定义在$\chi\times\chi$上的对称函数，则$\kappa$是核函数当且仅当对于任意数据$D=\left \{\boldsymbol{x}_1,\boldsymbol{x}_2,…,\boldsymbol{x}_m\right \}$，“核矩阵”$\boldsymbol{K}$总是半正定的。</p>
+<p>定理表明，<strong>只要是一个对称函数对应的核矩阵半正定，它就能作为核函数使用</strong>。</p>
+<p>常用的几种核函数</p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th>名称</th>
+<th>表达式</th>
+<th>参数</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>线性核</td>
+<td>$\kappa(\boldsymbol{x}_i,\boldsymbol{x}_j)=\boldsymbol{x}_i^T\boldsymbol{x}_j$</td>
+</tr>
+<tr>
+<td>多项式核</td>
+<td>$\kappa(\boldsymbol{x}_i,\boldsymbol{x}_j)=(\boldsymbol{x}_i^T\boldsymbol{x}_j)^d$`</td>
+<td>`$d\geq1$为多项式的次数</td>
+</tr>
+<tr>
+<td>高斯核(RBF核)</td>
+<td>$\kappa(\boldsymbol{x}_i,\boldsymbol{x}_j)=\exp(-\frac{\boldsymbol{x}_i-\boldsymbol{x}_j^2}{2\sigma^2})$</td>
+<td>$\sigma&gt;0$为高斯核带宽</td>
+</tr>
+<tr>
+<td>拉普拉斯核</td>
+<td>$\kappa(\boldsymbol{x}_i,\boldsymbol{x}_j)=\exp(-\frac{\boldsymbol{x}_i-\boldsymbol{x}_j}{\sigma})$</td>
+<td>$\sigma&gt;0$</td>
+</tr>
+<tr>
+<td>Sigmoid核</td>
+<td>$\kappa(\boldsymbol{x}_i,\boldsymbol{x}_j)=\tanh(\beta\boldsymbol{x}_i^T\boldsymbol{x}_j+\theta)$</td>
+<td>$\beta&gt;0,\theta&gt;0$</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>此外，还可通过函数组合得到</p>
+<ul>
+<li>若$\kappa_1$和$\kappa_2$为核函数，则对于任意正数$\gamma_1$、$\gamma_2$，其线性组合也是核函数</li>
+</ul>
+<script type="math/tex; mode=display">
+\gamma_1\kappa_1+\gamma_2\kappa_2</script><ul>
+<li>若$\kappa_1$和$\kappa_2$为核函数，则核函数的直积也是核函数<font color="red">（这里不太懂，直积不是集合运算吗？）</font></li>
+</ul>
+<script type="math/tex; mode=display">
+\kappa_1\otimes \kappa_2(\boldsymbol{x},\boldsymbol{z})=\kappa_1(\boldsymbol{x},\boldsymbol{z})\kappa_2(\boldsymbol{x},\boldsymbol{z})</script><ul>
+<li>若$\kappa_1$为核函数，则对于任意函数$g(\boldsymbol{x})$，$\kappa$也是核函数</li>
+</ul>
+<script type="math/tex; mode=display">
+\kappa(\boldsymbol{x},\boldsymbol{z})=g(\boldsymbol{x})\kappa_1(\boldsymbol{x},\boldsymbol{z})g(\boldsymbol{z})</script><hr>
+<h2 id="SMO算法"><a href="#SMO算法" class="headerlink" title="SMO算法*"></a>SMO算法*</h2><h3 id="优化目标"><a href="#优化目标" class="headerlink" title="优化目标"></a>优化目标</h3><p>目标函数：</p>
+<script type="math/tex; mode=display">
+\underset{\boldsymbol{\alpha}}{\min}\;\frac{1}{2}\sum_{i=1}^{m}\sum_{j=1}^{m}\alpha_i\alpha_jy_iy_jK(\boldsymbol{x}_i,\boldsymbol{x}_j)-\sum_{i=1}^{m}\alpha_i
+\\
+s.t.\sum_{i=1}^{m}\alpha_iy_i=0
+\\
+0\leq\alpha_i\leq C</script><p>==解要满足的KKT条件的对偶互补条件为==</p>
+<script type="math/tex; mode=display">
+\alpha_i^*(y_i(\boldsymbol{\omega}^T\phi(\boldsymbol{x}_i)+b)-1+\xi_i^*)=0</script><p>即</p>
+<script type="math/tex; mode=display">
+\alpha_i^*=0\Rightarrow y_i(\boldsymbol{\omega}^T\phi(\boldsymbol{x}_i)+b)\geq1
+\\
+0<\alpha_i^*<C\Rightarrow y_i(\boldsymbol{\omega}^T\phi(\boldsymbol{x}_i)+b)=1
+\\
+\alpha_i^*=C\Rightarrow y_i(\boldsymbol{\omega}^T\phi(\boldsymbol{x}_i)+b)\leq1</script><p>由于$\boldsymbol{\omega}=\sum_{i=1}^{m}\alpha_i^<em>y_i\phi(\boldsymbol{x}_i)$。$f(\boldsymbol{x})=\sum_{i=1}^{m}\alpha_i^</em>y_iK(\boldsymbol{x},\boldsymbol{x_i})+b$,则有</p>
+<script type="math/tex; mode=display">
+\alpha_i^*=0\Rightarrow y_if(\boldsymbol{x}_i)\geq1
+\\
+0<\alpha_i^*<C\Rightarrow y_if(\boldsymbol{x}_i)=1
+\\
+\alpha_i^*=C\Rightarrow y_if(\boldsymbol{x}_i)\leq1</script><h3 id="SMO基本思想"><a href="#SMO基本思想" class="headerlink" title="SMO基本思想"></a>SMO基本思想</h3><p>上面的优化式子比较复杂。是一个二次规划问题，可以使用通用的二次规划算法来求解。优化时间正比于训练样本数m，所以直接优化很难。</p>
+<p>SMO算法，采用了一种<strong>启发式</strong>方法。它每次只选择两个变量，其他变量视为常数（固定）。由于存在约束$\sum_{i=1}^{m}\alpha_iy_i=0$，假如将$\alpha_3,\alpha4,…,\alpha_m$固定，那么$\alpha_1,\alpha_2$之间的关系也确定了。</p>
+<p>SMO不断执行如下两个步骤直至收敛</p>
+<blockquote>
+<ul>
+<li>选取一对需要更新的$\alpha_i$和$\alpha_j$</li>
+<li>固定$\alpha_i$和$\alpha_j$以外的参数，求解目标函数式获得更新后的$\alpha_i$和$\alpha_j$</li>
+</ul>
+</blockquote>
+<h3 id="SMO算法细节"><a href="#SMO算法细节" class="headerlink" title="SMO算法细节"></a>SMO算法细节</h3><h4 id="两个变量的选择"><a href="#两个变量的选择" class="headerlink" title="两个变量的选择"></a>两个变量的选择</h4><p>不妨记$\alpha_1,\alpha_2$为选择的两个变量</p>
+<h5 id="1-第一个变量的选择"><a href="#1-第一个变量的选择" class="headerlink" title="1.第一个变量的选择"></a>1.第一个变量的选择</h5><p>SMO算法称选择第一个变量为外层循环，选择在训练集中<strong>违反KKT条件程度最大的样本点</strong>。对于每个样本点，要满足的KKT条件</p>
+<script type="math/tex; mode=display">
+\alpha_i^*=0\Rightarrow y_if(\boldsymbol{x}_i)\geq1
+\\
+0<\alpha_i^*<C\Rightarrow y_if(\boldsymbol{x}_i)=1
+\\
+\alpha_i^*=C\Rightarrow y_if(\boldsymbol{x}_i)\leq1</script><p>一般来说，先选择违反$0&lt;\alpha_i^<em>&lt;C\Rightarrow y_if(\boldsymbol{x}_i)=1$的点。如果这些<em>*支持向量</em></em>都满足KKT条件，在选择其他的</p>
+<h5 id="2-第二个变量的选择"><a href="#2-第二个变量的选择" class="headerlink" title="2.第二个变量的选择"></a>2.第二个变量的选择</h5><p>SMO算法称，选择第二个变量为内层循环，假设外层循环已经找到了$\alpha_1$，第二个变量的选择标准是选择<strong>与其样本间隔最大的点</strong>。<br>为了方便表示，我们定义</p>
+<script type="math/tex; mode=display">
+E_i=f(\boldsymbol{x_i})-y_i
+\\
+=\sum_{i=1}^{m}\alpha_i^*y_iK(\boldsymbol{x},\boldsymbol{x}_i)+b-y_i</script><font color="red">对于E的理解有待更新</font>
+
+<p>即第二个变量的选择标准是让$|E_1-E_2|$有足够大的变化。由于$\alpha_1$定了的时候$E_1$也定了，所以想要$|E_1-E_2|$最大，只需要在$E_1$为正时，选择最小的$E_i$作为$E_2$，$E_1$为负时，选择最大的$E_i$作为$E_2$，可以将所有的$E_i$保存下来加快迭代。</p>
+<p>==如果内循环找到的点不能让目标函数有足够的下降，可以采用遍历支持向量点来做<code>$\alpha_2$</code>，直至目标函数有足够的下降，如果所有的支持向量做<code>$\alpha_2$</code>都不能让目标函数有足够的下降，可以跳出循环，重新选择<code>$\alpha_1$</code>。==</p>
+<h4 id="两个变量的更新"><a href="#两个变量的更新" class="headerlink" title="两个变量的更新"></a>两个变量的更新</h4><p>定义</p>
+<script type="math/tex; mode=display">
+K_{ij}=\phi(\boldsymbol{x}_i)\cdot\phi(\boldsymbol{x}_j)</script><p>因为$\alpha_3,\alpha_4,…,\alpha_m$都变成了常量，所以我们的目标优化函数变为</p>
+<script type="math/tex; mode=display">
+\underset{\alpha_1,\alpha_2}{\min}\frac{1}{2}K_{11}\alpha_1^2+\frac{1}{2}K_{22}\alpha_2^2+y_1y_2K_{12}\alpha_1\alpha_2-(\alpha_1+\alpha_2)+y_1\alpha_1\sum_{i=3}^{m}y_i\alpha_iK_{i1}+y_2\alpha_2\sum_{i=3}^{m}y_i\alpha_iK_{i2}
+\\
+s.t.\ \alpha_1y_1+\alpha_2y_2=-\sum_{i=3}^{m}y_i\alpha_i=\zeta
+\\
+0\leq\alpha_i\leq C \ i=1,2</script><p>现在的问题是，求解上面含有这两个变量的目标优化问题。</p>
+<p>首先分析约束条件，所有的$\alpha_1,\alpha_1$都要满足约束条件，然后在约束条件下求最小。</p>
+<ol>
+<li>要满足的约束条件</li>
+</ol>
+<p>已知约束条件：</p>
+<script type="math/tex; mode=display">
+\left\{\begin{matrix}
+\alpha_1y_1+\alpha_2y_2=\zeta\\ 
+0\leq\alpha_1\leq C\\
+0\leq\alpha_2\leq C\\
+|y1|=|y2|=1
+\end{matrix}\right.</script><p>若$y_1=y_2$,</p>
+<script type="math/tex; mode=display">
+\because\alpha_1y_1+\alpha_2y_2=\zeta
+\\
+\therefore\alpha_1+\alpha_2=y_1\zeta
+\\
+\therefore\alpha_1=y_1\zeta-\alpha_2
+\\
+\because\ 0\leq\alpha_1\leq C
+\\
+\therefore y_1\zeta-C\leq\alpha_2\leq y_1\zeta
+\\
+\because 0\leq\alpha_2\leq C,\alpha_1+\alpha_2=y_1\zeta
+\\
+\therefore \max(0, \alpha_1+\alpha_2-C)\leq\alpha_2\leq\min(C,\alpha_1+\alpha_2)</script><p>若$y_1\neq y_2$</p>
+<script type="math/tex; mode=display">
+\because\alpha_1y_1+\alpha_2y_2=\zeta
+\\
+\therefore\alpha_1-\alpha_2=y_1\zeta
+\\
+\therefore\alpha_a=y_1\zeta+\alpha_2
+\\
+\because 0\leq\alpha_1\leq C
+\\
+\therefore -y_1\zeta\leq\alpha_2\leq C-y_1\zeta
+\\
+\because 0\leq\alpha_2\leq C,\alpha_1-\alpha_2=y_1\zeta
+\\
+\therefore \max(0, \alpha_2-\alpha_1)\leq\alpha_2\leq\min(C,C+\alpha_2-\alpha_1)</script><p>分别用L和H表示$\alpha_2$的上下界约束，则$L\leq\alpha_2\leq H$。也就是说，我们通过求导得到$\alpha_{2}^{new,unc}$,则最终的$\alpha_2^{new}$应该为</p>
+<script type="math/tex; mode=display">
+\alpha_2^{new}=\left\{\begin{matrix}
+H&\alpha_2^{new,unc}>H\\ 
+\alpha_2^{new,unc}&L\leq\alpha_2^{new,unc}\leq H\\ 
+L&\alpha_2^{new,unc}<L
+\end{matrix}\right.</script><ol>
+<li>约束条件下的最优值</li>
+</ol>
+<p>为了简化目标优化函数，我们令</p>
+<script type="math/tex; mode=display">
+v_i=\sum_{j=3}^{m}y_j\alpha_jK_{ij}=g(\boldsymbol{x}_i)-\sum_{j=1}^2y_j\alpha_jK_{ij}-b</script><p>这样我们的目标优化函数进一步简化为</p>
+<script type="math/tex; mode=display">
+W(\alpha_1,\alpha_2)=\frac{1}{2}K_{11}\alpha_1^2+\frac{1}{2}K_{22}\alpha_2^2+y_1y_2K_{12}\alpha_1\alpha_2-(\alpha_1+\alpha_2)+y_1\alpha_1v_1+y2\alpha_2v_2</script><p>由于$\alpha_1y_1+\alpha_2y_2=\zeta$，可以得到$\alpha_1$用$\alpha_2$表达的式子为</p>
+<script type="math/tex; mode=display">
+\alpha_1=y_1(\zeta-\alpha_2y_2)</script><p>将上式代入我们的目标优化函数，就可以消除$\alpha_1$，得到仅包含$\alpha_2$的式子</p>
+<script type="math/tex; mode=display">
+W(\alpha_2)=\frac{1}{2}K_{11}(\zeta-\alpha_2y_2)^2+\frac{1}{2}K_{22}\alpha_2^2+y_2K_{12}(\zeta-\alpha_2y_2)\alpha_2
+\\
+-(y_1(\zeta-\alpha_2y_2)+\alpha_2)+(\zeta-\alpha_2y_2)v_1+y_2\alpha_2v_2</script><p>对W求导数，得到$\alpha_2^{new,unc}$</p>
+<script type="math/tex; mode=display">
+\frac{\partial{W}}{\partial{\alpha_2}}=K_{11}\alpha_2-K_{11}y_2\zeta+K_{22}\alpha_2+K_{12}y_2\zeta-2K_{12}\alpha_2+y_1y_2-1-v_1y_2+v2y2=0</script><p>整理上式得</p>
+<script type="math/tex; mode=display">
+(K_{11}+K_{22}-2K_{12})\alpha_2=y_2(y_2-y_1+K_{11}\zeta-K_{12}\zeta+v_1-v_2)
+\\
+y_2(y_2-y_1+K_{11}\zeta-K_{12}\zeta+(g(\boldsymbol{x}_1)-\sum_{i=1}^2y_i\alpha_iK_{1i}-b)-(g(\boldsymbol{x}_2)-\sum_{i=1}^2y_i\alpha_iK_{2i}-b)</script><p>将$\zeta=\alpha_1y_1+\alpha_2y_2$带入上式得</p>
+<script type="math/tex; mode=display">
+(K_{11}+K_{22}-2K_{12})\alpha_2^{new,unc}=y_2((K_{11}+K_{22}-2K_{12})\alpha_2^{old}y_2+y_2-y_1+g(\boldsymbol{x}_1)-g(\boldsymbol{x}_2))
+\\
+=(K_{11}+K_{22}-2K_{12})\alpha_2^{old}+y_2(E_1-E_2)</script><p>最终得到$\alpha_2^{new,unc}$的表达式</p>
+<script type="math/tex; mode=display">
+\alpha_2^{new,unc}=\alpha_2^{old}+\frac{y_2(E_1-E_2)}{K_{11}+K_{22}-2K_{12}}</script><p>求得$\alpha_2^{new}$后，利用$\alpha_2^{new}$与$\alpha_1^{new}$的线性关系，也可以得到$\alpha_1^{new}$</p>
+<h4 id="计算阈值b和差值-E-i"><a href="#计算阈值b和差值-E-i" class="headerlink" title="计算阈值b和差值$E_i$"></a>计算阈值b和差值$E_i$</h4><h4 id="SMO算法总结"><a href="#SMO算法总结" class="headerlink" title="SMO算法总结"></a>SMO算法总结</h4><p>输入m个样本<code>$(\boldsymbol{x}_1,y_1),(\boldsymbol{x}_2,y_2),...,(\boldsymbol{x}_m,y_m)$</code>，其中<code>$x_i$</code>为n维特征向量，y为二元输出，值为1或-1。</p>
+<ol>
+<li>取初值<code>$\boldsymbol{\alpha}^0=0,k=0$</code></li>
+<li><p>按上述方法选择<code>$\alpha_1^k$</code>和<code>$\alpha_2^k$</code>，求出新的<code>$\alpha_2^{new,unc}$</code></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">\alpha_2^&#123;new,unc&#125;=\alpha_2^k+\frac&#123;y_2(E_1-E_2)&#125;&#123;K_&#123;11&#125;+K_&#123;22&#125;-2K_&#123;12&#125;&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>按照下式求出<code>$\alpha_2^{k+1}$</code></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">\alpha_2^&#123;k+1&#125;=\left\&#123;\begin&#123;matrix&#125;</span><br><span class="line">H&amp;\alpha_2^&#123;new,unc&#125;&gt;H\\ </span><br><span class="line">\alpha_2^&#123;new,unc&#125;&amp;L\leq\alpha_2^&#123;new,unc&#125;\leq H\\ </span><br><span class="line">L&amp;\alpha_2^&#123;new,unc&#125;&lt;L</span><br><span class="line">\end&#123;matrix&#125;\right.</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>利用<code>$\alpha_2^{k+1}$</code>和<code>$\alpha_1^{k+1}$</code>的线性关系求出<code>$\alpha_1^{k+1}$</code></p>
+</li>
+<li>按上述方法计算<code>$b^{k+1}$</code>和<code>$E_i$</code></li>
+<li><p>在精度e范围内检查是否满足如下的终止条件</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">\sum_&#123;i=1&#125;^m\alpha_iy_i=0</span><br><span class="line"></span><br><span class="line">0\leq\alpha_i\leq C\ i=1,2,...,m</span><br><span class="line"></span><br><span class="line">\alpha_i^&#123;k+1&#125;=0\Rightarrow y_if(\boldsymbol&#123;x&#125;_i)\geq1</span><br><span class="line"></span><br><span class="line">0&lt;\alpha_i^&#123;k+1&#125;&lt;C\Rightarrow y_if(\boldsymbol&#123;x&#125;_i)=1</span><br><span class="line"></span><br><span class="line">\alpha_i^&#123;k+1&#125;=C\Rightarrow y_if(\boldsymbol&#123;x&#125;_i)\leq1</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>如满足则结束，返回<code>$\boldsymbol{\alpha}^{k+1}$</code>，否则转到步骤2</p>
+</li>
+</ol>
+<h2 id="支持向量机回归"><a href="#支持向量机回归" class="headerlink" title="支持向量机回归"></a>支持向量机回归</h2><p>考虑一个回归问题，给定训练样本<code>$D=\left\{(\boldsymbol{x}_1,y_1),(\boldsymbol{x}_2,y_2),...,(\boldsymbol{x}_m,y_m)\right\},y_i\epsilon\mathbb{R}$</code>，希望学得一个形如下式的回归模型，使得<code>$f(\boldsymbol{x})$</code>与<code>$y$</code>尽可能接近，<code>$\boldsymbol{\omega}$</code>和<code>$b$</code>是待确定的模型参数。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">f(\boldsymbol&#123;x&#125;)=\boldsymbol&#123;\omega&#125;^T\boldsymbol&#123;x&#125;+b</span><br></pre></td></tr></table></figure>
+<ul>
+<li><strong>传统回归模型</strong>：通常直接基于模型输出<code>$f(\boldsymbol{x})$</code>与真是输出<code>$y$</code>之间的差别来计算损失，当且仅当<code>$f(\boldsymbol{x})$</code>与<code>$y$</code>完全相同时，损失才为零。</li>
+<li><strong>支持向量回归</strong>：可以容忍<code>$f(\boldsymbol{x})$</code>与<code>$y$</code>之间最多有<code>$\epsilon$</code>的偏差，即仅当<code>$f(\boldsymbol{x})$</code>与<code>$y$</code>之间的差别绝对值大约<code>$\epsilon$</code>时才计算损失。</li>
+</ul>
+<p>SVR问题可形式化为</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">\underset&#123;\boldsymbol&#123;\omega&#125;,b&#125;&#123;\min&#125;\frac&#123;1&#125;&#123;2&#125;||\boldsymbol&#123;\omega&#125;||^2+C\sum_&#123;i=1&#125;^&#123;m&#125;\ell_&#123;\epsilon&#125;(f(\boldsymbol&#123;x&#125;_i)-y_i)</span><br></pre></td></tr></table></figure>
+<p>其中C为正则化常数，<code>$\ell_{\epsilon}$</code>是<code>$\epsilon-$</code>不敏感损失函数</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">\ell_&#123;\epsilon&#125;(z)=\left\&#123;\begin&#123;matrix&#125;</span><br><span class="line">0,&amp;if|z|\leq\epsilon\\ </span><br><span class="line">|z|-\epsilon,&amp;othervise</span><br><span class="line">\end&#123;matrix&#125;\right.</span><br></pre></td></tr></table></figure>
+<p>引入松弛变量<code>$\xi_i$</code>和<code>$\widehat{\xi}_i$</code>（间隔带两侧的松弛程度可有所不同，所以有两个松弛变量）</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">\underset&#123;\boldsymbol&#123;\omega&#125;,b,\xi_i,\widehat&#123;\xi&#125;_i&#125;&#123;\min&#125;\frac&#123;1&#125;&#123;2&#125;||\boldsymbol&#123;\omega&#125;||^2+C\sum_&#123;i=1&#125;^m(\xi_i,\widehat&#123;\xi&#125;_i)</span><br><span class="line"></span><br><span class="line">s.t.\ -\epsilon-\widehat&#123;\xi&#125;_i\leq f(\boldsymbol&#123;x&#125;_i)-y_i\leq\epsilon+\xi_i</span><br><span class="line"></span><br><span class="line">\xi_i\geq0,\widehat&#123;\xi&#125;_i\geq0,i=1,2,...,m</span><br></pre></td></tr></table></figure>
+<h3 id="目标函数对偶形式"><a href="#目标函数对偶形式" class="headerlink" title="目标函数对偶形式"></a>目标函数对偶形式</h3><p>引入拉格朗日乘子<code>$\mu_i\geq0,\hat{\mu}_i\geq0,\alpha_i\geq0,\hat{\alpha}_i\geq0$</code>，由拉格朗日乘子法可得拉格朗日函数<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">L(\boldsymbol&#123;\omega&#125;,b,\boldsymbol&#123;\alpha&#125;,\boldsymbol&#123;\hat&#123;\alpha&#125;&#125;,\boldsymbol&#123;\xi&#125;,\boldsymbol&#123;\hat&#123;\xi&#125;&#125;,\boldsymbol&#123;\mu&#125;,\boldsymbol&#123;\hat&#123;\mu&#125;&#125;)</span><br><span class="line"></span><br><span class="line">=\frac&#123;1&#125;&#123;2&#125;||\boldsymbol&#123;\omega&#125;||^2+C\sum_&#123;i=1&#125;^m(\xi_i+\hat&#123;\xi&#125;_i)-\sum_&#123;i=1&#125;^m\mu_i\xi_i-\sum_&#123;i=1&#125;^m\hat&#123;\mu&#125;_i\hat&#123;\xi&#125;_i</span><br><span class="line"></span><br><span class="line">+\sum_&#123;i=1&#125;^m\alpha_i(f(\boldsymbol&#123;x&#125;_i-y_i-\epsilon-\xi_i))+\sum_&#123;i=1&#125;^m\hat&#123;\alpha&#125;_i(y_i-f(\boldsymbol&#123;x&#125;_i)-\epsilon-\hat&#123;\xi&#125;_i)</span><br></pre></td></tr></table></figure></p>
+<p>我们的优化目标是</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">\underset&#123;\boldsymbol&#123;\omega&#125;,b,\boldsymbol&#123;\xi&#125;,\boldsymbol&#123;\hat&#123;\xi&#125;&#125;&#125;&#123;\min&#125;\underset&#123;\boldsymbol&#123;\mu&#125;,\boldsymbol&#123;\hat&#123;\mu&#125;&#125;,\boldsymbol&#123;\alpha&#125;,\boldsymbol&#123;\hat&#123;\alpha&#125;&#125;&#125;&#123;\max&#125;L(\boldsymbol&#123;\omega&#125;,b,\boldsymbol&#123;\alpha&#125;,\boldsymbol&#123;\hat&#123;\alpha&#125;&#125;,\boldsymbol&#123;\xi&#125;,\boldsymbol&#123;\hat&#123;\xi&#125;&#125;,\boldsymbol&#123;\mu&#125;,\boldsymbol&#123;\hat&#123;\mu&#125;&#125;)</span><br></pre></td></tr></table></figure>
+<p>和SVM分类模型一样，这个优化目标也满足KKT条件，也就是说，我们可以通过拉格朗日对偶将我们的优化问题转化为等价的对偶问题来求解如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">\underset&#123;\boldsymbol&#123;\mu&#125;,\boldsymbol&#123;\hat&#123;\mu&#125;&#125;,\boldsymbol&#123;\alpha&#125;,\boldsymbol&#123;\hat&#123;\alpha&#125;&#125;&#125;&#123;\max&#125;\underset&#123;\boldsymbol&#123;\omega&#125;,b,\boldsymbol&#123;\xi&#125;,\boldsymbol&#123;\hat&#123;\xi&#125;&#125;&#125;&#123;\min&#125;L(\boldsymbol&#123;\omega&#125;,b,\boldsymbol&#123;\alpha&#125;,\boldsymbol&#123;\hat&#123;\alpha&#125;&#125;,\boldsymbol&#123;\xi&#125;,\boldsymbol&#123;\hat&#123;\xi&#125;&#125;,\boldsymbol&#123;\mu&#125;,\boldsymbol&#123;\hat&#123;\mu&#125;&#125;)</span><br></pre></td></tr></table></figure></p>
+<p>首先通过求偏导数，求关于<code>$\boldsymbol{\omega},b,\boldsymbol{\xi},\boldsymbol{\hat{\xi}}$</code>的极小值</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">\frac&#123;\partial&#123;L&#125;&#125;&#123;\partial&#123;\boldsymbol&#123;\omega&#125;&#125;&#125;=0\Rightarrow\boldsymbol&#123;\omega&#125;=\sum_&#123;i=1&#125;^m(\hat&#123;\alpha_i&#125;-\alpha_i)\boldsymbol&#123;x&#125;_i</span><br><span class="line"></span><br><span class="line">\frac&#123;\partial&#123;L&#125;&#125;&#123;\partial&#123;b&#125;&#125;=0\Rightarrow\sum_&#123;i=1&#125;^m(\hat&#123;\alpha&#125;_i-\alpha_i)=0</span><br><span class="line"></span><br><span class="line">\frac&#123;\partial&#123;L&#125;&#125;&#123;\partial&#123;\xi&#125;_i&#125;=0\Rightarrow\alpha_i+\mu_i=C</span><br><span class="line"></span><br><span class="line">\frac&#123;\partial&#123;L&#125;&#125;&#123;\partial&#123;\hat&#123;\xi&#125;_i&#125;&#125;=0\Rightarrow\hat&#123;\alpha&#125;_i+\hat&#123;\mu&#125;_i=C</span><br></pre></td></tr></table></figure>
+<p>带入，得到对偶问题</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">\underset&#123;\boldsymbol&#123;\alpha&#125;,\boldsymbol&#123;\hat&#123;\alpha&#125;&#125;&#125;&#123;\max&#125;\sum_&#123;i=1&#125;^my_i(\hat&#123;\alpha&#125;_i-\alpha_i)-\epsilon(\hat&#123;\alpha&#125;_i+\alpha_i)</span><br><span class="line"></span><br><span class="line">-\frac&#123;1&#125;&#123;2&#125;\sum_&#123;i=1&#125;^m\sum_&#123;j=1&#125;^m(\hat&#123;\alpha&#125;_i-\alpha_i)(\hat&#123;\alpha&#125;_j-\alpha_j)\boldsymbol&#123;x&#125;_i^T\boldsymbol&#123;x&#125;_j</span><br><span class="line"></span><br><span class="line">s.t.\ \sum_&#123;i=1&#125;^m(\hat&#123;\alpha&#125;_i-\alpha_j)=0</span><br><span class="line"></span><br><span class="line">0\leq\alpha_i,\hat&#123;\alpha&#125;_j\leq&#123;C&#125;</span><br></pre></td></tr></table></figure>
+<p>同样可通过SMO算法解出<code>$\boldsymbol{\alpha},\boldsymbol{\hat{\alpha}}$</code>，SVR的解为</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">f(\boldsymbol&#123;x&#125;)=\sum_&#123;i=1&#125;^m(\hat&#123;\alpha&#125;_i-\alpha_i)\boldsymbol&#123;x&#125;_i^T\boldsymbol&#123;x&#125;+b</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    
+    
+    
+
+<div>
+  
+    <div>
+    
+        <div style="text-align:center;color: #555;font-size:14px;">-------------The End-------------</div>
+    
+</div>
+  
+</div>
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/西瓜书笔记/" rel="tag"># 西瓜书笔记</a>
+          
+            <a href="/tags/机器学习/" rel="tag"># 机器学习</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/09/30/目标检测backbone/" rel="next" title="目标检测backbone">
+                <i class="fa fa-chevron-left"></i> 目标检测backbone
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/10/19/evaluation-measure-of-pose-estimation/" rel="prev" title="Evaluation measure of pose estimation">
+                Evaluation measure of pose estimation <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="lv-container" data-id="city" data-uid="MTAyMC80MDY4Mi8xNzIwNw=="></div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/avatar2.jpg" alt="JF Wang">
+            
+              <p class="site-author-name" itemprop="name">JF Wang</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives">
+              
+                  <span class="site-state-item-count">30</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">22</span>
+                  <span class="site-state-item-name">categories</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">28</span>
+                  <span class="site-state-item-name">tags</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#西瓜书笔记6-支持向量机"><span class="nav-number">1.</span> <span class="nav-text">西瓜书笔记6 支持向量机</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#间隔与支持向量"><span class="nav-number">1.1.</span> <span class="nav-text">间隔与支持向量</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#对偶问题"><span class="nav-number">1.2.</span> <span class="nav-text">对偶问题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#软间隔与正则化"><span class="nav-number">1.3.</span> <span class="nav-text">软间隔与正则化</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#软间隔最大化"><span class="nav-number">1.3.1.</span> <span class="nav-text">软间隔最大化</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#最大化函数的优化"><span class="nav-number">1.3.2.</span> <span class="nav-text">最大化函数的优化</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#核函数"><span class="nav-number">1.3.3.</span> <span class="nav-text">核函数</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#有哪些核函数呢"><span class="nav-number">1.3.3.1.</span> <span class="nav-text">有哪些核函数呢</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#SMO算法"><span class="nav-number">1.4.</span> <span class="nav-text">SMO算法*</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#优化目标"><span class="nav-number">1.4.1.</span> <span class="nav-text">优化目标</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#SMO基本思想"><span class="nav-number">1.4.2.</span> <span class="nav-text">SMO基本思想</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#SMO算法细节"><span class="nav-number">1.4.3.</span> <span class="nav-text">SMO算法细节</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#两个变量的选择"><span class="nav-number">1.4.3.1.</span> <span class="nav-text">两个变量的选择</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1-第一个变量的选择"><span class="nav-number">1.4.3.1.1.</span> <span class="nav-text">1.第一个变量的选择</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2-第二个变量的选择"><span class="nav-number">1.4.3.1.2.</span> <span class="nav-text">2.第二个变量的选择</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#两个变量的更新"><span class="nav-number">1.4.3.2.</span> <span class="nav-text">两个变量的更新</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#计算阈值b和差值-E-i"><span class="nav-number">1.4.3.3.</span> <span class="nav-text">计算阈值b和差值$E_i$</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#SMO算法总结"><span class="nav-number">1.4.3.4.</span> <span class="nav-text">SMO算法总结</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#支持向量机回归"><span class="nav-number">1.5.</span> <span class="nav-text">支持向量机回归</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#目标函数对偶形式"><span class="nav-number">1.5.1.</span> <span class="nav-text">目标函数对偶形式</span></a></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2018 &mdash; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">JF Wang</span>
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+      <span class="post-meta-item-text">Site words total count&#58;</span>
+    
+    <span title="Site words total count">50.8k</span>
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Gemini</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+    <script type="text/javascript">
+      (function(d, s) {
+        var j, e = d.getElementsByTagName(s)[0];
+        if (typeof LivereTower === 'function') { return; }
+        j = d.createElement(s);
+        j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+        j.async = true;
+        e.parentNode.insertBefore(j, e);
+      })(document, 'script');
+    </script>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.4.js"></script>
+  <script>AV.initialize("RNdl2wO1FNBvt55Si3t38Ur0-gzGzoHsz", "Bq8si1UE7hC2B4OsFFJYUcnQ");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+
+  
+
+  
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+  
+
+  
+
+</body>
+</html>

@@ -110,16 +110,16 @@
 <meta name="description" content="实现几个层：卷积层、最大池化、BN、GN(new)">
 <meta name="keywords" content="cs231n,计算机视觉,神经网络">
 <meta property="og:type" content="article">
-<meta property="og:title" content="cs231n_assignment2(ConvolutionalNetworks)">
+<meta property="og:title" content="cs231n assignment2(ConvolutionalNetworks)">
 <meta property="og:url" content="https://bywmm.github.io/2018/12/05/cs231n_assignment2(ConvolutionalNetworks)/index.html">
 <meta property="og:site_name" content="bywmm&#39;s blog">
 <meta property="og:description" content="实现几个层：卷积层、最大池化、BN、GN(new)">
 <meta property="og:locale" content="UTF-8">
 <meta property="og:image" content="http://static.zybuluo.com/BYWMM/rpkjafixzz9tl2kwcpxiinbb/12522150-02baf749c0d7a33b.png">
 <meta property="og:image" content="http://static.zybuluo.com/BYWMM/r2c9dldwzff2qmpa7ois3m0t/12522150-771831a611f4cf37.jpg">
-<meta property="og:updated_time" content="2018-12-05T14:27:15.199Z">
+<meta property="og:updated_time" content="2019-10-24T03:42:46.334Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="cs231n_assignment2(ConvolutionalNetworks)">
+<meta name="twitter:title" content="cs231n assignment2(ConvolutionalNetworks)">
 <meta name="twitter:description" content="实现几个层：卷积层、最大池化、BN、GN(new)">
 <meta name="twitter:image" content="http://static.zybuluo.com/BYWMM/rpkjafixzz9tl2kwcpxiinbb/12522150-02baf749c0d7a33b.png">
 
@@ -157,7 +157,7 @@
 
 
 
-  <title>cs231n_assignment2(ConvolutionalNetworks) | bywmm's blog</title>
+  <title>cs231n assignment2(ConvolutionalNetworks) | bywmm's blog</title>
   
 
 
@@ -301,7 +301,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">cs231n_assignment2(ConvolutionalNetworks)</h1>
+          <h1 class="post-title" itemprop="name headline">cs231n assignment2(ConvolutionalNetworks)</h1>
         
 
         <div class="post-meta">
@@ -336,8 +336,8 @@
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/cs231n-assignment/" itemprop="url" rel="index">
-                    <span itemprop="name">cs231n_assignment</span>
+                  <a href="/categories/cs231n/" itemprop="url" rel="index">
+                    <span itemprop="name">cs231n</span>
                   </a>
                 </span>
 
@@ -353,7 +353,7 @@
 
           
           
-             <span id="/2018/12/05/cs231n_assignment2(ConvolutionalNetworks)/" class="leancloud_visitors" data-flag-title="cs231n_assignment2(ConvolutionalNetworks)">
+             <span id="/2018/12/05/cs231n_assignment2(ConvolutionalNetworks)/" class="leancloud_visitors" data-flag-title="cs231n assignment2(ConvolutionalNetworks)">
                <span class="post-meta-divider">|</span>
                <span class="post-meta-item-icon">
                  <i class="fa fa-eye"></i>
@@ -419,7 +419,7 @@
       
 
       
-        <h1 id="cs231n-assignment2-ConvolutionalNetworks"><a href="#cs231n-assignment2-ConvolutionalNetworks" class="headerlink" title="cs231n_assignment2(ConvolutionalNetworks)"></a>cs231n_assignment2(ConvolutionalNetworks)</h1><h2 id="Convolution-Naive-forward-pass"><a href="#Convolution-Naive-forward-pass" class="headerlink" title="Convolution: Naive forward pass"></a>Convolution: Naive forward pass</h2><p><strong>Input data of shape：</strong> $(N, C, H_{prev}, W_{prev})$<br>其中$N$是样本数，$C$是channel数。<br>下一层的$H,W$可由以下公式得出：</p>
+        <h1 id="cs231n-assignment2-ConvolutionalNetworks"><a href="#cs231n-assignment2-ConvolutionalNetworks" class="headerlink" title="cs231n assignment2(ConvolutionalNetworks)"></a>cs231n assignment2(ConvolutionalNetworks)</h1><h2 id="Convolution-Naive-forward-pass"><a href="#Convolution-Naive-forward-pass" class="headerlink" title="Convolution: Naive forward pass"></a>Convolution: Naive forward pass</h2><p><strong>Input data of shape：</strong> $(N, C, H_{prev}, W_{prev})$<br>其中$N$是样本数，$C$是channel数。<br>下一层的$H,W$可由以下公式得出：</p>
 <script type="math/tex; mode=display">H = \lfloor \frac{H_{prev} - HH + 2 \times pad}{stride} \rfloor +1</script><script type="math/tex; mode=display">W = \lfloor \frac{W_{prev} - WW + 2 \times pad}{stride} \rfloor +1</script><p><strong>Output data of shape：</strong> $(N, F, H, W)$<br>其中$F$是本层filters的个数。</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">conv_forward_naive</span><span class="params">(x, w, b, conv_param)</span>:</span></span><br><span class="line">    <span class="string">"""</span></span><br><span class="line"><span class="string">    A naive implementation of the forward pass for a convolutional layer.</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">    The input consists of N data points, each with C channels, height H and</span></span><br><span class="line"><span class="string">    width W. We convolve each input with F different filters, where each filter</span></span><br><span class="line"><span class="string">    spans all C channels and has height HH and width WW.</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">    Input:</span></span><br><span class="line"><span class="string">    - x: Input data of shape (N, C, H, W)</span></span><br><span class="line"><span class="string">    - w: Filter weights of shape (F, C, HH, WW)</span></span><br><span class="line"><span class="string">    - b: Biases, of shape (F,)</span></span><br><span class="line"><span class="string">    - conv_param: A dictionary with the following keys:</span></span><br><span class="line"><span class="string">      - 'stride': The number of pixels between adjacent receptive fields in the</span></span><br><span class="line"><span class="string">        horizontal and vertical directions.</span></span><br><span class="line"><span class="string">      - 'pad': The number of pixels that will be used to zero-pad the input. </span></span><br><span class="line"><span class="string">        </span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">    During padding, 'pad' zeros should be placed symmetrically (i.e equally on both sides)</span></span><br><span class="line"><span class="string">    along the height and width axes of the input. Be careful not to modfiy the original</span></span><br><span class="line"><span class="string">    input x directly.</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">    Returns a tuple of:</span></span><br><span class="line"><span class="string">    - out: Output data, of shape (N, F, H', W') where H' and W' are given by</span></span><br><span class="line"><span class="string">      H' = 1 + (H + 2 * pad - HH) / stride</span></span><br><span class="line"><span class="string">      W' = 1 + (W + 2 * pad - WW) / stride</span></span><br><span class="line"><span class="string">    - cache: (x, w, b, conv_param)</span></span><br><span class="line"><span class="string">    """</span></span><br><span class="line">    <span class="comment">###########################################################################</span></span><br><span class="line">    <span class="comment"># <span class="doctag">TODO:</span> Implement the convolutional forward pass.                         #</span></span><br><span class="line">    <span class="comment"># Hint: you can use the function np.pad for padding.                      #</span></span><br><span class="line">    <span class="comment">###########################################################################</span></span><br><span class="line">    N, C, H_prev, W_prev = x.shape</span><br><span class="line">    F, _, HH, WW = w.shape</span><br><span class="line">    stride = conv_param[<span class="string">'stride'</span>]   <span class="comment"># stride</span></span><br><span class="line">    pad = conv_param[<span class="string">'pad'</span>]   <span class="comment"># pad</span></span><br><span class="line"></span><br><span class="line">    <span class="comment"># python3除法的结果都是float</span></span><br><span class="line">    H_out = <span class="number">1</span> + (H_prev + <span class="number">2</span> * pad - HH) // stride</span><br><span class="line">    W_out = <span class="number">1</span> + (W_prev + pad * <span class="number">2</span> - WW) // stride</span><br><span class="line">    Z = np.zeros((N, F, H_out, W_out))</span><br><span class="line">    <span class="comment"># zero padding</span></span><br><span class="line">    x_pad = np.pad(x, ((<span class="number">0</span>, <span class="number">0</span>), (<span class="number">0</span>, <span class="number">0</span>), (pad, pad), (pad, pad)), <span class="string">'constant'</span>, constant_values=<span class="number">0</span>)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> range(N): </span><br><span class="line">        <span class="keyword">for</span> h_i <span class="keyword">in</span> range(H_out):  </span><br><span class="line">            <span class="keyword">for</span> w_i <span class="keyword">in</span> range(W_out): </span><br><span class="line">                </span><br><span class="line">                h_start = h_i * stride</span><br><span class="line">                h_end = h_start + HH</span><br><span class="line">                w_start = w_i * stride</span><br><span class="line">                w_end = w_start + WW</span><br><span class="line">                </span><br><span class="line">                xi_slice = x[i, :, h_start:h_end, w_start:w_end]</span><br><span class="line">                <span class="keyword">for</span> f <span class="keyword">in</span> range(F):                   <span class="comment"># loop over channels (= #filters) of the output volume</span></span><br><span class="line">                    Z[i, f, h_i, w_i] = np.sum(np.multiply(xi_slice, w[f])) + b[f]</span><br><span class="line">    out = Z</span><br><span class="line">    <span class="comment">###########################################################################</span></span><br><span class="line">    <span class="comment">#                             END OF YOUR CODE                            #</span></span><br><span class="line">    <span class="comment">###########################################################################</span></span><br><span class="line">    cache = (x, w, b, conv_param)</span><br><span class="line">    <span class="keyword">return</span> out, cache</span><br></pre></td></tr></table></figure>
 <h2 id="Convolution-Naive-backward-pass"><a href="#Convolution-Naive-backward-pass" class="headerlink" title="Convolution: Naive backward pass"></a>Convolution: Naive backward pass</h2><p>在Forward Pass中，最关键的就这一句代码了</p>
@@ -489,8 +489,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2018/12/03/cs231n_assignment2(Dropout)/" rel="next" title="cs231n_assignment2(Dropout)">
-                <i class="fa fa-chevron-left"></i> cs231n_assignment2(Dropout)
+              <a href="/2018/12/03/cs231n_assignment2(Dropout)/" rel="next" title="cs231n assignment2(Dropout)">
+                <i class="fa fa-chevron-left"></i> cs231n assignment2(Dropout)
               </a>
             
           </div>
@@ -585,7 +585,7 @@
               
                 <a href="/archives">
               
-                  <span class="site-state-item-count">26</span>
+                  <span class="site-state-item-count">30</span>
                   <span class="site-state-item-name">posts</span>
                 </a>
               </div>
@@ -596,7 +596,7 @@
               
               <div class="site-state-item site-state-categories">
                 <a href="/categories/index.html">
-                  <span class="site-state-item-count">9</span>
+                  <span class="site-state-item-count">22</span>
                   <span class="site-state-item-name">categories</span>
                 </a>
               </div>
@@ -607,7 +607,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">21</span>
+                  <span class="site-state-item-count">28</span>
                   <span class="site-state-item-name">tags</span>
                 </a>
               </div>
@@ -647,7 +647,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#cs231n-assignment2-ConvolutionalNetworks"><span class="nav-number">1.</span> <span class="nav-text">cs231n_assignment2(ConvolutionalNetworks)</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Convolution-Naive-forward-pass"><span class="nav-number">1.1.</span> <span class="nav-text">Convolution: Naive forward pass</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Convolution-Naive-backward-pass"><span class="nav-number">1.2.</span> <span class="nav-text">Convolution: Naive backward pass</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Max-Pooling-Naive-forward"><span class="nav-number">1.3.</span> <span class="nav-text">Max-Pooling: Naive forward</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Max-Pooling-Naive-backward"><span class="nav-number">1.4.</span> <span class="nav-text">Max-Pooling: Naive backward</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Spatial-batch-normalization-forward"><span class="nav-number">1.5.</span> <span class="nav-text">Spatial batch normalization: forward</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Spatial-batch-normalization-backward"><span class="nav-number">1.6.</span> <span class="nav-text">Spatial batch normalization: backward</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Spatial-group-normalization-forward"><span class="nav-number">1.7.</span> <span class="nav-text">Spatial group normalization: forward</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Spatial-group-normalization-backward"><span class="nav-number">1.8.</span> <span class="nav-text">Spatial group normalization: backward</span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#cs231n-assignment2-ConvolutionalNetworks"><span class="nav-number">1.</span> <span class="nav-text">cs231n assignment2(ConvolutionalNetworks)</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Convolution-Naive-forward-pass"><span class="nav-number">1.1.</span> <span class="nav-text">Convolution: Naive forward pass</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Convolution-Naive-backward-pass"><span class="nav-number">1.2.</span> <span class="nav-text">Convolution: Naive backward pass</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Max-Pooling-Naive-forward"><span class="nav-number">1.3.</span> <span class="nav-text">Max-Pooling: Naive forward</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Max-Pooling-Naive-backward"><span class="nav-number">1.4.</span> <span class="nav-text">Max-Pooling: Naive backward</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Spatial-batch-normalization-forward"><span class="nav-number">1.5.</span> <span class="nav-text">Spatial batch normalization: forward</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Spatial-batch-normalization-backward"><span class="nav-number">1.6.</span> <span class="nav-text">Spatial batch normalization: backward</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Spatial-group-normalization-forward"><span class="nav-number">1.7.</span> <span class="nav-text">Spatial group normalization: forward</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Spatial-group-normalization-backward"><span class="nav-number">1.8.</span> <span class="nav-text">Spatial group normalization: backward</span></a></li></ol></li></ol></div>
             
 
           </div>
@@ -681,7 +681,7 @@
     
       <span class="post-meta-item-text">Site words total count&#58;</span>
     
-    <span title="Site words total count">45.9k</span>
+    <span title="Site words total count">50.8k</span>
   
 </div>
 

@@ -110,7 +110,7 @@
 <meta name="description" content="层的模块化；更多优化算法">
 <meta name="keywords" content="cs231n,计算机视觉,神经网络">
 <meta property="og:type" content="article">
-<meta property="og:title" content="cs231n_assignment2(FullyConnectedNets)">
+<meta property="og:title" content="cs231n assignment2(FullyConnectedNets)">
 <meta property="og:url" content="https://bywmm.github.io/2018/11/26/cs231n_assignment2(FullyConnectedNets)/index.html">
 <meta property="og:site_name" content="bywmm&#39;s blog">
 <meta property="og:description" content="层的模块化；更多优化算法">
@@ -121,9 +121,9 @@
 <meta property="og:image" content="http://static.zybuluo.com/BYWMM/ap8jfanaoxhxkzcgvjk4nhl5/lingwai.png">
 <meta property="og:image" content="http://static.zybuluo.com/BYWMM/uxkrp10efa9nglu09wn5946p/789127863fakjsdh%20%283%29.png">
 <meta property="og:image" content="http://static.zybuluo.com/BYWMM/7mgqipql95f860q7ovn41j1c/789127863fakjsdh%20%281%29.png">
-<meta property="og:updated_time" content="2018-12-01T11:07:07.520Z">
+<meta property="og:updated_time" content="2019-10-24T03:43:02.464Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="cs231n_assignment2(FullyConnectedNets)">
+<meta name="twitter:title" content="cs231n assignment2(FullyConnectedNets)">
 <meta name="twitter:description" content="层的模块化；更多优化算法">
 <meta name="twitter:image" content="http://static.zybuluo.com/BYWMM/as7iiq6omsyg5mszkrd3gft6/356adslfasdk%20%281%29.png">
 
@@ -161,7 +161,7 @@
 
 
 
-  <title>cs231n_assignment2(FullyConnectedNets) | bywmm's blog</title>
+  <title>cs231n assignment2(FullyConnectedNets) | bywmm's blog</title>
   
 
 
@@ -305,7 +305,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">cs231n_assignment2(FullyConnectedNets)</h1>
+          <h1 class="post-title" itemprop="name headline">cs231n assignment2(FullyConnectedNets)</h1>
         
 
         <div class="post-meta">
@@ -340,8 +340,8 @@
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/cs231n-assignment/" itemprop="url" rel="index">
-                    <span itemprop="name">cs231n_assignment</span>
+                  <a href="/categories/cs231n/" itemprop="url" rel="index">
+                    <span itemprop="name">cs231n</span>
                   </a>
                 </span>
 
@@ -357,7 +357,7 @@
 
           
           
-             <span id="/2018/11/26/cs231n_assignment2(FullyConnectedNets)/" class="leancloud_visitors" data-flag-title="cs231n_assignment2(FullyConnectedNets)">
+             <span id="/2018/11/26/cs231n_assignment2(FullyConnectedNets)/" class="leancloud_visitors" data-flag-title="cs231n assignment2(FullyConnectedNets)">
                <span class="post-meta-divider">|</span>
                <span class="post-meta-item-icon">
                  <i class="fa fa-eye"></i>
@@ -423,7 +423,7 @@
       
 
       
-        <h1 id="cs231n-assignment2-FullyConnectedNets"><a href="#cs231n-assignment2-FullyConnectedNets" class="headerlink" title="cs231n_assignment2(FullyConnectedNets)"></a>cs231n_assignment2(FullyConnectedNets)</h1><h2 id="层的模块化"><a href="#层的模块化" class="headerlink" title="层的模块化"></a>层的模块化</h2><p>在assignment1中的实验中，曾经实现了一个two-layers-net。用的方法，一个公式一个公式的写出来的，当网络规模变大，就不好实现，重用性也差。本节实验就将层进行模块化，每一层都会实现一个forward和backward的函数。</p>
+        <h1 id="cs231n-assignment2-FullyConnectedNets"><a href="#cs231n-assignment2-FullyConnectedNets" class="headerlink" title="cs231n assignment2(FullyConnectedNets)"></a>cs231n assignment2(FullyConnectedNets)</h1><h2 id="层的模块化"><a href="#层的模块化" class="headerlink" title="层的模块化"></a>层的模块化</h2><p>在assignment1中的实验中，曾经实现了一个two-layers-net。用的方法，一个公式一个公式的写出来的，当网络规模变大，就不好实现，重用性也差。本节实验就将层进行模块化，每一层都会实现一个forward和backward的函数。</p>
 <p>例如一个forward函数<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">layer_forward</span><span class="params">(x, w)</span>:</span></span><br><span class="line">  <span class="string">""" Receive inputs x and weights w """</span></span><br><span class="line">  <span class="comment"># Do some computations ...</span></span><br><span class="line">  z = <span class="comment"># ... some intermediate value</span></span><br><span class="line">  <span class="comment"># Do some more computations ...</span></span><br><span class="line">  out = <span class="comment"># the output</span></span><br><span class="line"></span><br><span class="line">  cache = (x, w, z, out) <span class="comment"># Values we need to compute gradients</span></span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> out, cache</span><br></pre></td></tr></table></figure></p>
 <p>例如一个backward函数</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">layer_backward</span><span class="params">(dout, cache)</span>:</span></span><br><span class="line">  <span class="string">"""</span></span><br><span class="line"><span class="string">  Receive dout (derivative of loss with respect to outputs) and cache,</span></span><br><span class="line"><span class="string">  and compute derivative with respect to inputs.</span></span><br><span class="line"><span class="string">  """</span></span><br><span class="line">  <span class="comment"># Unpack cache values</span></span><br><span class="line">  x, w, z, out = cache</span><br><span class="line"></span><br><span class="line">  <span class="comment"># Use values in cache to compute derivatives</span></span><br><span class="line">  dx = <span class="comment"># Derivative of loss with respect to x</span></span><br><span class="line">  dw = <span class="comment"># Derivative of loss with respect to w</span></span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> dx, dw</span><br></pre></td></tr></table></figure>
@@ -596,7 +596,7 @@ db & =dout * \frac{\partial{Z}}{\partial{b}} = dout * [1,...,1]
               
                 <a href="/archives">
               
-                  <span class="site-state-item-count">26</span>
+                  <span class="site-state-item-count">30</span>
                   <span class="site-state-item-name">posts</span>
                 </a>
               </div>
@@ -607,7 +607,7 @@ db & =dout * \frac{\partial{Z}}{\partial{b}} = dout * [1,...,1]
               
               <div class="site-state-item site-state-categories">
                 <a href="/categories/index.html">
-                  <span class="site-state-item-count">9</span>
+                  <span class="site-state-item-count">22</span>
                   <span class="site-state-item-name">categories</span>
                 </a>
               </div>
@@ -618,7 +618,7 @@ db & =dout * \frac{\partial{Z}}{\partial{b}} = dout * [1,...,1]
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">21</span>
+                  <span class="site-state-item-count">28</span>
                   <span class="site-state-item-name">tags</span>
                 </a>
               </div>
@@ -658,7 +658,7 @@ db & =dout * \frac{\partial{Z}}{\partial{b}} = dout * [1,...,1]
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#cs231n-assignment2-FullyConnectedNets"><span class="nav-number">1.</span> <span class="nav-text">cs231n_assignment2(FullyConnectedNets)</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#层的模块化"><span class="nav-number">1.1.</span> <span class="nav-text">层的模块化</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Affine-layer-forward"><span class="nav-number">1.1.1.</span> <span class="nav-text">Affine layer: forward</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Affine-layer-backward"><span class="nav-number">1.1.2.</span> <span class="nav-text">Affine layer: backward</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ReLU-layer-forward"><span class="nav-number">1.1.3.</span> <span class="nav-text">ReLU layer: forward</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ReLU-layer-backward"><span class="nav-number">1.1.4.</span> <span class="nav-text">ReLU layer: backward</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Two-layer-network"><span class="nav-number">1.1.5.</span> <span class="nav-text">Two-layer network</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Multilayer-network"><span class="nav-number">1.1.6.</span> <span class="nav-text">Multilayer network</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#优化方法"><span class="nav-number">1.2.</span> <span class="nav-text">优化方法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#SGD-Momentum"><span class="nav-number">1.2.1.</span> <span class="nav-text">SGD+Momentum</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#RMSProp-and-Adam"><span class="nav-number">1.2.2.</span> <span class="nav-text">RMSProp and Adam</span></a></li></ol></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#cs231n-assignment2-FullyConnectedNets"><span class="nav-number">1.</span> <span class="nav-text">cs231n assignment2(FullyConnectedNets)</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#层的模块化"><span class="nav-number">1.1.</span> <span class="nav-text">层的模块化</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Affine-layer-forward"><span class="nav-number">1.1.1.</span> <span class="nav-text">Affine layer: forward</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Affine-layer-backward"><span class="nav-number">1.1.2.</span> <span class="nav-text">Affine layer: backward</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ReLU-layer-forward"><span class="nav-number">1.1.3.</span> <span class="nav-text">ReLU layer: forward</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ReLU-layer-backward"><span class="nav-number">1.1.4.</span> <span class="nav-text">ReLU layer: backward</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Two-layer-network"><span class="nav-number">1.1.5.</span> <span class="nav-text">Two-layer network</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Multilayer-network"><span class="nav-number">1.1.6.</span> <span class="nav-text">Multilayer network</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#优化方法"><span class="nav-number">1.2.</span> <span class="nav-text">优化方法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#SGD-Momentum"><span class="nav-number">1.2.1.</span> <span class="nav-text">SGD+Momentum</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#RMSProp-and-Adam"><span class="nav-number">1.2.2.</span> <span class="nav-text">RMSProp and Adam</span></a></li></ol></li></ol></li></ol></div>
             
 
           </div>
@@ -692,7 +692,7 @@ db & =dout * \frac{\partial{Z}}{\partial{b}} = dout * [1,...,1]
     
       <span class="post-meta-item-text">Site words total count&#58;</span>
     
-    <span title="Site words total count">45.9k</span>
+    <span title="Site words total count">50.8k</span>
   
 </div>
 

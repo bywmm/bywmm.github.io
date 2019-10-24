@@ -110,7 +110,7 @@
 <meta name="description" content="Dropout；Add Random Noise；">
 <meta name="keywords" content="cs231n,计算机视觉,神经网络">
 <meta property="og:type" content="article">
-<meta property="og:title" content="cs231n_assignment2(Dropout)">
+<meta property="og:title" content="cs231n assignment2(Dropout)">
 <meta property="og:url" content="https://bywmm.github.io/2018/12/03/cs231n_assignment2(Dropout)/index.html">
 <meta property="og:site_name" content="bywmm&#39;s blog">
 <meta property="og:description" content="Dropout；Add Random Noise；">
@@ -123,9 +123,9 @@
 <meta property="og:image" content="http://static.zybuluo.com/BYWMM/r86vowzynib7rjfcbrhp9vrx/bufenzuidachihua.png">
 <meta property="og:image" content="http://static.zybuluo.com/BYWMM/52yfomuok05otlf60s9byk57/aifjadsighja.png">
 <meta property="og:image" content="http://static.zybuluo.com/BYWMM/1fum4aovro9q925z1ns1rig4/flkjasghfewac.png">
-<meta property="og:updated_time" content="2018-12-03T14:48:18.417Z">
+<meta property="og:updated_time" content="2019-10-24T03:42:53.107Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="cs231n_assignment2(Dropout)">
+<meta name="twitter:title" content="cs231n assignment2(Dropout)">
 <meta name="twitter:description" content="Dropout；Add Random Noise；">
 <meta name="twitter:image" content="http://static.zybuluo.com/BYWMM/pqk98tsytplmjt25pd22yh53/xixijifojahjgas.png">
 
@@ -163,7 +163,7 @@
 
 
 
-  <title>cs231n_assignment2(Dropout) | bywmm's blog</title>
+  <title>cs231n assignment2(Dropout) | bywmm's blog</title>
   
 
 
@@ -307,7 +307,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">cs231n_assignment2(Dropout)</h1>
+          <h1 class="post-title" itemprop="name headline">cs231n assignment2(Dropout)</h1>
         
 
         <div class="post-meta">
@@ -342,8 +342,8 @@
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/cs231n-assignment/" itemprop="url" rel="index">
-                    <span itemprop="name">cs231n_assignment</span>
+                  <a href="/categories/cs231n/" itemprop="url" rel="index">
+                    <span itemprop="name">cs231n</span>
                   </a>
                 </span>
 
@@ -359,7 +359,7 @@
 
           
           
-             <span id="/2018/12/03/cs231n_assignment2(Dropout)/" class="leancloud_visitors" data-flag-title="cs231n_assignment2(Dropout)">
+             <span id="/2018/12/03/cs231n_assignment2(Dropout)/" class="leancloud_visitors" data-flag-title="cs231n assignment2(Dropout)">
                <span class="post-meta-divider">|</span>
                <span class="post-meta-item-icon">
                  <i class="fa fa-eye"></i>
@@ -425,7 +425,7 @@
       
 
       
-        <h1 id="cs231n-assignment2-Dropout"><a href="#cs231n-assignment2-Dropout" class="headerlink" title="cs231n_assignment2(Dropout)"></a>cs231n_assignment2(Dropout)</h1><h2 id="随机失活（Dropout）笔记"><a href="#随机失活（Dropout）笔记" class="headerlink" title="随机失活（Dropout）笔记"></a>随机失活（Dropout）笔记</h2><p>Dropout是一个简单又极其有效的正则化方法。该方法由Srivastava在论文<a href="http://www.cs.toronto.edu/~rsalakhu/papers/srivastava14a.pdf" target="_blank" rel="noopener">Dropout: A Simple Way to Prevent Neural Networks from Overfitting</a>中提出的，与L1正则化，L2正则化和最大范式约束等方法互为补充。在训练的时候，随机失活的实现方法是让神经元以超参数p的概率被激活或者被设置为0。</p>
+        <h1 id="cs231n-assignment2-Dropout"><a href="#cs231n-assignment2-Dropout" class="headerlink" title="cs231n assignment2(Dropout)"></a>cs231n assignment2(Dropout)</h1><h2 id="随机失活（Dropout）笔记"><a href="#随机失活（Dropout）笔记" class="headerlink" title="随机失活（Dropout）笔记"></a>随机失活（Dropout）笔记</h2><p>Dropout是一个简单又极其有效的正则化方法。该方法由Srivastava在论文<a href="http://www.cs.toronto.edu/~rsalakhu/papers/srivastava14a.pdf" target="_blank" rel="noopener">Dropout: A Simple Way to Prevent Neural Networks from Overfitting</a>中提出的，与L1正则化，L2正则化和最大范式约束等方法互为补充。在训练的时候，随机失活的实现方法是让神经元以超参数p的概率被激活或者被设置为0。</p>
 <p><img src="http://static.zybuluo.com/BYWMM/pqk98tsytplmjt25pd22yh53/xixijifojahjgas.png"></p>
 <p>在训练过程中，<strong>随机失活可以被认为是对完整的神经网络抽样出一些子集</strong>，每次基于输入数据只更新子网络的参数（然而，数量巨大的子网络们并不是相互独立的，因为它们都共享参数）。在测试过程中不使用随机失活，可以理解为是<strong>对数量巨大的子网络们做了模型集成（model ensemble）</strong>，以此来计算出一个平均的预测。</p>
 <p>一个3层神经网络的普通版随机失活可以用下面代码实现：</p>
@@ -506,8 +506,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2018/12/02/cs231n_assignment2(BatchNormalization)/" rel="next" title="cs231n_assignment2(BatchNormalization)">
-                <i class="fa fa-chevron-left"></i> cs231n_assignment2(BatchNormalization)
+              <a href="/2018/12/02/cs231n_assignment2(BatchNormalization)/" rel="next" title="cs231n assignment2(BatchNormalization)">
+                <i class="fa fa-chevron-left"></i> cs231n assignment2(BatchNormalization)
               </a>
             
           </div>
@@ -516,8 +516,8 @@
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2018/12/05/cs231n_assignment2(ConvolutionalNetworks)/" rel="prev" title="cs231n_assignment2(ConvolutionalNetworks)">
-                cs231n_assignment2(ConvolutionalNetworks) <i class="fa fa-chevron-right"></i>
+              <a href="/2018/12/05/cs231n_assignment2(ConvolutionalNetworks)/" rel="prev" title="cs231n assignment2(ConvolutionalNetworks)">
+                cs231n assignment2(ConvolutionalNetworks) <i class="fa fa-chevron-right"></i>
               </a>
             
           </div>
@@ -602,7 +602,7 @@
               
                 <a href="/archives">
               
-                  <span class="site-state-item-count">26</span>
+                  <span class="site-state-item-count">30</span>
                   <span class="site-state-item-name">posts</span>
                 </a>
               </div>
@@ -613,7 +613,7 @@
               
               <div class="site-state-item site-state-categories">
                 <a href="/categories/index.html">
-                  <span class="site-state-item-count">9</span>
+                  <span class="site-state-item-count">22</span>
                   <span class="site-state-item-name">categories</span>
                 </a>
               </div>
@@ -624,7 +624,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">21</span>
+                  <span class="site-state-item-count">28</span>
                   <span class="site-state-item-name">tags</span>
                 </a>
               </div>
@@ -664,7 +664,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#cs231n-assignment2-Dropout"><span class="nav-number">1.</span> <span class="nav-text">cs231n_assignment2(Dropout)</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#随机失活（Dropout）笔记"><span class="nav-number">1.1.</span> <span class="nav-text">随机失活（Dropout）笔记</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Add-Random-Noise"><span class="nav-number">1.2.</span> <span class="nav-text">Add Random Noise</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#实验内容"><span class="nav-number">1.3.</span> <span class="nav-text">实验内容</span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#cs231n-assignment2-Dropout"><span class="nav-number">1.</span> <span class="nav-text">cs231n assignment2(Dropout)</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#随机失活（Dropout）笔记"><span class="nav-number">1.1.</span> <span class="nav-text">随机失活（Dropout）笔记</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Add-Random-Noise"><span class="nav-number">1.2.</span> <span class="nav-text">Add Random Noise</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#实验内容"><span class="nav-number">1.3.</span> <span class="nav-text">实验内容</span></a></li></ol></li></ol></div>
             
 
           </div>
@@ -698,7 +698,7 @@
     
       <span class="post-meta-item-text">Site words total count&#58;</span>
     
-    <span title="Site words total count">45.9k</span>
+    <span title="Site words total count">50.8k</span>
   
 </div>
 
