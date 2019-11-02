@@ -1,0 +1,973 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="UTF-8">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT">
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="bywmm's blog" type="application/atom+xml">
+
+
+
+
+
+
+<meta name="description" content="主成分分析(PCA)主成分分析(PCA)是最重要的降维方法之一。 为什么要降维？在原始的高维空间中，包含冗余信息和噪声信息，会在实际应用中引入误差，影响准确率；而降维可以提取数据内部的本质结构，减少冗余信息和噪声信息造成的误差，提高应用中的精度。  噪声    冗余   PCA思想PCA顾名思义，就是找出数据里最主要的方面，用数据里最主要的方面来代替原始数据。 假设有$m$个数据样本$\bolds">
+<meta property="og:type" content="article">
+<meta property="og:title" content="主成分分析">
+<meta property="og:url" content="https://bywmm.github.io/2019/10/25/pca/index.html">
+<meta property="og:site_name" content="bywmm&#39;s blog">
+<meta property="og:description" content="主成分分析(PCA)主成分分析(PCA)是最重要的降维方法之一。 为什么要降维？在原始的高维空间中，包含冗余信息和噪声信息，会在实际应用中引入误差，影响准确率；而降维可以提取数据内部的本质结构，减少冗余信息和噪声信息造成的误差，提高应用中的精度。  噪声    冗余   PCA思想PCA顾名思义，就是找出数据里最主要的方面，用数据里最主要的方面来代替原始数据。 假设有$m$个数据样本$\bolds">
+<meta property="og:locale" content="UTF-8">
+<meta property="og:image" content="https://bywmm.github.io/2019/10/25/pca/noise.jpg">
+<meta property="og:image" content="https://bywmm.github.io/2019/10/25/pca/redundancy.png">
+<meta property="og:image" content="https://bywmm.github.io/2019/10/25/pca/deletelater.png">
+<meta property="og:updated_time" content="2019-10-25T07:31:29.966Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="主成分分析">
+<meta name="twitter:description" content="主成分分析(PCA)主成分分析(PCA)是最重要的降维方法之一。 为什么要降维？在原始的高维空间中，包含冗余信息和噪声信息，会在实际应用中引入误差，影响准确率；而降维可以提取数据内部的本质结构，减少冗余信息和噪声信息造成的误差，提高应用中的精度。  噪声    冗余   PCA思想PCA顾名思义，就是找出数据里最主要的方面，用数据里最主要的方面来代替原始数据。 假设有$m$个数据样本$\bolds">
+<meta name="twitter:image" content="https://bywmm.github.io/2019/10/25/pca/noise.jpg">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://bywmm.github.io/2019/10/25/pca/">
+
+
+
+
+
+  <title>主成分分析 | bywmm's blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="UTF-8">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">bywmm's blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-主页">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            主页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-标签">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-分类">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-归档">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://bywmm.github.io/2019/10/25/pca/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="JF Wang">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar2.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="bywmm's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">主成分分析</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-10-25T18:17:24+08:00">
+                2019-10-25
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2019/10/25/pca/" class="leancloud_visitors" data-flag-title="主成分分析">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">Visitors&#58;</span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Words count in article&#58;</span>
+                
+                <span title="Words count in article">
+                  1.2k
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Reading time &asymp;</span>
+                
+                <span title="Reading time">
+                  5
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="主成分分析-PCA"><a href="#主成分分析-PCA" class="headerlink" title="主成分分析(PCA)"></a>主成分分析(PCA)</h1><p>主成分分析(PCA)是最重要的降维方法之一。</p>
+<h2 id="为什么要降维？"><a href="#为什么要降维？" class="headerlink" title="为什么要降维？"></a>为什么要降维？</h2><p>在原始的高维空间中，包含<strong>冗余信息和噪声信息</strong>，会在实际应用中引入误差，影响准确率；而降维可以提取数据内部的本质结构，减少冗余信息和噪声信息造成的误差，提高应用中的精度。</p>
+<ul>
+<li>噪声</li>
+</ul>
+<p><img src="/2019/10/25/pca/noise.jpg"></p>
+<ul>
+<li>冗余</li>
+</ul>
+<p><img src="/2019/10/25/pca/redundancy.png"></p>
+<h2 id="PCA思想"><a href="#PCA思想" class="headerlink" title="PCA思想"></a>PCA思想</h2><p>PCA顾名思义，就是找出数据里最主要的方面，用数据里最主要的方面来代替原始数据。</p>
+<p>假设有$m$个数据样本$\boldsymbol{X}=\{\boldsymbol{x_1},\boldsymbol{x_2},…,\boldsymbol{x_m}\}$，每个样本是$n$维的$\boldsymbol{x_1}=(x_{i1},x_{i2},…,x_{in})$。我们希望将这$m$个数据的维度从$n$维降到$n’$维，希望这个$m$个$n’$维的数据集尽可能代表原数据集。<strong>我们知道数据从$n$维降到$n’$维肯定会有损失，但是我们希望损失尽可能的小</strong>。那么如何让这$n’$维的数据尽可能表示原来的数据呢？</p>
+<p>现在我们的样本是再$n$维的空间里，希望投影到一个$n’$维的超平面。这样就实现了降维。如果存在这样的超平面，那么它大概具有这样的性质：</p>
+<ul>
+<li><strong>最近重构性</strong>：样本点到这个超平面的距离都足够近；</li>
+<li><strong>最大可分性</strong>：样本点在这个超平面上的投影尽可能分开。</li>
+</ul>
+<p>基于最近重构性和最大可分性，分别得到主成分分析的两种等价推导。</p>
+<h2 id="基于最近重构性的PCA推导"><a href="#基于最近重构性的PCA推导" class="headerlink" title="基于最近重构性的PCA推导"></a>基于最近重构性的PCA推导</h2><p>假定样本进行了中心化，即$\sum_i\boldsymbol{x}_i=\boldsymbol{0}$;</p>
+<p>假设投影变换后得到的新坐标系为$\{\boldsymbol{w}_1,\boldsymbol{w}_2,…,\boldsymbol{w}_n\}$，其中$\boldsymbol{w}_i$是<strong>标准正交基向量</strong>,即$\boldsymbol{w}_i^T\boldsymbol{w}_j=\delta_{ij}$;</p>
+<p><del>$\boldsymbol{x}_i$在新坐标系$\boldsymbol{W}$下的投影为$(z_{i1}, z_{i2},…,z_{in})$，如果$\boldsymbol{x}_i$在新坐标系下投影重构，不会有信息缺失。</del></p>
+<p><del>我们<strong>丢弃了新坐标系中的部分坐标</strong>，将维度降低到$n’&lt;n$。丢其的部分投影后的坐标，置为固定常数。则样本点$\boldsymbol{x}_i$在新坐标系中的某超平面下的投影为$\boldsymbol{z}_i=(z_{i1},…,z_{in’},b_{i(n’+1)},…,b_{in})$。其中$z_{ij}=\boldsymbol{w}_j^T\boldsymbol{x}_i$是$\boldsymbol{x}_i$在低维坐标系下第$j$维的坐标，$b_{ij}$是固定常数。也就是说 <strong>$\boldsymbol{z}_i$是$\boldsymbol{x}_i$在新坐标系$W$下，一个超平面的投影</strong>。</del></p>
+<p>若丢弃新坐标系中的部分坐标，即将维度降低到$n’&lt;n$，则样本点$\boldsymbol{x}_i$在低维坐标系中的投影是$\boldsymbol{z}_i=(z_{i1},z_{i2},…,z_{in’})$，其中$z_{ij}=\boldsymbol{w}_j^T\boldsymbol{x}_i$是$\boldsymbol{x}_i$在低维坐标系下第$j$维的坐标。</p>
+<p>记$\boldsymbol{W}=(\boldsymbol{w}_1,\boldsymbol{w}_2,…,\boldsymbol{w}_{n’})$，则$\boldsymbol{z}_i=\boldsymbol{W}^T\boldsymbol{x}_i$</p>
+<p>如果用低维坐标系下的$\boldsymbol{z}_i$来重构$\boldsymbol{x}_i$，得到$\hat\boldsymbol{x}_i=\sum_{j=1}^{n’}z_{ij}\boldsymbol{w}_j=\boldsymbol{W}\boldsymbol{z}_i$</p>
+<p>（$\hat\boldsymbol{x}_i=\boldsymbol{W}\boldsymbol{z}_i=\boldsymbol{W}\boldsymbol{W}^T\boldsymbol{x}_i$;$\boldsymbol{W}^T\boldsymbol{W}=\boldsymbol{I}$但是$\boldsymbol{W}\boldsymbol{W}^T\neq\boldsymbol{I}$）</p>
+<p>考虑整个训练集，原样本点$\boldsymbol{x}_i$与基于<strong>投影重构</strong>的样本点$\hat\boldsymbol{x}_i$之间的距离为</p>
+<p><img src="/2019/10/25/pca/deletelater.png"></p>
+<p>$\sum_{i=1}^m\boldsymbol{x}_i^T\boldsymbol{x}_i$是个常量，最小化上式等同于</p>
+<script type="math/tex; mode=display">
+\underset{W'}{\arg\min}-tr(\boldsymbol{W}^T\boldsymbol{X}\boldsymbol{X}^T\boldsymbol{W})</script><script type="math/tex; mode=display">
+s.t.\ \boldsymbol{W}^T\boldsymbol{W}=\boldsymbol{I}</script><p>这就是主成分分析的优化目标，可用拉格朗日乘子法求解。</p>
+<p>拉格朗日函数</p>
+<script type="math/tex; mode=display">
+L(W,\lambda)=-tr(\boldsymbol{W}^T\boldsymbol{X}\boldsymbol{X}^T\boldsymbol{W}+\lambda(\boldsymbol{W}^T\boldsymbol{W}-\boldsymbol{I}))</script><p>对$\boldsymbol{W}求导有$</p>
+<script type="math/tex; mode=display">
+\frac{\partial{L}}{\partial{\boldsymbol{W}}}=-\boldsymbol{X}\boldsymbol{X}^T\boldsymbol{W}+\lambda\boldsymbol{W}</script><p>即</p>
+<script type="math/tex; mode=display">
+\boldsymbol{X}\boldsymbol{X}^T\boldsymbol{W}=\lambda\boldsymbol{W}</script><p>于是，只需要对协方差矩阵$\boldsymbol{X}\boldsymbol{X}^T$进行特征值分解，将求得的特征值排序：$\lambda_1\geq\lambda_2\geq…\geq\lambda_{n’}$，取前$n’$个特征值对应的特征向量构成$\boldsymbol{W}^*=(\boldsymbol{w}_1,\boldsymbol{w}_2,…,\boldsymbol{w}_{n’})$.这就是主成分分析的解。</p>
+<h2 id="基于最近重构性的PCA推导-1"><a href="#基于最近重构性的PCA推导-1" class="headerlink" title="基于最近重构性的PCA推导"></a>基于最近重构性的PCA推导</h2><p>最大可分性是希望样本点的投影能尽可能分开，则应该是投影后的样本点方差最大化。</p>
+<p>样本点$\boldsymbol{x}_i$在新空间中超平面上的投影为$\boldsymbol{W}^T\boldsymbol{x}_i$，投影后的样本方差为$\sum_i\boldsymbol{W}^T\boldsymbol{x}_i\boldsymbol{x}_i^T\boldsymbol{W}$，于是优化目标可写为</p>
+<script type="math/tex; mode=display">
+\underset{W}{\max}\ tr(\boldsymbol{W}^T\boldsymbol{X}\boldsymbol{X}^T\boldsymbol{W})</script><script type="math/tex; mode=display">
+s.t.\ \boldsymbol{W}^T\boldsymbol{W}=\boldsymbol{I}</script>
+      
+    </div>
+    
+    
+    
+
+<div>
+  
+    <div>
+    
+        <div style="text-align:center;color: #555;font-size:14px;">-------------The End-------------</div>
+    
+</div>
+  
+</div>
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/10/24/单人检测-stacked-hourglass-network/" rel="next" title="单人检测：stacked hourglass network">
+                <i class="fa fa-chevron-left"></i> 单人检测：stacked hourglass network
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/10/27/plt绘制检测相关特征/" rel="prev" title="plt绘制检测相关特征">
+                plt绘制检测相关特征 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="lv-container" data-id="city" data-uid="MTAyMC80MDY4Mi8xNzIwNw=="></div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/avatar2.jpg" alt="JF Wang">
+            
+              <p class="site-author-name" itemprop="name">JF Wang</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives">
+              
+                  <span class="site-state-item-count">34</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">8</span>
+                  <span class="site-state-item-name">categories</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">26</span>
+                  <span class="site-state-item-name">tags</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#主成分分析-PCA"><span class="nav-number">1.</span> <span class="nav-text">主成分分析(PCA)</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#为什么要降维？"><span class="nav-number">1.1.</span> <span class="nav-text">为什么要降维？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#PCA思想"><span class="nav-number">1.2.</span> <span class="nav-text">PCA思想</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#基于最近重构性的PCA推导"><span class="nav-number">1.3.</span> <span class="nav-text">基于最近重构性的PCA推导</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#基于最近重构性的PCA推导-1"><span class="nav-number">1.4.</span> <span class="nav-text">基于最近重构性的PCA推导</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2018 &mdash; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">JF Wang</span>
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+      <span class="post-meta-item-text">Site words total count&#58;</span>
+    
+    <span title="Site words total count">52.9k</span>
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Gemini</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+    <script type="text/javascript">
+      (function(d, s) {
+        var j, e = d.getElementsByTagName(s)[0];
+        if (typeof LivereTower === 'function') { return; }
+        j = d.createElement(s);
+        j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+        j.async = true;
+        e.parentNode.insertBefore(j, e);
+      })(document, 'script');
+    </script>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.4.js"></script>
+  <script>AV.initialize("RNdl2wO1FNBvt55Si3t38Ur0-gzGzoHsz", "Bq8si1UE7hC2B4OsFFJYUcnQ");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+
+  
+
+  
+  
+
+  
+  
+
+
+  
+
+  
+
+</body>
+</html>
