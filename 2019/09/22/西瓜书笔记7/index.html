@@ -116,7 +116,7 @@
 <meta property="og:description" content="贝叶斯决策论；朴素贝叶斯；半朴素贝叶斯；贝叶斯网；EM算法">
 <meta property="og:locale" content="UTF-8">
 <meta property="og:image" content="http://static.zybuluo.com/BYWMM/prpt04mukomox26l5ev3r2cc/image_1dl8u7lhserp1tsp144813kef679.png">
-<meta property="og:updated_time" content="2019-10-24T03:44:24.397Z">
+<meta property="og:updated_time" content="2019-11-02T02:36:19.071Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="西瓜书笔记7 贝叶斯分类器">
 <meta name="twitter:description" content="贝叶斯决策论；朴素贝叶斯；半朴素贝叶斯；贝叶斯网；EM算法">
@@ -377,7 +377,7 @@
                   <span class="post-meta-item-text">Words count in article&#58;</span>
                 
                 <span title="Words count in article">
-                  3k
+                  2.5k
                 </span>
               
 
@@ -393,7 +393,7 @@
                   <span class="post-meta-item-text">Reading time &asymp;</span>
                 
                 <span title="Reading time">
-                  12
+                  10
                 </span>
               
             </div>
@@ -540,34 +540,7 @@ P(c|\boldsymbol x)\propto \sum_{i=1,|D_{x_i}| \geq m^{'}}^{d}P(c,x_i)\prod_{j=1}
 <script type="math/tex; mode=display">
 \hat{P}(c,x_i)=\frac{|D_{c,x_i}|+1}{|D|+N+N_i}</script><script type="math/tex; mode=display">
 \hat{P}(x_j|c,x_i) = \frac{|D_{c,x_i,x_j}|+1}{|D_{c,x_i}|+N_j}</script><p>其中N是D中可能的类别数，$N_i$是第i个属性可能的取值数，$D_{c,x_i}$是类别为c且在第i个属性上取值为$x_i$的样本集合，$D_{c, x_i, x_j}$是类别为c且在第i和第j个属性上分别为$x_i$和$x_j$的样本集合。</p>
-<h2 id="贝叶斯网-信念网"><a href="#贝叶斯网-信念网" class="headerlink" title="贝叶斯网(信念网)"></a>贝叶斯网(信念网)</h2><h2 id="EM算法"><a href="#EM算法" class="headerlink" title="EM算法"></a>EM算法</h2><p><strong>隐变量</strong>：属性值未知的变量；未观测的变量。</p>
-<p>令$\boldsymbol X$表示已观测变量集，$\boldsymbol Z$表示隐变量集，$\Theta$表示模型参数。</p>
-<p>若对$\Theta$做极大似然估计，则应最大化对数似然</p>
-<script type="math/tex; mode=display">
-LL(\Theta|\boldsymbol X, \boldsymbol Z) = lnP(\boldsymbol X, \boldsymbol Z|\Theta)</script><p>由于$\boldsymbol Z$是隐变量，上式无法直接求解。可以对$\boldsymbol Z$计算期望，来最大化已观测数据的对数“==边际似然==”</p>
-<script type="math/tex; mode=display">
-LL(\Theta|\boldsymbol X)=lnP(\boldsymbol X|\Theta) = ln \sum _{\boldsymbol Z}P(\boldsymbol X,\boldsymbol Z|\Theta)</script><p><strong>EM(Expectation-Maximization)算法(期望最大化算法)</strong>:<br>是一种<strong>迭代式</strong>的方法</p>
-<p>EM使用两个步骤交替计算，直至收敛到最优解。</p>
-<p>算法原型：</p>
-<ul>
-<li>E步(Expectation)：基于$\Theta^t$推断隐变量$\boldsymbol Z$的值，记为$\boldsymbol Z^t$;</li>
-<li>M步(Maximization)：基于已观测变量$\boldsymbol X$和$\boldsymbol{Z^t}$对参数$\Theta$做极大似然估计，记为$\Theta^{t+1}$</li>
-</ul>
-<p>若不是，取$\boldsymbol{Z}$的期望，而是基于$\Theta^t$计算隐变量$\boldsymbol Z$的概率分布$P(\boldsymbol Z|\boldsymbol X, \Theta^t)$,则EM算法的两个步骤是：</p>
-<ul>
-<li>E步(Expectation)：以当前参数$\Theta^t$推断隐变量分布$P(\boldsymbol Z|\boldsymbol{X},\Theta)$，并计算对数似然$LL(\Theta|\boldsymbol{X},\boldsymbol{Z})$关于$\boldsymbol{Z}$的期望</li>
-</ul>
-<script type="math/tex; mode=display">
-Q(\Theta|\Theta^t)=E_{\boldsymbol{Z}|\boldsymbol{X},\Theta^t}LL(\Theta|\boldsymbol{X},\boldsymbol{Z})</script><ul>
-<li>M步(Maximization):寻找参数<strong>最大化期望似</strong>然，即</li>
-</ul>
-<script type="math/tex; mode=display">
-\Theta^{t+1}=\underset{\Theta}{argmax}Q(\Theta|\Theta^t)</script><p>EM算法可看作用坐标下降法来最大化对数似然下界的过程，是一种非梯度的优化方法。</p>
-<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><blockquote>
-<p>根据对属性间依赖的涉及程度，贝叶斯分类器形成了一个“谱”：朴素贝叶斯分类器不考虑属性见的依赖性，贝叶斯网能表示任意属性间的依赖性，二者分别位于“谱”的两端；介于两者之间的则是一系列半朴素贝叶斯分类器，它们基于各种假设和约束来对属性间的部分依赖性进行建模。</p>
-<p>EM算法是最常见的<strong>隐变量估计方法</strong>，在机器学习中有极为广泛的用途，例如常被用来学习高斯混合模型(GMM)的参数。K均值聚类算法就是一个典型的EM算法。</p>
-</blockquote>
-
+<h2 id="贝叶斯网-信念网"><a href="#贝叶斯网-信念网" class="headerlink" title="贝叶斯网(信念网)"></a>贝叶斯网(信念网)</h2>
       
     </div>
     
@@ -705,7 +678,7 @@ Q(\Theta|\Theta^t)=E_{\boldsymbol{Z}|\boldsymbol{X},\Theta^t}LL(\Theta|\boldsymb
               
                 <a href="/archives">
               
-                  <span class="site-state-item-count">34</span>
+                  <span class="site-state-item-count">33</span>
                   <span class="site-state-item-name">posts</span>
                 </a>
               </div>
@@ -727,7 +700,7 @@ Q(\Theta|\Theta^t)=E_{\boldsymbol{Z}|\boldsymbol{X},\Theta^t}LL(\Theta|\boldsymb
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">26</span>
+                  <span class="site-state-item-count">24</span>
                   <span class="site-state-item-name">tags</span>
                 </a>
               </div>
@@ -767,7 +740,7 @@ Q(\Theta|\Theta^t)=E_{\boldsymbol{Z}|\boldsymbol{X},\Theta^t}LL(\Theta|\boldsymb
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#西瓜书笔记7-贝叶斯分类器"><span class="nav-number">1.</span> <span class="nav-text">西瓜书笔记7 贝叶斯分类器</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#贝叶斯决策论"><span class="nav-number">1.1.</span> <span class="nav-text">贝叶斯决策论</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#朴素贝叶斯分类器"><span class="nav-number">1.2.</span> <span class="nav-text">朴素贝叶斯分类器</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#属性条件独立假设"><span class="nav-number">1.2.1.</span> <span class="nav-text">属性条件独立假设</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#拉普拉斯修正"><span class="nav-number">1.2.2.</span> <span class="nav-text">拉普拉斯修正</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#半朴素贝叶斯分类器"><span class="nav-number">1.3.</span> <span class="nav-text">半朴素贝叶斯分类器</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#独立依赖估计"><span class="nav-number">1.3.1.</span> <span class="nav-text">独立依赖估计</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#SPODE"><span class="nav-number">1.3.2.</span> <span class="nav-text">SPODE</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#TAN"><span class="nav-number">1.3.3.</span> <span class="nav-text">TAN</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#AODE"><span class="nav-number">1.3.4.</span> <span class="nav-text">AODE</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#贝叶斯网-信念网"><span class="nav-number">1.4.</span> <span class="nav-text">贝叶斯网(信念网)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#EM算法"><span class="nav-number">1.5.</span> <span class="nav-text">EM算法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#总结"><span class="nav-number">1.6.</span> <span class="nav-text">总结</span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#西瓜书笔记7-贝叶斯分类器"><span class="nav-number">1.</span> <span class="nav-text">西瓜书笔记7 贝叶斯分类器</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#贝叶斯决策论"><span class="nav-number">1.1.</span> <span class="nav-text">贝叶斯决策论</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#朴素贝叶斯分类器"><span class="nav-number">1.2.</span> <span class="nav-text">朴素贝叶斯分类器</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#属性条件独立假设"><span class="nav-number">1.2.1.</span> <span class="nav-text">属性条件独立假设</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#拉普拉斯修正"><span class="nav-number">1.2.2.</span> <span class="nav-text">拉普拉斯修正</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#半朴素贝叶斯分类器"><span class="nav-number">1.3.</span> <span class="nav-text">半朴素贝叶斯分类器</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#独立依赖估计"><span class="nav-number">1.3.1.</span> <span class="nav-text">独立依赖估计</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#SPODE"><span class="nav-number">1.3.2.</span> <span class="nav-text">SPODE</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#TAN"><span class="nav-number">1.3.3.</span> <span class="nav-text">TAN</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#AODE"><span class="nav-number">1.3.4.</span> <span class="nav-text">AODE</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#贝叶斯网-信念网"><span class="nav-number">1.4.</span> <span class="nav-text">贝叶斯网(信念网)</span></a></li></ol></li></ol></div>
             
 
           </div>
@@ -787,7 +760,7 @@ Q(\Theta|\Theta^t)=E_{\boldsymbol{Z}|\boldsymbol{X},\Theta^t}LL(\Theta|\boldsymb
 
     <footer id="footer" class="footer">
       <div class="footer-inner">
-        <div class="copyright">&copy; 2018 &mdash; <span itemprop="copyrightYear">2019</span>
+        <div class="copyright">&copy; 2018 &mdash; <span itemprop="copyrightYear">2020</span>
   <span class="with-love">
     <i class="fa fa-user"></i>
   </span>
@@ -801,7 +774,7 @@ Q(\Theta|\Theta^t)=E_{\boldsymbol{Z}|\boldsymbol{X},\Theta^t}LL(\Theta|\boldsymb
     
       <span class="post-meta-item-text">Site words total count&#58;</span>
     
-    <span title="Site words total count">52.9k</span>
+    <span title="Site words total count">52.8k</span>
   
 </div>
 
